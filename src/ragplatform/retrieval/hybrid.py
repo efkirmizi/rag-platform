@@ -21,10 +21,20 @@ WITH vec AS (
     LIMIT $4
 ),
 fts AS (
+    -- OR semantiği bilinçli tercih: uzun doğal dil sorularında AND (websearch_to_tsquery)
+    -- tek eksik kelimede tüm isabeti kaybediyor. Recall'u OR sağlar; hassasiyeti
+    -- ts_rank_cd (çok terim eşleşen üste) + RRF + reranker sağlar.
     SELECT c.id, row_number() OVER (ORDER BY ts_rank_cd(c.content_tsv, q.tsq) DESC) AS rnk
     FROM chunks c
     JOIN pages p ON p.id = c.page_id
-    CROSS JOIN (SELECT websearch_to_tsquery('turkish_unaccent', $5) AS tsq) q
+    CROSS JOIN (
+        SELECT CASE
+            WHEN plainto_tsquery('turkish_unaccent', $5)::text = '' THEN
+                plainto_tsquery('turkish_unaccent', $5)
+            ELSE
+                replace(plainto_tsquery('turkish_unaccent', $5)::text, ' & ', ' | ')::tsquery
+        END AS tsq
+    ) q
     WHERE c.content_tsv @@ q.tsq
       AND p.space_key = ANY($2::text[])
       AND (NOT p.is_restricted OR p.page_key = ANY($3::text[]))

@@ -55,7 +55,11 @@ uvicorn ragplatform.api.main:app --port 8000
 ```powershell
 pytest                              # birim testleri (servis gerektirmez)
 python scripts/acl_leak_test.py     # entegrasyon: G-1 kabul kriteri
+python scripts/run_eval.py          # golden set eval: hit@k / MRR / yetki-sınırı (G-3)
 ```
+
+Golden set formatı ve kuralları: [eval/golden/README.md](eval/golden/README.md).
+Eval sonuçları `eval/results/` altına yazılır ve baseline takibi için commit'lenir.
 
 ## Dizin yapısı
 

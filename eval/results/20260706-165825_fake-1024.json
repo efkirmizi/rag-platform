@@ -1,0 +1,566 @@
+{
+  "run_at": "2026-07-06T13:58:25+00:00",
+  "golden_file": "golden_v1.jsonl",
+  "item_count": 22,
+  "embedding_model": "fake-1024",
+  "reranker": "noop",
+  "top_k": 8,
+  "metrics": {
+    "mrr": 0.8519,
+    "hit@1": 0.7778,
+    "hit@3": 0.9444,
+    "hit@5": 0.9444,
+    "hit@8": 0.9444,
+    "acl_violations": 0,
+    "latency_p95_ms": 62.3
+  },
+  "per_category": {
+    "faktuel": {
+      "n": 10,
+      "hit@1": 0.8,
+      "hit@3": 1.0,
+      "hit@5": 1.0
+    },
+    "kisitli-erisim": {
+      "n": 3,
+      "hit@1": 1.0,
+      "hit@3": 1.0,
+      "hit@5": 1.0
+    },
+    "parafraz": {
+      "n": 5,
+      "hit@1": 0.6,
+      "hit@3": 0.8,
+      "hit@5": 0.8
+    }
+  },
+  "boundary_items": {
+    "n": 4,
+    "violations": []
+  },
+  "items": [
+    {
+      "id": "f01",
+      "category": "faktuel",
+      "user_id": "ayse",
+      "question": "Yıllık izin kaç iş günü?",
+      "expected": [
+        "ik-yillik-izin"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 42.9,
+      "returned_pages": [
+        "ik-yillik-izin",
+        "ik-uzaktan-calisma",
+        "ik-ise-alim",
+        "ik-performans"
+      ]
+    },
+    {
+      "id": "f02",
+      "category": "faktuel",
+      "user_id": "mehmet",
+      "question": "VPN bağlantısında TR-4021 hata kodu ne anlama geliyor?",
+      "expected": [
+        "eng-vpn"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 57.6,
+      "returned_pages": [
+        "eng-vpn",
+        "eng-dagitim",
+        "ik-uzaktan-calisma",
+        "eng-olay-mudahale",
+        "ik-performans",
+        "ik-yillik-izin"
+      ]
+    },
+    {
+      "id": "f03",
+      "category": "faktuel",
+      "user_id": "can",
+      "question": "Masraf beyanı kaç gün içinde yapılmalı?",
+      "expected": [
+        "fin-masraf"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 58.7,
+      "returned_pages": [
+        "fin-masraf",
+        "ik-yillik-izin",
+        "ik-ise-alim",
+        "ik-uzaktan-calisma",
+        "fin-butce"
+      ]
+    },
+    {
+      "id": "f04",
+      "category": "faktuel",
+      "user_id": "mehmet",
+      "question": "Üretim dağıtım pencereleri hangi saatler arasında?",
+      "expected": [
+        "eng-dagitim"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 3.4,
+      "returned_pages": [
+        "eng-dagitim",
+        "ik-yillik-izin",
+        "ik-uzaktan-calisma",
+        "eng-olay-mudahale",
+        "eng-vpn",
+        "ik-ise-alim"
+      ]
+    },
+    {
+      "id": "f05",
+      "category": "faktuel",
+      "user_id": "deniz",
+      "question": "SEV1 olayında olay kanalı kaç dakika içinde açılır?",
+      "expected": [
+        "eng-olay-mudahale"
+      ],
+      "rank": 2,
+      "hits": {
+        "1": false,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 60.8,
+      "returned_pages": [
+        "eng-dagitim",
+        "eng-olay-mudahale",
+        "ik-uzaktan-calisma",
+        "ik-performans",
+        "eng-guvenlik-acigi",
+        "ik-yillik-izin",
+        "eng-kod-inceleme"
+      ]
+    },
+    {
+      "id": "f06",
+      "category": "faktuel",
+      "user_id": "can",
+      "question": "Satın alma onay limitleri nedir?",
+      "expected": [
+        "fin-satinalma"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 3.4,
+      "returned_pages": [
+        "fin-satinalma",
+        "fin-masraf",
+        "ik-yillik-izin",
+        "ik-ise-alim"
+      ]
+    },
+    {
+      "id": "f07",
+      "category": "faktuel",
+      "user_id": "ayse",
+      "question": "İşe alım süreci kaç aşamadan oluşuyor?",
+      "expected": [
+        "ik-ise-alim"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 2.9,
+      "returned_pages": [
+        "ik-ise-alim",
+        "ik-yillik-izin",
+        "ik-uzaktan-calisma",
+        "ik-performans"
+      ]
+    },
+    {
+      "id": "f08",
+      "category": "faktuel",
+      "user_id": "can",
+      "question": "Bütçe çalışması hangi ayda başlar?",
+      "expected": [
+        "fin-butce"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 3.0,
+      "returned_pages": [
+        "fin-butce",
+        "ik-performans",
+        "ik-uzaktan-calisma",
+        "fin-satinalma",
+        "ik-ise-alim"
+      ]
+    },
+    {
+      "id": "f09",
+      "category": "faktuel",
+      "user_id": "ayse",
+      "question": "Performans değerlendirmeleri hangi aylarda yapılır?",
+      "expected": [
+        "ik-performans"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 3.1,
+      "returned_pages": [
+        "ik-performans",
+        "ik-yillik-izin",
+        "ik-uzaktan-calisma",
+        "ik-ise-alim"
+      ]
+    },
+    {
+      "id": "f10",
+      "category": "faktuel",
+      "user_id": "mehmet",
+      "question": "Kod inceleme onayı olmadan ana dala birleştirme yapılabilir mi?",
+      "expected": [
+        "eng-kod-inceleme"
+      ],
+      "rank": 3,
+      "hits": {
+        "1": false,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 3.4,
+      "returned_pages": [
+        "ik-yillik-izin",
+        "eng-olay-mudahale",
+        "eng-kod-inceleme",
+        "ik-uzaktan-calisma",
+        "eng-dagitim",
+        "eng-vpn"
+      ]
+    },
+    {
+      "id": "p01",
+      "category": "parafraz",
+      "user_id": "ayse",
+      "question": "Evden çalışma kuralları neler?",
+      "expected": [
+        "ik-uzaktan-calisma"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 3.0,
+      "returned_pages": [
+        "ik-uzaktan-calisma",
+        "ik-yillik-izin",
+        "ik-performans",
+        "ik-ise-alim"
+      ]
+    },
+    {
+      "id": "p02",
+      "category": "parafraz",
+      "user_id": "mehmet",
+      "question": "Canlıya çıkış süreci nasıl işliyor?",
+      "expected": [
+        "eng-dagitim"
+      ],
+      "rank": 2,
+      "hits": {
+        "1": false,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 2.5,
+      "returned_pages": [
+        "ik-ise-alim",
+        "eng-dagitim",
+        "ik-yillik-izin",
+        "eng-olay-mudahale",
+        "eng-kod-inceleme",
+        "eng-vpn"
+      ]
+    },
+    {
+      "id": "p03",
+      "category": "parafraz",
+      "user_id": "can",
+      "question": "Yaptığım harcamanın geri ödemesini nasıl alırım?",
+      "expected": [
+        "fin-masraf"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 3.5,
+      "returned_pages": [
+        "fin-masraf",
+        "ik-yillik-izin",
+        "fin-satinalma",
+        "ik-performans",
+        "fin-butce"
+      ]
+    },
+    {
+      "id": "p04",
+      "category": "parafraz",
+      "user_id": "deniz",
+      "question": "Sistemde bir zafiyet bulursam kime haber vermeliyim?",
+      "expected": [
+        "eng-guvenlik-acigi"
+      ],
+      "rank": null,
+      "hits": {
+        "1": false,
+        "3": false,
+        "5": false
+      },
+      "forbidden_violation": [],
+      "took_ms": 3.6,
+      "returned_pages": [
+        "eng-kod-inceleme",
+        "ik-yillik-izin",
+        "ik-performans",
+        "eng-olay-mudahale",
+        "ik-uzaktan-calisma"
+      ]
+    },
+    {
+      "id": "p05",
+      "category": "parafraz",
+      "user_id": "ayse",
+      "question": "Doktor raporu alırsam ne yapmam gerekiyor?",
+      "expected": [
+        "ik-yillik-izin"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 3.5,
+      "returned_pages": [
+        "ik-yillik-izin",
+        "ik-uzaktan-calisma",
+        "ik-ise-alim",
+        "ik-performans"
+      ]
+    },
+    {
+      "id": "k01",
+      "category": "kisitli-erisim",
+      "user_id": "zeynep",
+      "question": "Maaş bantları hangi ayda güncellenir?",
+      "expected": [
+        "ik-maas-bantlari"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 62.6,
+      "returned_pages": [
+        "ik-maas-bantlari",
+        "ik-performans",
+        "ik-uzaktan-calisma",
+        "ik-isten-cikis",
+        "ik-yillik-izin"
+      ]
+    },
+    {
+      "id": "k02",
+      "category": "kisitli-erisim",
+      "user_id": "elif",
+      "question": "Standart tedarikçi ödeme vadesi kaç gün?",
+      "expected": [
+        "fin-tedarikci-odeme"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 56.9,
+      "returned_pages": [
+        "fin-tedarikci-odeme",
+        "fin-masraf",
+        "ik-yillik-izin",
+        "fin-satinalma",
+        "ik-uzaktan-calisma",
+        "ik-ise-alim"
+      ]
+    },
+    {
+      "id": "k03",
+      "category": "kisitli-erisim",
+      "user_id": "zeynep",
+      "question": "İşten çıkışta erişim iptali ne kadar sürede tamamlanmalı?",
+      "expected": [
+        "ik-isten-cikis"
+      ],
+      "rank": 1,
+      "hits": {
+        "1": true,
+        "3": true,
+        "5": true
+      },
+      "forbidden_violation": [],
+      "took_ms": 2.8,
+      "returned_pages": [
+        "ik-isten-cikis",
+        "ik-yillik-izin",
+        "ik-ise-alim",
+        "ik-uzaktan-calisma",
+        "ik-performans"
+      ]
+    },
+    {
+      "id": "y01",
+      "category": "yetki-siniri",
+      "user_id": "mehmet",
+      "question": "Maaş bantları ve seviye matrisi nedir?",
+      "expected": [],
+      "rank": null,
+      "hits": {
+        "1": false,
+        "3": false,
+        "5": false
+      },
+      "forbidden_violation": [],
+      "took_ms": 2.7,
+      "returned_pages": [
+        "ik-yillik-izin",
+        "ik-uzaktan-calisma",
+        "eng-olay-mudahale",
+        "ik-performans",
+        "eng-dagitim",
+        "eng-kod-inceleme"
+      ]
+    },
+    {
+      "id": "y02",
+      "category": "yetki-siniri",
+      "user_id": "can",
+      "question": "Tedarikçi iskonto oranları nelerdir?",
+      "expected": [],
+      "rank": null,
+      "hits": {
+        "1": false,
+        "3": false,
+        "5": false
+      },
+      "forbidden_violation": [],
+      "took_ms": 2.6,
+      "returned_pages": [
+        "fin-satinalma",
+        "fin-butce",
+        "ik-ise-alim",
+        "ik-yillik-izin",
+        "fin-masraf",
+        "ik-performans"
+      ]
+    },
+    {
+      "id": "y03",
+      "category": "yetki-siniri",
+      "user_id": "ayse",
+      "question": "Güvenlik açığı embargo süreci nasıl yönetiliyor?",
+      "expected": [],
+      "rank": null,
+      "hits": {
+        "1": false,
+        "3": false,
+        "5": false
+      },
+      "forbidden_violation": [],
+      "took_ms": 2.3,
+      "returned_pages": [
+        "ik-ise-alim",
+        "ik-uzaktan-calisma",
+        "ik-performans",
+        "ik-yillik-izin"
+      ]
+    },
+    {
+      "id": "y04",
+      "category": "yetki-siniri",
+      "user_id": "mehmet",
+      "question": "İşten çıkış prosedüründe erişim iptali nasıl yapılır?",
+      "expected": [],
+      "rank": null,
+      "hits": {
+        "1": false,
+        "3": false,
+        "5": false
+      },
+      "forbidden_violation": [],
+      "took_ms": 3.1,
+      "returned_pages": [
+        "ik-performans",
+        "ik-ise-alim",
+        "ik-uzaktan-calisma",
+        "ik-yillik-izin",
+        "eng-vpn",
+        "eng-olay-mudahale"
+      ]
+    }
+  ]
+}

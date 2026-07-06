@@ -1,0 +1,22 @@
+{"id": "f01", "user_id": "ayse", "question": "Yıllık izin kaç iş günü?", "expected_page_keys": ["ik-yillik-izin"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f02", "user_id": "mehmet", "question": "VPN bağlantısında TR-4021 hata kodu ne anlama geliyor?", "expected_page_keys": ["eng-vpn"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f03", "user_id": "can", "question": "Masraf beyanı kaç gün içinde yapılmalı?", "expected_page_keys": ["fin-masraf"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f04", "user_id": "mehmet", "question": "Üretim dağıtım pencereleri hangi saatler arasında?", "expected_page_keys": ["eng-dagitim"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f05", "user_id": "deniz", "question": "SEV1 olayında olay kanalı kaç dakika içinde açılır?", "expected_page_keys": ["eng-olay-mudahale"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f06", "user_id": "can", "question": "Satın alma onay limitleri nedir?", "expected_page_keys": ["fin-satinalma"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f07", "user_id": "ayse", "question": "İşe alım süreci kaç aşamadan oluşuyor?", "expected_page_keys": ["ik-ise-alim"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f08", "user_id": "can", "question": "Bütçe çalışması hangi ayda başlar?", "expected_page_keys": ["fin-butce"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f09", "user_id": "ayse", "question": "Performans değerlendirmeleri hangi aylarda yapılır?", "expected_page_keys": ["ik-performans"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f10", "user_id": "mehmet", "question": "Kod inceleme onayı olmadan ana dala birleştirme yapılabilir mi?", "expected_page_keys": ["eng-kod-inceleme"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "p01", "user_id": "ayse", "question": "Evden çalışma kuralları neler?", "expected_page_keys": ["ik-uzaktan-calisma"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p02", "user_id": "mehmet", "question": "Canlıya çıkış süreci nasıl işliyor?", "expected_page_keys": ["eng-dagitim"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p03", "user_id": "can", "question": "Yaptığım harcamanın geri ödemesini nasıl alırım?", "expected_page_keys": ["fin-masraf"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p04", "user_id": "deniz", "question": "Sistemde bir zafiyet bulursam kime haber vermeliyim?", "expected_page_keys": ["eng-guvenlik-acigi"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p05", "user_id": "ayse", "question": "Doktor raporu alırsam ne yapmam gerekiyor?", "expected_page_keys": ["ik-yillik-izin"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "k01", "user_id": "zeynep", "question": "Maaş bantları hangi ayda güncellenir?", "expected_page_keys": ["ik-maas-bantlari"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "k02", "user_id": "elif", "question": "Standart tedarikçi ödeme vadesi kaç gün?", "expected_page_keys": ["fin-tedarikci-odeme"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "k03", "user_id": "zeynep", "question": "İşten çıkışta erişim iptali ne kadar sürede tamamlanmalı?", "expected_page_keys": ["ik-isten-cikis"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "y01", "user_id": "mehmet", "question": "Maaş bantları ve seviye matrisi nedir?", "expected_page_keys": [], "forbidden_page_keys": ["ik-maas-bantlari"], "category": "yetki-siniri"}
+{"id": "y02", "user_id": "can", "question": "Tedarikçi iskonto oranları nelerdir?", "expected_page_keys": [], "forbidden_page_keys": ["fin-tedarikci-odeme"], "category": "yetki-siniri"}
+{"id": "y03", "user_id": "ayse", "question": "Güvenlik açığı embargo süreci nasıl yönetiliyor?", "expected_page_keys": [], "forbidden_page_keys": ["eng-guvenlik-acigi"], "category": "yetki-siniri"}
+{"id": "y04", "user_id": "mehmet", "question": "İşten çıkış prosedüründe erişim iptali nasıl yapılır?", "expected_page_keys": [], "forbidden_page_keys": ["ik-isten-cikis"], "category": "yetki-siniri"}

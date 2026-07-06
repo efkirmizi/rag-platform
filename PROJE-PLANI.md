@@ -1,7 +1,7 @@
 # Kurumsal RAG Platformu — Proje Planı
 
 > **Son güncelleme:** 2026-07-06
-> **Durum:** Faz 0 devam ediyor — G-1 sentetik PoC ✅ (sızıntı 0/480, p95 56ms). Gerçek Confluence erişimi bekleniyor (G-0). Kod: `src/ragplatform/`, kurulum: `README.md`
+> **Durum:** Faz 0 devam ediyor — G-1 sentetik PoC ✅ (sızıntı 0/480, p95 ~60ms) · G-3 harness + sentetik baseline ✅ (MRR 0.852). Sırada: G-0 keşif (kurum bilgileri) ve G-2 (gerçek embedding — vLLM/GPU erişimi gerekli). Kod: `src/ragplatform/`, kurulum: `README.md`
 > **Takip kuralı:** Görevler `- [ ]` / `- [x]` ile işaretlenir. Her faz sonunda "Faz Çıkış Kriterleri" sağlanmadan sonraki faza geçilmez. Kararlar §3'e (ADR), yeni riskler §6'ya eklenir.
 
 ---
@@ -136,11 +136,11 @@ YATAY KATMANLAR
 - [ ] PG FTS `turkish` config + `unaccent` ile lexical arama kalitesini hızlıca doğrula (eklemeli yapıda stemming yeterli mi?)
 - [ ] **Kabul:** Model seçildi, ADR-3 kapandı; rerank katkısı ve FTS doğrulaması raporlandı
 
-**G-3: Golden eval seti v1**
-- [ ] Domain uzmanlarıyla 50–100 soru + beklenen kaynak doküman + beklenen cevap özü
-- [ ] Metrikler: retrieval recall@k, citation doğruluğu, faithfulness (halüsinasyon)
-- [ ] Basit eval harness (script yeterli; CI entegrasyonu Faz 2'de)
-- [ ] **Kabul:** Set versiyonlu şekilde repo'da; baseline skorlar kayıtlı
+**G-3: Golden eval seti v1** *(harness çalışıyor; sentetik başlangıç seti ölçüldü, 2026-07-06)*
+- [ ] Domain uzmanlarıyla 50–100 soru + beklenen kaynak doküman *(pilot space sonrası; başlangıç: 22 sentetik soru — `eval/golden/golden_v1.jsonl`)*
+- [x] Metrikler: hit@k (recall), MRR, yetki-sınırı ihlali, latency — `scripts/run_eval.py` *(faithfulness, generation eklendiğinde — Faz 1)*
+- [x] Basit eval harness (CI entegrasyonu Faz 2'de)
+- [x] **Kabul (sentetik):** set + baseline repo'da — fake embedding baseline: MRR 0.852, hit@3 0.944, parafraz hit@5 0.80. *Gerçek embedding (G-2) hedefi: parafraz ≥ 0.9.* Not: FTS, AND→OR semantiğine geçirildi (uzun Türkçe sorularda AND tek eksik kelimede ıskalıyordu; MRR 0.44→0.85)
 
 **G-4: Altyapı iskeleti**
 - [ ] K8s namespace'leri + GPU node pool (generation / embedding+rerank ayrı)
