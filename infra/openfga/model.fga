@@ -1,0 +1,20 @@
+# İnsan tarafından okunması için DSL gösterimi.
+# API'ye yazılan makine formatı: model.json (seed script kullanır).
+model
+  schema 1.1
+
+type user
+
+type group
+  relations
+    define member: [user]
+
+type space
+  relations
+    define viewer: [user, group#member]
+
+type page
+  relations
+    define parent: [space]
+    define restricted_viewer: [user, group#member]
+    define viewer: restricted_viewer or viewer from parent
