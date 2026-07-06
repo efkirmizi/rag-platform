@@ -1,7 +1,7 @@
 # Kurumsal RAG Platformu — Proje Planı
 
 > **Son güncelleme:** 2026-07-06
-> **Durum:** Faz 0 devam ediyor — G-1 sentetik PoC ✅ (sızıntı 0/480, p95 ~60ms) · G-3 harness + sentetik baseline ✅ (MRR 0.852). Sırada: G-0 keşif (kurum bilgileri) ve G-2 (gerçek embedding — vLLM/GPU erişimi gerekli). Kod: `src/ragplatform/`, kurulum: `README.md`
+> **Durum:** Faz 0 devam ediyor — G-1 sentetik PoC ✅ (sızıntı 0/480) · G-3 harness ✅ · G-2 ön sinyali ✅ (bge-m3: MRR 0.931, parafraz hit@5 1.00 — CPU'da bile leak p95 235ms). Sırada: G-0 keşif (kurum bilgileri), G-2 tam ölçüm (Qwen3-Embedding karşılaştırma + reranker, GPU/vLLM ile). Kod: `src/ragplatform/`, kurulum: `README.md`
 > **Takip kuralı:** Görevler `- [ ]` / `- [x]` ile işaretlenir. Her faz sonunda "Faz Çıkış Kriterleri" sağlanmadan sonraki faza geçilmez. Kararlar §3'e (ADR), yeni riskler §6'ya eklenir.
 
 ---
@@ -128,13 +128,14 @@ YATAY KATMANLAR
 - [x] **Kabul (sentetik):** 6 kullanıcı × 10 sorgu, 480 sonuç → sızıntı = 0, p95 = 56ms — `scripts/acl_leak_test.py`
 - [ ] **Kabul (gerçek):** aynı test gerçek space + gerçek izinlerle, geniş yetkili kullanıcı (50+ space) dahil tekrarlanacak
 
-**G-2: Embedding + reranker doğrulaması (ADR-3)**
+**G-2: Embedding + reranker doğrulaması (ADR-3)** *(ön sinyal alındı, 2026-07-06)*
+- [x] **Ön sinyal (sentetik set, CPU):** bge-m3 vs fake → parafraz hit@5 0.80→**1.00**, MRR 0.852→**0.931**, hit@5 **1.00**; "zafiyet↔güvenlik açığı" tipi ortak-köksüz eşleşmeler çözüldü. ACL temiz (0/480). Sonuç: `eval/results/20260706-171723_BAAI-bge-m3.json`
 - [ ] Domain korpusundan 500–1000 chunk'lık test seti hazırla (**~%90 Türkçe** — gerçek içerik dağılımını yansıt)
-- [ ] Qwen3-Embedding vs bge-m3: recall@10 / MRR karşılaştır (Türkçe skoru belirleyici)
+- [ ] Qwen3-Embedding vs bge-m3: recall@10 / MRR karşılaştır (Türkçe skoru belirleyici; bge-m3 güçlü baseline koydu)
 - [ ] bge-reranker-v2-m3'ün Türkçe'de katkısını ölç (rerank'li vs rerank'siz)
 - [ ] Türkçe token verimliliğini ölç (token/kelime oranı → bağlam bütçesi ve maliyet planı buna göre)
-- [ ] PG FTS `turkish` config + `unaccent` ile lexical arama kalitesini hızlıca doğrula (eklemeli yapıda stemming yeterli mi?)
-- [ ] **Kabul:** Model seçildi, ADR-3 kapandı; rerank katkısı ve FTS doğrulaması raporlandı
+- [x] PG FTS `turkish` config + `unaccent` doğrulaması: çalışıyor; iki bulgu → (1) uzun sorularda AND semantiği kırılgan → OR'a geçildi, (2) t/d ünsüz yumuşamasını stemmer eşleyemiyor → chunk'a başlık gömme (contextual header) ile kapatıldı
+- [ ] **Kabul:** Model seçildi, ADR-3 kapandı; rerank katkısı ve tam boyutlu setle karşılaştırma raporlandı
 
 **G-3: Golden eval seti v1** *(harness çalışıyor; sentetik başlangıç seti ölçüldü, 2026-07-06)*
 - [ ] Domain uzmanlarıyla 50–100 soru + beklenen kaynak doküman *(pilot space sonrası; başlangıç: 22 sentetik soru — `eval/golden/golden_v1.jsonl`)*

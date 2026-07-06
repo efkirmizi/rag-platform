@@ -14,8 +14,16 @@ Bu repo şu an planın en kritik doğrulamasını içerir: **ACL-filtered hybrid
 - **Sentetik veri:** Gerçek Confluence erişimi henüz yok → 3 space, 15 sayfa,
   6 kullanıcı, 7 gruplu gerçekçi Türkçe kurum senaryosu (`scripts/synthetic_corpus.py`).
 - **Embedding:** Varsayılan `fake` (deterministik, sadece ACL/latency testi için).
-  Gerçek model bağlamak için `.env` içinde `EMBEDDINGS_PROVIDER=openai` +
-  vLLM/OpenAI-uyumlu endpoint verin (G-2).
+  Gerçek model: `local` (sentence-transformers, CPU — G-2 denemeleri) veya
+  `openai` (vLLM/OpenAI-uyumlu endpoint — üretim hedefi).
+
+  ```powershell
+  # bge-m3 ile yeniden index + eval (ilk koşuda ~2.3GB model iner):
+  pip install -e ".[local]"
+  $env:EMBEDDINGS_PROVIDER='local'; $env:EMBEDDINGS_MODEL='BAAI/bge-m3'
+  python scripts/seed_synthetic.py
+  python scripts/run_eval.py
+  ```
 
 ## Kurulum
 

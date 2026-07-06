@@ -21,6 +21,10 @@ dev = [
     "pytest-asyncio>=0.24",
     "ruff>=0.6",
 ]
+# G-2 yerel model denemeleri (CPU); üretimde embedding vLLM'den servis edilir
+local = [
+    "sentence-transformers>=3.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -144,7 +144,8 @@ async def main() -> int:
     results_dir = ROOT / "eval" / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    out = results_dir / f"{stamp}_{embedder.name}.json"
+    safe_model = embedder.name.replace("/", "-").replace("\\", "-").replace(":", "-")
+    out = results_dir / f"{stamp}_{safe_model}.json"
     out.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # --- Konsol raporu ---
