@@ -33,6 +33,33 @@ if sys.platform == "win32":
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
+async def index_corpus(pool, embedder) -> int:
+    """Sentetik sayfaları verilen embedder ile chunk'layıp indexler; chunk sayısını döner.
+
+    FGA'dan bağımsız — yalnız içerik. Matris koşucusu (run_g2_matrix.py) modeli
+    değiştirip bunu tekrar çağırarak embedding'leri yeniden yazar (FGA tuple'ları
+    değişmez). index_page upsert + chunk replace olduğundan idempotenttir.
+    """
+    for key, name in corpus.SPACES.items():
+        await upsert_space(pool, key, name)
+    total_chunks = 0
+    for page in corpus.PAGES:
+        n = await index_page(
+            pool,
+            embedder,
+            page_key=page["page_key"],
+            space_key=page["space"],
+            title=page["title"],
+            content_md=page["content"],
+            url=f"https://confluence.sirket.local/pages/{page['page_key']}",
+            is_restricted=page["restricted_to"] is not None,
+        )
+        total_chunks += n
+        flag = " [KISITLI]" if page["restricted_to"] else ""
+        print(f"[db] {page['space']:>3} / {page['page_key']:<22} {n} chunk{flag}")
+    return total_chunks
+
+
 def build_tuples() -> list[tuple[str, str, str]]:
     tuples: list[tuple[str, str, str]] = []
     for group, members in corpus.GROUPS.items():
@@ -51,10 +78,12 @@ def build_tuples() -> list[tuple[str, str, str]]:
     return tuples
 
 
-async def main() -> None:
-    settings = get_settings()
+async def bootstrap_fga(settings) -> tuple[str, str]:
+    """OpenFGA store + model + izin tuple'larını yazar; (store_id, model_id) döner.
 
-    # --- 1) OpenFGA bootstrap ---
+    State dosyasını (fga_state_file) günceller ki FgaClient.from_settings okusun.
+    seed_synthetic.main() ve run_g2_matrix.py paylaşır — tuple'lar tek yerden.
+    """
     admin = FgaAdmin(settings.fga_api_url)
     try:
         store_id = await admin.create_store("rag-poc")
@@ -68,34 +97,25 @@ async def main() -> None:
         )
         print(f"[fga] store={store_id} model={model_id} -> {state_file.name}")
 
-        # --- 2) İzin tuple'ları ---
         tuples = build_tuples()
         written = await admin.write_tuples(store_id, model_id, tuples)
-        print(f"[fga] {written} tuple yazıldı")
+        print(f"[fga] {written} tuple yazıldı ({len(corpus.PAGES)} sayfa)")
     finally:
         await admin.close()
+    return store_id, model_id
+
+
+async def main() -> None:
+    settings = get_settings()
+
+    # --- 1-2) OpenFGA bootstrap + izin tuple'ları ---
+    await bootstrap_fga(settings)
 
     # --- 3) İçerik index'leme ---
     pool = await create_pool(settings.database_url)
     embedder = create_embeddings(settings)
     try:
-        for key, name in corpus.SPACES.items():
-            await upsert_space(pool, key, name)
-        total_chunks = 0
-        for page in corpus.PAGES:
-            n = await index_page(
-                pool,
-                embedder,
-                page_key=page["page_key"],
-                space_key=page["space"],
-                title=page["title"],
-                content_md=page["content"],
-                url=f"https://confluence.sirket.local/pages/{page['page_key']}",
-                is_restricted=page["restricted_to"] is not None,
-            )
-            total_chunks += n
-            flag = " [KISITLI]" if page["restricted_to"] else ""
-            print(f"[db] {page['space']:>3} / {page['page_key']:<22} {n} chunk{flag}")
+        total_chunks = await index_corpus(pool, embedder)
         print(
             f"\nÖzet: {len(corpus.SPACES)} space, {len(corpus.PAGES)} sayfa, "
             f"{total_chunks} chunk (embedding: {embedder.name})"

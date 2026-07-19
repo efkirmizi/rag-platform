@@ -23,7 +23,7 @@ from ragplatform.acl.fga import FgaClient
 from ragplatform.config import get_settings
 from ragplatform.db import create_pool
 from ragplatform.embeddings import create_embeddings
-from ragplatform.retrieval.rerank import NoopReranker
+from ragplatform.retrieval.rerank import create_reranker
 from ragplatform.retrieval.service import RetrievalService
 
 if sys.platform == "win32":
@@ -44,6 +44,90 @@ def page_order(results: list[dict]) -> list[str]:
     return seen
 
 
+async def score_run(
+    service: RetrievalService,
+    items: list[dict],
+    top_k: int,
+    *,
+    golden_name: str,
+    embedding_model: str,
+    reranker_name: str,
+) -> dict:
+    """Golden sorularını retrieval'dan geçirip özet metrik sözlüğü döner.
+
+    I/O yapmaz (dosya yazımı/konsol çağırana ait) — run_eval.main() ve
+    run_g2_matrix.py bunu paylaşır; skorlama mantığı tek yerde.
+    """
+    per_item: list[dict] = []
+    violations: list[str] = []
+    for item in items:
+        resp = await service.retrieve(item["user_id"], item["question"], top_k)
+        pages = page_order(resp["results"])
+
+        expected = item["expected_page_keys"]
+        rank = next((i + 1 for i, p in enumerate(pages) if p in expected), None)
+
+        found_forbidden = [p for p in item["forbidden_page_keys"] if p in pages]
+        for p in found_forbidden:
+            violations.append(f"{item['id']}: user={item['user_id']} yasaklı sayfa döndü: {p}")
+
+        per_item.append(
+            {
+                "id": item["id"],
+                "category": item["category"],
+                "user_id": item["user_id"],
+                "question": item["question"],
+                "expected": expected,
+                "rank": rank,
+                "hits": {str(k): (rank is not None and rank <= k) for k in HIT_KS},
+                "forbidden_violation": found_forbidden,
+                "took_ms": resp["took_ms"],
+                "returned_pages": pages,
+            }
+        )
+
+    scored = [i for i in per_item if i["expected"]]  # yetki-siniri hariç
+    boundary = [i for i in per_item if not i["expected"]]
+
+    def rate(items_: list[dict], k: int) -> float:
+        return sum(i["hits"][str(k)] for i in items_) / len(items_) if items_ else 0.0
+
+    mrr = sum(1.0 / i["rank"] for i in scored if i["rank"]) / len(scored) if scored else 0.0
+    categories = sorted({i["category"] for i in scored})
+
+    return {
+        "run_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "golden_file": golden_name,
+        "item_count": len(per_item),
+        "embedding_model": embedding_model,
+        "reranker": reranker_name,
+        "top_k": top_k,
+        "metrics": {
+            "mrr": round(mrr, 4),
+            **{f"hit@{k}": round(rate(scored, k), 4) for k in HIT_KS},
+            f"hit@{top_k}": round(sum(i["rank"] is not None for i in scored) / len(scored), 4)
+            if scored
+            else 0.0,
+            "acl_violations": len(violations),
+            "latency_p95_ms": round(
+                statistics.quantiles([i["took_ms"] for i in per_item], n=20)[18], 1
+            ),
+        },
+        "per_category": {
+            cat: {
+                "n": len([i for i in scored if i["category"] == cat]),
+                **{
+                    f"hit@{k}": round(rate([i for i in scored if i["category"] == cat], k), 4)
+                    for k in HIT_KS
+                },
+            }
+            for cat in categories
+        },
+        "boundary_items": {"n": len(boundary), "violations": violations},
+        "items": per_item,
+    }
+
+
 async def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--golden", default=str(ROOT / "eval" / "golden" / "golden_v1.jsonl"))
@@ -60,86 +144,32 @@ async def main() -> int:
     pool = await create_pool(settings.database_url)
     fga = FgaClient.from_settings(settings)
     embedder = create_embeddings(settings)
+    reranker = create_reranker(settings)
     service = RetrievalService(
         pool=pool,
         embedder=embedder,
         resolver=AccessResolver(fga, ttl_seconds=settings.acl_cache_ttl_seconds),
-        reranker=NoopReranker(),
+        reranker=reranker,
     )
 
-    per_item: list[dict] = []
-    violations: list[str] = []
     try:
-        for item in items:
-            resp = await service.retrieve(item["user_id"], item["question"], args.top_k)
-            pages = page_order(resp["results"])
-
-            expected = item["expected_page_keys"]
-            rank = next((i + 1 for i, p in enumerate(pages) if p in expected), None)
-
-            found_forbidden = [p for p in item["forbidden_page_keys"] if p in pages]
-            for p in found_forbidden:
-                violations.append(f"{item['id']}: user={item['user_id']} yasaklı sayfa döndü: {p}")
-
-            per_item.append(
-                {
-                    "id": item["id"],
-                    "category": item["category"],
-                    "user_id": item["user_id"],
-                    "question": item["question"],
-                    "expected": expected,
-                    "rank": rank,
-                    "hits": {str(k): (rank is not None and rank <= k) for k in HIT_KS},
-                    "forbidden_violation": found_forbidden,
-                    "took_ms": resp["took_ms"],
-                    "returned_pages": pages,
-                }
-            )
+        summary = await score_run(
+            service,
+            items,
+            args.top_k,
+            golden_name=Path(args.golden).name,
+            embedding_model=embedder.name,
+            reranker_name=getattr(reranker, "name", settings.reranker_provider),
+        )
     finally:
         await fga.close()
         await embedder.close()
         await pool.close()
 
-    scored = [i for i in per_item if i["expected"]]  # yetki-siniri hariç
-    boundary = [i for i in per_item if not i["expected"]]
-
-    def rate(items_: list[dict], k: int) -> float:
-        return sum(i["hits"][str(k)] for i in items_) / len(items_) if items_ else 0.0
-
-    mrr = (
-        sum(1.0 / i["rank"] for i in scored if i["rank"]) / len(scored) if scored else 0.0
-    )
-
-    categories = sorted({i["category"] for i in scored})
-    summary = {
-        "run_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "golden_file": Path(args.golden).name,
-        "item_count": len(per_item),
-        "embedding_model": embedder.name,
-        "reranker": "noop",
-        "top_k": args.top_k,
-        "metrics": {
-            "mrr": round(mrr, 4),
-            **{f"hit@{k}": round(rate(scored, k), 4) for k in HIT_KS},
-            f"hit@{args.top_k}": round(
-                sum(i["rank"] is not None for i in scored) / len(scored), 4
-            ) if scored else 0.0,
-            "acl_violations": len(violations),
-            "latency_p95_ms": round(
-                statistics.quantiles([i["took_ms"] for i in per_item], n=20)[18], 1
-            ),
-        },
-        "per_category": {
-            cat: {
-                "n": len([i for i in scored if i["category"] == cat]),
-                **{f"hit@{k}": round(rate([i for i in scored if i["category"] == cat], k), 4)
-                   for k in HIT_KS},
-            }
-            for cat in categories
-        },
-        "boundary_items": {"n": len(boundary), "violations": violations},
-        "items": per_item,
-    }
+    violations = summary["boundary_items"]["violations"]
+    boundary = [i for i in summary["items"] if not i["expected"]]
+    scored = [i for i in summary["items"] if i["expected"]]
+    per_item = summary["items"]
 
     results_dir = ROOT / "eval" / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
@@ -151,7 +181,7 @@ async def main() -> int:
     # --- Konsol raporu ---
     m = summary["metrics"]
     print(f"Golden set : {summary['golden_file']}  ({len(per_item)} soru)")
-    print(f"Embedding  : {embedder.name}   reranker: noop   top_k: {args.top_k}")
+    print(f"Embedding  : {embedder.name}   reranker: {summary['reranker']}   top_k: {args.top_k}")
     print(f"\nMRR        : {m['mrr']:.3f}")
     for k in HIT_KS:
         print(f"hit@{k}      : {m[f'hit@{k}']:.3f}")

@@ -1,12 +1,20 @@
 # -*- coding: utf-8 -*-
-"""G-1 PoC için sentetik kurum içeriği ve izin yapısı (PROJE-PLANI.md §8: pilot
-space erişimi gelene kadar sentetik izin yapısıyla ilerle).
+"""G-1 PoC + G-2 ölçümü için sentetik kurum içeriği ve izin yapısı
+(PROJE-PLANI.md §8: pilot space erişimi gelene kadar sentetik izin yapısıyla ilerle).
 
-Senaryo — 3 space, 6 kullanıcı, 7 grup:
-- IK  : herkese açık (grp herkes), 2 kısıtlı sayfa (yalnız ik-yonetim)
-- ENG : yalnız grp eng, 1 kısıtlı sayfa (yalnız guvenlik)
-- FIN : yalnız grp fin, 1 kısıtlı sayfa (yalnız fin-yonetim)
+Senaryo — 3 space, 6 kullanıcı, 7 grup, 40 sayfa:
+- IK  : herkese açık (grp herkes), 3 kısıtlı sayfa (yalnız ik-yonetim)
+- ENG : yalnız grp eng, 2 kısıtlı sayfa (yalnız guvenlik)
+- FIN : yalnız grp fin, 2 kısıtlı sayfa (yalnız fin-yonetim)
 
+G-2 için içerik bilinçli olarak **confusable kümeler** halinde genişletildi:
+izin (yıllık/hastalık/doğum/ücretsiz/tatil), erişim (uzaktan/VPN/ağ/ekipman),
+masraf (masraf/seyahat/kart/avans), güvenlik (açık/olay/parola/sınıflandırma),
+dağıtım (dağıtım/sürümleme/test/nöbet). Her sorgunun 4-5 makul adayı olur →
+sıralama zorlaşır → reranker ve embedding farkı ölçülebilir hale gelir
+(doygun set sorunu, bkz. docs/superpowers/specs/2026-07-19-...-design.md §1.1).
+
+İlk 15 sayfa (G-1 baseline'ı) DEĞİŞTİRİLMEDEN korunur; page_key'ler sabittir.
 Gerçek Confluence connector'ı geldiğinde bu modülün yerini connector alır;
 seed ve test script'leri buradaki yapıdan bağımsız hesap yapar.
 """
@@ -270,6 +278,463 @@ anlaşmaları finans yönetimi onayıyla yapılır. Erken ödeme iskontosu yıll
 Tedarikçi bazlı iskonto oranları ve özel fiyat anlaşmaları gizlidir; yalnız
 finans yönetimi erişebilir. Bu bilgiler ihale süreçlerinde pazarlık gücünü
 korumak için kısıtlı tutulur.""",
+    },
+    # ---------------------------------------------------------------------
+    # G-2 confusable küme genişletmesi — aşağıdaki 25 sayfa yeni.
+    # ---------------------------------------------------------------------
+    # --- İzin kümesi (IK, herkese açık) ---
+    {
+        "page_key": "ik-hastalik-izni",
+        "space": "IK",
+        "title": "Hastalık izni ve sağlık raporu",
+        "restricted_to": None,
+        "content": """## Rapor bildirimi
+Hastalık nedeniyle işe gelemeyecek çalışan, mesai başlangıcından önce
+yöneticisine ve İK'ya bilgi verir. Tek günlük rahatsızlıklarda sözlü bildirim
+yeterlidir.
+
+## Sağlık raporu
+İki iş gününü aşan hastalık izinlerinde resmi sağlık raporu İK portalına 48
+saat içinde yüklenir. Raporlu günler yıllık izinden düşülmez; SGK iş
+göremezlik süreci İK tarafından başlatılır.
+
+## Uzun süreli rapor
+Yirmi günü aşan raporlarda iş yeri hekimi görüşü istenir ve işe dönüşte
+kontrol muayenesi yapılır.""",
+    },
+    {
+        "page_key": "ik-dogum-izni",
+        "space": "IK",
+        "title": "Doğum ve ebeveyn izni",
+        "restricted_to": None,
+        "content": """## Analık izni
+Kadın çalışanlar doğumdan önce 8, doğumdan sonra 8 hafta olmak üzere toplam 16
+hafta ücretli analık izni kullanır. Çoğul gebelikte doğum öncesine 2 hafta
+eklenir.
+
+## Babalık ve evlat edinme
+Babalık izni 5 iş günüdür. Evlat edinmede eşlerden birine 8 hafta izin hakkı
+doğar. İzinler İK portalından belge ile talep edilir.
+
+## Süt izni ve dönüş
+Doğum sonrası ilk bir yıl günde 1,5 saat süt izni verilir. İzin dönüşünde
+talep hâlinde 6 aya kadar kısmi veya uzaktan çalışma değerlendirilir.""",
+    },
+    {
+        "page_key": "ik-ucretsiz-izin",
+        "space": "IK",
+        "title": "Ücretsiz izin esasları",
+        "restricted_to": None,
+        "content": """## Ücretsiz izin hakkı
+Yıllık ücretli izni tükenen çalışan, geçerli mazeretle yılda en fazla 30 gün
+ücretsiz izin talep edebilir. Talep, yöneticisi ve İK'nın ortak onayına
+tabidir.
+
+## Etki ve şartlar
+Ücretsiz izin süresince maaş ve yan haklar durur; sağlık sigortası çalışan
+talebiyle sürdürülebilir. Bir aydan uzun ücretsiz izinlerde kıdem süresi
+işlemez.
+
+## Analık sonrası ek izin
+Analık izni bitiminde talep edilirse 6 aya kadar ek ücretsiz izin verilir; bu
+süre performans döneminde orantılı değerlendirilir.""",
+    },
+    {
+        "page_key": "ik-resmi-tatil",
+        "space": "IK",
+        "title": "Resmi tatil takvimi",
+        "restricted_to": None,
+        "content": """## Resmi tatil günleri
+Ulusal bayramlar, dini bayramlar ve yılbaşı resmi tatildir. Dini bayram
+arifelerinde yarım gün çalışılır. Tatil takvimi her yıl aralık ayında İK
+tarafından yayımlanır.
+
+## Tatilde çalışma
+Resmi tatilde çalışan personele karşılığı fazla mesai ya da serbest gün olarak
+verilir. Nöbet gerektiren birimler tatil çalışma planını bir hafta önceden
+bildirir.
+
+## Köprü günleri
+Tatil ile hafta sonu arasına denk gelen köprü günleri, yıllık izinden
+düşülerek idari izin biçiminde kullandırılabilir; karar yönetimce duyurulur.""",
+    },
+    # --- Erişim / ekipman kümesi (IK + ENG) ---
+    {
+        "page_key": "ik-ekipman-zimmet",
+        "space": "IK",
+        "title": "Ekipman zimmet ve iade",
+        "restricted_to": None,
+        "content": """## Zimmet süreci
+İşe başlayan çalışana dizüstü bilgisayar, ekran ve gerekli çevre birimleri
+zimmetle teslim edilir. Zimmet formu imzalanmadan cihaz verilmez.
+
+## Kullanım ve bakım
+Zimmetli cihazlar yalnız iş amaçlı kullanılır; kişisel yazılım kurulumu BT
+onayına tabidir. Arıza durumunda BT destek kaydı açılır ve geçici cihaz
+sağlanır.
+
+## İade
+Görevden ayrılışta tüm zimmetli ekipman son iş günü İK'ya iade edilir. İade
+edilmeyen cihaz bedeli son ödemeden mahsup edilir.""",
+    },
+    {
+        "page_key": "ik-ofis-kullanim",
+        "space": "IK",
+        "title": "Ofis kullanım ve masa rezervasyonu",
+        "restricted_to": None,
+        "content": """## Masa rezervasyonu
+Hibrit düzende ofise gelen çalışanlar masalarını rezervasyon uygulamasından
+ayırtır. Salı ve perşembe ekip günlerinde masalar ekiplere bloke edilir.
+
+## Ortak alanlar
+Toplantı odaları takvimden rezerve edilir; 8 kişiden büyük toplantılar için
+konferans salonu kullanılır. Mutfak ve dinlenme alanları paylaşımlıdır.
+
+## Ziyaretçi ve güvenlik
+Ziyaretçiler resepsiyondan kayıtla giriş yapar ve refakatle ağırlanır. Ofis
+giriş kartı başkasıyla paylaşılmaz; kayıp kart derhal güvenliğe bildirilir.""",
+    },
+    {
+        "page_key": "ik-oryantasyon",
+        "space": "IK",
+        "title": "Oryantasyon ve işe uyum",
+        "restricted_to": None,
+        "content": """## İlk hafta programı
+Yeni çalışanın ilk günü İK karşılaması, evrak teslimi ve ekipman zimmetiyle
+başlar. İlk hafta boyunca şirket tanıtımı, süreçler ve araçlar üzerine
+oryantasyon oturumları yapılır.
+
+## Mentorluk
+Her yeni çalışana bir mentor atanır; ilk üç ay boyunca haftalık birebir
+görüşme yapılır. Mentor, ekibe uyum ve süreçlerde rehberlik eder.
+
+## Deneme süresi
+Deneme süresi iki aydır; sonunda yönetici değerlendirmesi yapılır. Olumlu
+değerlendirmede kadro kalıcılaşır.""",
+    },
+    {
+        "page_key": "ik-egitim-gelisim",
+        "space": "IK",
+        "title": "Eğitim ve gelişim politikası",
+        "restricted_to": None,
+        "content": """## Eğitim bütçesi
+Her çalışana yıllık kişisel gelişim bütçesi tanımlanır; kurs, konferans ve
+sertifika bu bütçeden karşılanır. Talep yönetici onayıyla eğitim sistemine
+girilir.
+
+## İç eğitimler
+Teknik ve yetkinlik eğitimleri iç eğitmenlerce düzenli verilir. Katılım
+eğitim kataloğundan yapılır; tamamlanan eğitimler gelişim planına işlenir.
+
+## Sertifikasyon
+Şirketin desteklediği sertifikalarda sınav ücreti karşılanır; başarısız sınav
+bir kez daha desteklenir. Sertifika sonrası bilgi paylaşım oturumu beklenir.""",
+    },
+    {
+        "page_key": "ik-disiplin",
+        "space": "IK",
+        "title": "Disiplin ve savunma süreci",
+        "restricted_to": None,
+        "content": """## Disiplin süreci
+Kurallara aykırı davranışlarda kademeli süreç uygulanır: sözlü uyarı, yazılı
+uyarı, savunma talebi ve gerekirse iş akdinin feshi. Her aşama İK tarafından
+kayıt altına alınır.
+
+## Savunma hakkı
+Yazılı uyarı öncesi çalışandan yazılı savunma istenir; savunma için en az 3 iş
+günü verilir. Süreç boyunca çalışanın hakları korunur.
+
+## İtiraz
+Disiplin kararına, tebliğden itibaren 5 iş günü içinde İK'ya itiraz
+edilebilir. İtiraz, karara katılmayan bir üst yönetici tarafından
+değerlendirilir.""",
+    },
+    {
+        "page_key": "ik-prim-politikasi",
+        "space": "IK",
+        "title": "Prim ve teşvik politikası",
+        "restricted_to": "ik-yonetim",
+        "content": """## Prim yapısı
+Yıllık prim, şirket hedefi gerçekleşmesi ile bireysel performans katsayısının
+çarpımıyla hesaplanır. Katsayılar ücret komitesince belirlenir ve gizli
+tutulur.
+
+## Ödeme
+Primler performans dönemi kapanışını izleyen mart ayında ödenir. Prim oranları
+ve bireysel katsayılar yalnız İK yönetimiyle paylaşılır.
+
+## Özel durumlar
+Yıl içinde ayrılan çalışanın primi orantılı hesaplanır; düşük performans notu
+alan çalışana prim ödenmeyebilir. Bu kurallar maaş bandı bilgisiyle birlikte
+gizlidir.""",
+    },
+    # --- Güvenlik / erişim kümesi (ENG) ---
+    {
+        "page_key": "eng-ag-erisim",
+        "space": "ENG",
+        "title": "Ağ erişim ve güvenlik duvarı",
+        "restricted_to": None,
+        "content": """## Ağ segmentleri
+Kurumsal ağ üretim, kurumsal ve misafir olmak üzere ayrılır. Üretim ağına
+yalnız yetkili mühendisler sıçrama sunucusu üzerinden erişir. Misafir ağı iç
+kaynaklara kapalıdır.
+
+## Güvenlik duvarı istekleri
+Yeni port veya adres erişimi ağ değişiklik formuyla talep edilir ve güvenlik
+onayından geçer. Geçici erişimler süre sonunda otomatik kapanır.
+
+## Uzak erişim
+Ofis dışından iç ağa erişim yalnız VPN ile mümkündür; bölünmüş tünel
+kapalıdır. Yetkisiz cihazların bağlanması engellidir.""",
+    },
+    {
+        "page_key": "eng-parola-politikasi",
+        "space": "ENG",
+        "title": "Parola ve kimlik doğrulama politikası",
+        "restricted_to": None,
+        "content": """## Parola kuralları
+Kurumsal hesap parolaları en az 14 karakter olup büyük/küçük harf, rakam ve
+sembol içerir. Parolalar 90 günde bir yenilenir ve son 5 parola tekrar
+kullanılamaz.
+
+## Çok faktörlü doğrulama
+Tüm kritik sistemlerde çok faktörlü doğrulama (MFA) zorunludur. Kayıp cihazda
+MFA sıfırlama, BT destek üzerinden kimlik doğrulamasıyla yapılır.
+
+## Parola yöneticisi
+Paylaşımlı hesap parolaları kurumsal parola kasasında tutulur; düz metin
+paylaşım yasaktır. Servis hesaplarının parolaları otomatik döndürülür.""",
+    },
+    {
+        "page_key": "eng-veri-siniflandirma",
+        "space": "ENG",
+        "title": "Veri sınıflandırma matrisi",
+        "restricted_to": "guvenlik",
+        "content": """## Sınıflandırma seviyeleri
+Veriler herkese açık, iç kullanım, gizli ve çok gizli olarak sınıflandırılır.
+Her belge sahibi tarafından etiketlenir; etiketsiz veri iç kullanım kabul
+edilir.
+
+## İşleme kuralları
+Gizli ve çok gizli veri şifreli saklanır ve yalnız bilmesi gerekenlerle
+paylaşılır. Çok gizli verinin dışa aktarımı güvenlik ekibi onayına tabidir.
+
+## Gizli envanter
+Sınıflandırma matrisi ve müşteri veri envanteri yalnız güvenlik ekibiyle
+paylaşılır. Yanlış sınıflandırma veya sızıntı şüphesi güvenlik ekibine
+bildirilir.""",
+    },
+    {
+        "page_key": "eng-surumleme",
+        "space": "ENG",
+        "title": "Sürümleme ve dallanma modeli",
+        "restricted_to": None,
+        "content": """## Dallanma modeli
+Ana dal her zaman dağıtılabilir tutulur. Özellikler kısa ömürlü dallarda
+geliştirilir ve inceleme sonrası ana dala birleştirilir. Uzun ömürlü dal
+tutulmaz.
+
+## Sürüm numaralama
+Sürümler anlamsal olarak numaralanır: kırıcı değişiklik ana, geriye uyumlu
+özellik ikincil, düzeltme yama numarasını artırır. Her sürüm etiketlenir ve
+sürüm notu yayımlanır.
+
+## Etiket ve geri dönüş
+Üretime çıkan her sürüm sürüm kontrol etiketiyle işaretlenir; hızlı geri dönüş
+için bir önceki etiket her zaman hazır tutulur.""",
+    },
+    {
+        "page_key": "eng-test-stratejisi",
+        "space": "ENG",
+        "title": "Test stratejisi ve kapsam",
+        "restricted_to": None,
+        "content": """## Test piramidi
+Testler birim, entegrasyon ve uçtan uca olarak katmanlanır. Ağırlık hızlı ve
+çok sayıda birim testtedir; uçtan uca testler kritik akışlarla sınırlı
+tutulur.
+
+## Kapsam eşiği
+Yeni kodda birim test kapsamı en az %80 beklenir. Kapsamı düşüren
+birleştirmeler incelemede işaretlenir. Kırık test ile üretime çıkılmaz.
+
+## Test verisi
+Testlerde gerçek müşteri verisi kullanılmaz; anonimleştirilmiş veya üretilmiş
+veri kullanılır. Test ortamları üretimden yalıtılmıştır.""",
+    },
+    {
+        "page_key": "eng-nobet",
+        "space": "ENG",
+        "title": "Nöbet ve eskalasyon düzeni",
+        "restricted_to": None,
+        "content": """## Nöbet düzeni
+Üretim sistemleri için birincil ve ikincil nöbetçi mühendis haftalık dönüşümlü
+atanır. Nöbet takvimi bir ay önceden yayımlanır; devir toplantısıyla teslim
+edilir.
+
+## Çağrı ve eskalasyon
+Uyarı önce birincil nöbetçiye gider; 10 dakikada yanıt alınamazsa ikincil
+nöbetçiye, ardından ekip yöneticisine yükselir. Eskalasyon zinciri olay
+aracında tanımlıdır.
+
+## Nöbet sonrası
+Yoğun gece müdahalesi sonrası nöbetçiye telafi dinlenmesi verilir. Tekrarlayan
+uyarılar, nöbet yükünü azaltmak için düzenli gözden geçirilir.""",
+    },
+    {
+        "page_key": "eng-loglama",
+        "space": "ENG",
+        "title": "Loglama ve izleme standartları",
+        "restricted_to": None,
+        "content": """## Log standartları
+Uygulamalar yapılandırılmış (JSON) log üretir; her kayıtta zaman damgası, önem
+düzeyi ve izleme kimliği bulunur. Hassas veri loglara yazılmaz.
+
+## Saklama
+Loglar merkezi sistemde 30 gün, denetim logları 1 yıl saklanır. Erişim yetkiye
+bağlıdır ve loglara erişim de loglanır.
+
+## İzleme ve uyarı
+Kritik hata oranı ve gecikme eşikleri uyarı üretir. Panolar hizmet başına
+gecikme, hata ve doygunluğu gösterir; uyarılar nöbetçiye yönlendirilir.""",
+    },
+    {
+        "page_key": "eng-erisim-yonetimi",
+        "space": "ENG",
+        "title": "Erişim yönetimi ve en az yetki",
+        "restricted_to": None,
+        "content": """## En az yetki
+Sistem erişimleri görev gereğiyle sınırlıdır (en az yetki ilkesi). Yeni
+erişim yönetici onayıyla talep edilir ve gerekçesi kaydedilir.
+
+## Erişim gözden geçirme
+Kritik sistem erişimleri üç ayda bir gözden geçirilir; gereksiz yetkiler
+kaldırılır. Ayrılan çalışanın erişimleri son iş günü iptal edilir.
+
+## Ayrıcalıklı hesaplar
+Yönetici (admin) hesapları ayrı tutulur ve yalnız gerektiğinde yükseltmeyle
+kullanılır. Ayrıcalıklı işlemler ek onay ve loglama gerektirir.""",
+    },
+    # --- Masraf / finans kümesi (FIN) ---
+    {
+        "page_key": "fin-seyahat",
+        "space": "FIN",
+        "title": "Seyahat ve harcırah esasları",
+        "restricted_to": None,
+        "content": """## Seyahat onayı
+İş seyahatleri, tahmini bütçesiyle birlikte yöneticiden önceden onaylanır.
+Uçuşlar ekonomi sınıfında planlanır; 6 saati aşan uçuşlarda business sınıfı
+değerlendirilir.
+
+## Harcırah
+Konaklama ve günlük harcırah üst limitleri şehir bazında finans portalında
+yayımlanır. Limit üstü harcamalar gerekçeyle finans onayına tabidir.
+
+## Masraf birleştirme
+Seyahat masrafları dönüşten sonra 15 gün içinde tek dosyada masraf sistemine
+girilir. Fişsiz kalemler ödenmez; günlük harcırah için fiş aranmaz.""",
+    },
+    {
+        "page_key": "fin-kurumsal-kart",
+        "space": "FIN",
+        "title": "Kurumsal kart kullanımı",
+        "restricted_to": None,
+        "content": """## Kart tahsisi
+Sık masraf yapan pozisyonlara kurumsal kredi kartı tanımlanır. Kart yalnız iş
+harcamalarında kullanılır; kişisel harcama yasaktır.
+
+## Ekstre ve mutabakat
+Kart harcamaları aylık ekstre ile masraf sistemine yansır; kart sahibi her
+kalemi fiş yükleyerek onaylar. Onaylanmayan kalemler kişisel borç sayılır.
+
+## Limit ve kayıp
+Kart limitleri pozisyona göre belirlenir. Kayıp veya çalıntı kart, derhal
+bankaya ve finansa bildirilerek bloke ettirilir.""",
+    },
+    {
+        "page_key": "fin-fatura",
+        "space": "FIN",
+        "title": "Fatura kesim ve tahsilat",
+        "restricted_to": None,
+        "content": """## Fatura kesimi
+Müşteriye kesilen faturalar sözleşme koşullarına göre finans tarafından
+düzenlenir. Fatura talebi, teslim veya kabul belgesiyle birlikte finansa
+iletilir.
+
+## Tahsilat takibi
+Vadesi geçen alacaklar finans tarafından takip edilir; 30 günü aşan
+gecikmelerde hatırlatma, 60 günde eskalasyon uygulanır.
+
+## Düzeltme ve iade
+Hatalı faturalar iade faturasıyla düzeltilir. İptal ve iadeler muhasebe
+onayından geçer ve kayıt altına alınır.""",
+    },
+    {
+        "page_key": "fin-avans",
+        "space": "FIN",
+        "title": "Nakit avans süreci",
+        "restricted_to": None,
+        "content": """## Avans talebi
+Öngörülen iş harcamaları için nakit avans talep edilebilir. Talep, gerekçe ve
+tahmini tutarla yöneticiden onaylanır; avans kişinin sorumluluğundadır.
+
+## Kapatma
+Avans, harcama sonrası 15 gün içinde masraf beyanıyla kapatılır. Kullanılmayan
+tutar iade edilir; kapatılmayan avans maaştan mahsup edilir.
+
+## Sınırlar
+Aynı anda açık en fazla bir avans bulunabilir. Önceki avansı kapatmayan
+çalışana yeni avans verilmez.""",
+    },
+    {
+        "page_key": "fin-raporlama",
+        "space": "FIN",
+        "title": "Finansal raporlama",
+        "restricted_to": None,
+        "content": """## Dönemsel raporlar
+Aylık gelir-gider ve nakit akış raporları, takip eden ayın 10'una kadar
+yayımlanır. Çeyrek kapanış raporları yönetim kuruluna sunulur.
+
+## Bütçe gerçekleşme
+Birim bazında bütçe-gerçekleşme farkı aylık raporlanır. Yüzde 10'u aşan
+sapmalar gerekçelendirilir ve revizyon süreci başlatılır.
+
+## Denetim
+Yıllık bağımsız denetim öncesi mutabakatlar tamamlanır. Raporlama ilkeleri
+yürürlükteki muhasebe standartlarıyla uyumludur.""",
+    },
+    {
+        "page_key": "fin-vergi",
+        "space": "FIN",
+        "title": "Vergi ve belge düzeni",
+        "restricted_to": None,
+        "content": """## Vergi yükümlülükleri
+Kurumlar vergisi, KDV ve stopaj beyannameleri yasal sürelerde verilir. Beyan
+takvimi finans tarafından izlenir; gecikme cezaya yol açar.
+
+## Belge düzeni
+Gider belgelerinin vergi mevzuatına uygun olması gerekir; usulsüz belge gider
+yazılamaz. Yurt dışı hizmet alımlarında stopaj değerlendirilir.
+
+## Teşvikler
+Ar-Ge ve yatırım teşviklerinden yararlanma finans tarafından yürütülür; ilgili
+harcamalar ayrı kodlanır ve belgelenir.""",
+    },
+    {
+        "page_key": "fin-bordro",
+        "space": "FIN",
+        "title": "Bordro ve maaş ödemeleri",
+        "restricted_to": "fin-yonetim",
+        "content": """## Bordro süreci
+Aylık bordro; mesai, izin ve kesinti verileriyle finans tarafından hazırlanır
+ve ayın son iş günü ödenir. Bordro verileri gizlidir.
+
+## Kesintiler
+Vergi, sigorta ve yasal kesintiler bordroda gösterilir. Bireysel maaş ve
+kesinti bilgileri yalnız finans yönetimi ve ilgili çalışanla paylaşılır.
+
+## Gizlilik
+Çalışan bazlı maaş, prim ve ödeme bilgileri kişiye özeldir; toplu bordro
+dökümüne yalnız finans yönetimi erişebilir.""",
     },
 ]
 

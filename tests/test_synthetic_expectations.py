@@ -48,3 +48,38 @@ def test_everyone_sees_public_ik():
     for user in corpus.USERS:
         assert "IK" in corpus.expected_allowed_spaces(user)
         assert "ik-yillik-izin" in corpus.expected_allowed_pages(user)
+
+
+# --- G-2 genişletmesi: yeni kısıtlı sayfalar aynı kısıt semantiğine uymalı ---
+
+
+def test_new_restricted_prim_only_ik_yonetim():
+    # zeynep ik-yonetim; mehmet IK space'i görür ama bu kısıtlı sayfayı görmez
+    assert "ik-prim-politikasi" in corpus.expected_allowed_pages("zeynep")
+    assert "ik-prim-politikasi" not in corpus.expected_allowed_pages("mehmet")
+    assert "ik-prim-politikasi" not in corpus.expected_allowed_pages("ayse")
+
+
+def test_new_restricted_veri_siniflandirma_only_guvenlik():
+    # deniz guvenlik; mehmet ENG space'i görür ama bu kısıtlı sayfayı görmez
+    assert "eng-veri-siniflandirma" in corpus.expected_allowed_pages("deniz")
+    assert "eng-veri-siniflandirma" not in corpus.expected_allowed_pages("mehmet")
+
+
+def test_new_restricted_bordro_only_fin_yonetim():
+    # elif fin-yonetim; can FIN space'i görür ama bordroyu görmez
+    assert "fin-bordro" in corpus.expected_allowed_pages("elif")
+    assert "fin-bordro" not in corpus.expected_allowed_pages("can")
+
+
+def test_corpus_size_and_unique_keys():
+    assert len(corpus.PAGES) == 40
+    keys = [p["page_key"] for p in corpus.PAGES]
+    assert len(keys) == len(set(keys)), "page_key'ler benzersiz olmalı"
+
+
+def test_new_public_pages_visible_to_space_members():
+    # confusable küme örnekleri: yeni herkese açık sayfalar space üyelerine görünür
+    assert "ik-dogum-izni" in corpus.expected_allowed_pages("ayse")
+    assert "eng-parola-politikasi" in corpus.expected_allowed_pages("mehmet")
+    assert "fin-seyahat" in corpus.expected_allowed_pages("can")

@@ -22,6 +22,14 @@ class Settings(BaseSettings):
     embeddings_endpoint: str = ""
     embeddings_model: str = ""
     embeddings_api_key: str = ""
+    # local sağlayıcı (sentence-transformers) donanımı. auto: cuda varsa cuda+float16,
+    # yoksa cpu+float32. Açık değer verilince (cuda/cpu, float16/float32/bfloat16) o kullanılır.
+    embeddings_device: str = "auto"
+    embeddings_dtype: str = "auto"
+
+    # noop: RRF sırasını korur (Faz 0). local: bge-reranker-v2-m3 cross-encoder (G-2).
+    reranker_provider: str = "noop"
+    reranker_model: str = ""
 
     acl_cache_ttl_seconds: int = 60
 

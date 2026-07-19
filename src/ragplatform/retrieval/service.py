@@ -36,7 +36,7 @@ class RetrievalService:
 
         results: list[dict] = []
         if allowed_spaces:
-            [query_embedding] = await self._embedder.embed([query])
+            [query_embedding] = await self._embedder.embed_query([query])
             rows = await hybrid_search(
                 self._pool,
                 query_embedding,
@@ -74,5 +74,6 @@ class RetrievalService:
                 "vec_rank": row["vec_rank"],
                 "fts_rank": row["fts_rank"],
                 "is_restricted": row["is_restricted"],
+                "rerank_score": row.get("rerank_score"),  # noop'ta None
             },
         }

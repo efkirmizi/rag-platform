@@ -13,6 +13,8 @@ def create_embeddings(settings: Settings) -> EmbeddingProvider:
         return LocalSTEmbeddings(
             model_name=settings.embeddings_model or "BAAI/bge-m3",
             dim=settings.embeddings_dim,
+            device=settings.embeddings_device,
+            dtype=settings.embeddings_dtype,
         )
     if settings.embeddings_provider == "openai":
         if not settings.embeddings_endpoint or not settings.embeddings_model:

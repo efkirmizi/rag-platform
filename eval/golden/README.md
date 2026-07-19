@@ -26,10 +26,21 @@ bu set üzerinde ölçülür; skor düşüren değişiklik prod'a çıkamaz (ADR
 
 ## Sürüm notları
 
-- **v1 (2026-07-06):** 22 soru, sentetik korpus üzerinden — harness'i çalıştırmak ve
-  baseline almak için. **Gerçek set, pilot space seçilince domain uzmanlarıyla
-  yazılacak** (plan G-3: hedef 50-100, Faz 2'de 200+). Set append-only büyür;
-  soru silmek/değiştirmek skor kıyaslanabilirliğini bozar (yeni sürüm dosyası açın).
+- **v1 (2026-07-06):** 22 soru, 15 sayfalık sentetik korpus üzerinden — harness'i
+  çalıştırmak ve baseline almak için. Sorun: bge-m3 ile hit@5=1.00 → **doygun**;
+  reranker ve model farkı ölçülemiyor.
+- **v2 (2026-07-19):** 45 soru, **40 sayfalık genişletilmiş korpus** üzerinden
+  (confusable kümeler — bkz. `scripts/synthetic_corpus.py`). Amaç: G-2 için
+  ayırt edici substrat — her sorunun 4-5 makul adayı olduğundan hit@1/MRR
+  ayrışır, reranker ve embedding modeli farkı ölçülebilir hale gelir. v1
+  soruları korunur (append-only); yeni sorular ağırlıklı parafraz + confusable
+  faktüel + aynı-space kısıtlı yetki-sınırı. Korpus değiştiği için v1 sonucu
+  (`eval/results/...bge-m3.json`) **tarihsel** kalır, v2 ile kıyaslanmaz — yeni
+  baseline v2 üzerinden alınır (matris: `scripts/run_g2_matrix.py`).
+
+  **Gerçek set, pilot space seçilince domain uzmanlarıyla yazılacak** (plan G-3:
+  hedef 50-100, Faz 2'de 200+). Set append-only büyür; soru silmek/değiştirmek
+  skor kıyaslanabilirliğini bozar (yeni sürüm dosyası açın).
 
 ## Çalıştırma
 

@@ -1,7 +1,7 @@
 # Kurumsal RAG Platformu — Proje Planı
 
-> **Son güncelleme:** 2026-07-06
-> **Durum:** Faz 0 devam ediyor — G-1 sentetik PoC ✅ (sızıntı 0/480) · G-3 harness ✅ · G-2 ön sinyali ✅ (bge-m3: MRR 0.931, parafraz hit@5 1.00 — CPU'da bile leak p95 235ms). Sırada: G-0 keşif (kurum bilgileri), G-2 tam ölçüm (Qwen3-Embedding karşılaştırma + reranker, GPU/vLLM ile). Kod: `src/ragplatform/`, kurulum: `README.md`
+> **Son güncelleme:** 2026-07-19
+> **Durum:** Faz 0 devam ediyor — G-1 sentetik PoC ✅ (sızıntı 0/480) · G-3 harness ✅ · **G-2 tam ölçüm ✅ → ADR-3 kapandı: bge-m3 seçildi** (GPU/RTX 4050, golden_v2 40-sayfa confusable korpus: bge-m3 rerank'siz MRR 0.937 / hit@1 0.919 vs Qwen3-0.6B 0.896 / 0.838; bge-reranker-v2-m3 katkısı +0.032 MRR, parafraz 0.909→1.00; bge-m3 Türkçe token verimi 1.76 vs 2.62 tok/kelime; ACL 0 ihlal/4 hücre). Rapor: `eval/results/g2-report.md`. Sırada: G-0 keşif (kurum bilgileri) + gerçek pilot içerikle G-2 doğrulaması. Kod: `src/ragplatform/`, kurulum: `README.md`
 > **Takip kuralı:** Görevler `- [ ]` / `- [x]` ile işaretlenir. Her faz sonunda "Faz Çıkış Kriterleri" sağlanmadan sonraki faza geçilmez. Kararlar §3'e (ADR), yeni riskler §6'ya eklenir.
 
 ---
@@ -96,7 +96,7 @@ YATAY KATMANLAR
 |---|---|---|---|
 | ADR-1 | RAG servisi custom yazılacak, RAGFlow kullanılmayacak | ✅ Karar | Gerekçe: ACL entegrasyonu + kontrol. Docling parse için kullanılır. |
 | ADR-2 | pgvector ile başla; **çıkış eşiği:** >20M chunk VEYA p95 filtreli ANN >150ms VEYA index build >4saat → Qdrant migrasyonu değerlendir | ✅ Karar | Migrasyon hedefi Qdrant (metadata filtre + ölçek dengesi). |
-| ADR-3 | Embedding modeli seçimi | ⬜ Faz 0'da | Qwen3-Embedding vs bge-m3, Türkçe+domain golden set ile ölçülecek. |
+| ADR-3 | Embedding modeli seçimi: **bge-m3** (reranker: bge-reranker-v2-m3 açık) | ✅ Karar (2026-07-19) | Qwen3-Embedding-0.6B vs bge-m3, golden_v2 (40-sayfa confusable, %100 TR) + GPU ile ölçüldü. bge-m3 rerank'siz kalite (MRR 0.937 vs 0.896), Türkçe token verimi (1.76 vs 2.62 tok/kelime → ~%49 daha az bağlam/maliyet) ve latency'de üstün; reranker ile ikisi de tavana ulaşıyor. Not: 0.6B Qwen3 karşılaştırıldı; daha büyük Qwen3 (4B/8B) gerçek pilotta yeniden değerlendirilebilir. Rapor: `eval/results/g2-report.md`. |
 | ADR-4 | ACL deseni: OpenFGA `ListObjects` → erişim seti → pgvector sorgusunda metadata pre-filter | ✅ Karar | Faz 0 PoC ile doğrulanacak; başarısızsa mimari revize edilir. |
 | ADR-5 | Gateway metadata standardı: `agent_id, user_id, trace_id, kb_ids[], prompt_version, flow_version` her LLM çağrısında zorunlu | ✅ Karar | LiteLLM middleware'de enforce edilir; eksikse çağrı reddedilir. |
 | ADR-6 | Ingestion: Argo Workflows + Postgres outbox; Kafka yalnız >100K doküman/gün olursa | ✅ Karar | Erken Kafka = gereksiz operasyonel yük. |
@@ -128,14 +128,14 @@ YATAY KATMANLAR
 - [x] **Kabul (sentetik):** 6 kullanıcı × 10 sorgu, 480 sonuç → sızıntı = 0, p95 = 56ms — `scripts/acl_leak_test.py`
 - [ ] **Kabul (gerçek):** aynı test gerçek space + gerçek izinlerle, geniş yetkili kullanıcı (50+ space) dahil tekrarlanacak
 
-**G-2: Embedding + reranker doğrulaması (ADR-3)** *(ön sinyal alındı, 2026-07-06)*
+**G-2: Embedding + reranker doğrulaması (ADR-3)** *(tam ölçüm ✅ 2026-07-19; GPU/RTX 4050)*
 - [x] **Ön sinyal (sentetik set, CPU):** bge-m3 vs fake → parafraz hit@5 0.80→**1.00**, MRR 0.852→**0.931**, hit@5 **1.00**; "zafiyet↔güvenlik açığı" tipi ortak-köksüz eşleşmeler çözüldü. ACL temiz (0/480). Sonuç: `eval/results/20260706-171723_BAAI-bge-m3.json`
-- [ ] Domain korpusundan 500–1000 chunk'lık test seti hazırla (**~%90 Türkçe** — gerçek içerik dağılımını yansıt)
-- [ ] Qwen3-Embedding vs bge-m3: recall@10 / MRR karşılaştır (Türkçe skoru belirleyici; bge-m3 güçlü baseline koydu)
-- [ ] bge-reranker-v2-m3'ün Türkçe'de katkısını ölç (rerank'li vs rerank'siz)
-- [ ] Türkçe token verimliliğini ölç (token/kelime oranı → bağlam bütçesi ve maliyet planı buna göre)
+- [x] **Ayırt edici substrat:** 15→40 sayfa confusable korpus (`synthetic_corpus.py`) + golden_v2 (45 soru). Doygunluk kırıldı: bge-m3 hit@5 1.00→0.973 → sıralama artık ölçülebilir. *(Gerçek pilot domain korpusu — ~%90 TR, 500-1000 chunk — G-0 sonrası; sentetik karşılık bu.)*
+- [x] Qwen3-Embedding-0.6B vs bge-m3 (rerank'siz, MRR/hit@k): **bge-m3 üstün** — MRR 0.937 vs 0.896, hit@1 0.919 vs 0.838, parafraz@5 eşit 0.909. `scripts/run_g2_matrix.py`
+- [x] bge-reranker-v2-m3 katkısı (rerank'li vs rerank'siz): **pozitif** — bge-m3'te MRR +0.032, hit@1 +0.027, parafraz 0.909→**1.00**; latency p95 115→149ms (hedef <300 içinde). Her iki modeli de tavana (MRR 0.969) taşıyor → Faz 1'de açık.
+- [x] Türkçe token verimliliği: bge-m3 **1.76** vs Qwen3 **2.62** tok/kelime (XLM-R 250k vs Qwen 151k vocab). Qwen ~%49 fazla token → daha küçük etkin bağlam + daha yüksek maliyet. `scripts/token_efficiency.py`
 - [x] PG FTS `turkish` config + `unaccent` doğrulaması: çalışıyor; iki bulgu → (1) uzun sorularda AND semantiği kırılgan → OR'a geçildi, (2) t/d ünsüz yumuşamasını stemmer eşleyemiyor → chunk'a başlık gömme (contextual header) ile kapatıldı
-- [ ] **Kabul:** Model seçildi, ADR-3 kapandı; rerank katkısı ve tam boyutlu setle karşılaştırma raporlandı
+- [x] **Kabul:** Model seçildi (bge-m3), ADR-3 kapandı; rerank katkısı ve model karşılaştırması raporlandı → `eval/results/g2-report.md`. *(Gerçek pilot içerikle tekrar doğrulama G-0 sonrası; matris tek komutla yeniden koşar.)*
 
 **G-3: Golden eval seti v1** *(harness çalışıyor; sentetik başlangıç seti ölçüldü, 2026-07-06)*
 - [ ] Domain uzmanlarıyla 50–100 soru + beklenen kaynak doküman *(pilot space sonrası; başlangıç: 22 sentetik soru — `eval/golden/golden_v1.jsonl`)*
@@ -153,8 +153,8 @@ YATAY KATMANLAR
 **Faz 0 Çıkış Kriterleri:**
 - [ ] G-0 tamamlandı: §8 varsayımları gerçek veriyle güncellendi, pilot space'ler ve IdP netleşti
 - [ ] G-1 kabul kriteri sağlandı (sağlanmadıysa: mimari revizyon toplantısı)
-- [ ] Embedding modeli seçildi (ADR-3 ✅)
-- [ ] Golden set v1 hazır, baseline ölçüldü
+- [x] Embedding modeli seçildi (ADR-3 ✅ bge-m3) — 2026-07-19
+- [x] Golden set v1 hazır, baseline ölçüldü *(v2 40-sayfa confusable + 45 soru ile ayırt edici hale getirildi)*
 
 ---
 
@@ -276,7 +276,7 @@ YATAY KATMANLAR
 | ACL pre-filter ölçekte yavaş kalır | Orta | Kritik | Faz 0 G-1 PoC en başta; başarısızsa erişim seti tasarımı revize (partition bazlı index) |
 | İzin drift'i → veri sızıntısı | Orta | Kritik | ≤15 dk sync + gecelik reconciliation + sızıntı testleri her release'de |
 | Zehirlenmiş doküman + tool = aksiyon saldırısı | Orta | Yüksek | ADR-8 (untrusted içerik) + onay matrisi + kırmızı takım |
-| Embedding modeli Türkçe'de zayıf kalır | Orta | Yüksek | Faz 0 G-2 ölçümü; bge-m3 yedek aday |
+| Embedding modeli Türkçe'de zayıf kalır | ~~Orta~~ Düşük | Yüksek | ✅ G-2 kapattı: bge-m3 seçildi (Qwen3-0.6B'yi kalite+token veriminde geçti); reranker açık. Gerçek pilot içerikte tekrar ölçülecek (G-0). |
 | pgvector ölçek tavanı | Düşük (ilk yıl) | Orta | ADR-2 eşikleri + izleme; Qdrant çıkış planı hazır |
 | Golden set bakımsız kalır, eval kapısı anlamsızlaşır | Yüksek | Orta | Feedback triage'ı ile sürekli besleme (Faz 3); set sahibi atanır |
 | GPU maliyeti plansız büyür | Orta | Orta | Ayrı havuzlar + LiteLLM bütçe limitleri + chargeback görünürlüğü |
