@@ -1,0 +1,88 @@
+{
+  "run_at": "2026-07-19T22:46:36+00:00",
+  "model": "BAAI/bge-m3",
+  "golden_file": "golden_v2.jsonl",
+  "baseline": {
+    "max_chars": 1600,
+    "overlap": 0
+  },
+  "best": {
+    "max_chars": 1600,
+    "overlap": 0
+  },
+  "delta_mrr_vs_baseline": 0.0,
+  "rows": [
+    {
+      "max_chars": 1600,
+      "overlap": 0,
+      "chunks": 106,
+      "mrr": 0.9369,
+      "hit@1": 0.9189,
+      "hit@3": 0.973,
+      "hit@5": 0.973,
+      "parafraz@5": 0.9091,
+      "acl_violations": 0,
+      "p95_ms": 108.3
+    },
+    {
+      "max_chars": 1600,
+      "overlap": 200,
+      "chunks": 106,
+      "mrr": 0.9369,
+      "hit@1": 0.9189,
+      "hit@3": 0.973,
+      "hit@5": 0.973,
+      "parafraz@5": 0.9091,
+      "acl_violations": 0,
+      "p95_ms": 66.8
+    },
+    {
+      "max_chars": 800,
+      "overlap": 0,
+      "chunks": 106,
+      "mrr": 0.9369,
+      "hit@1": 0.9189,
+      "hit@3": 0.973,
+      "hit@5": 0.973,
+      "parafraz@5": 0.9091,
+      "acl_violations": 0,
+      "p95_ms": 46.1
+    },
+    {
+      "max_chars": 800,
+      "overlap": 150,
+      "chunks": 106,
+      "mrr": 0.9369,
+      "hit@1": 0.9189,
+      "hit@3": 0.973,
+      "hit@5": 0.973,
+      "parafraz@5": 0.9091,
+      "acl_violations": 0,
+      "p95_ms": 55.8
+    },
+    {
+      "max_chars": 2400,
+      "overlap": 0,
+      "chunks": 106,
+      "mrr": 0.9369,
+      "hit@1": 0.9189,
+      "hit@3": 0.973,
+      "hit@5": 0.973,
+      "parafraz@5": 0.9091,
+      "acl_violations": 0,
+      "p95_ms": 44.7
+    },
+    {
+      "max_chars": 2400,
+      "overlap": 300,
+      "chunks": 106,
+      "mrr": 0.9369,
+      "hit@1": 0.9189,
+      "hit@3": 0.973,
+      "hit@5": 0.973,
+      "parafraz@5": 0.9091,
+      "acl_violations": 0,
+      "p95_ms": 44.2
+    }
+  ]
+}

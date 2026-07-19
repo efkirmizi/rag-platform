@@ -55,12 +55,25 @@ def _flush_oversized(chunks: list["Chunk"], path: str, current: str, max_chars: 
     return current[cut:].lstrip()
 
 
-def chunk_markdown(text: str, max_chars: int = 1600) -> list[Chunk]:
+def _overlap_tail(text: str, overlap: int) -> str:
+    """Bir sonraki chunk'ın başına taşınacak kuyruk (kelime sınırında)."""
+    if overlap <= 0 or not text:
+        return ""
+    tail = text[-overlap:]
+    cut = tail.find(" ")
+    return tail[cut + 1:] if cut != -1 else tail
+
+
+def chunk_markdown(text: str, max_chars: int = 1600, overlap: int = 0) -> list[Chunk]:
     """Bölüm içindeki paragrafları max_chars sınırına kadar paketler.
 
+    `overlap`: ardışık chunk'ların paylaştığı karakter sayısı. Sınırın tam
+    üstüne düşen bir cevabın ikiye bölünüp hiçbir chunk'ta bütün görünmemesini
+    engellemeyi amaçlar. Varsayılan 0 — katkısı ölçülerek kanıtlanmalı
+    (bkz. scripts/run_chunking_matrix.py).
+
     Not: Türkçe'de token/karakter oranı İngilizce'den farklıdır; karakter
-    limiti kaba bir vekildir. G-2'deki token verimliliği ölçümünden sonra
-    limit token bazlıya çevrilebilir.
+    limiti kaba bir vekildir (G-2 ölçümü: bge-m3 ~1.76 token/kelime).
     """
     chunks: list[Chunk] = []
     for path, body in _sections(text):
@@ -69,7 +82,8 @@ def chunk_markdown(text: str, max_chars: int = 1600) -> list[Chunk]:
         for para in paragraphs:
             if current and len(current) + len(para) + 2 > max_chars:
                 chunks.append(Chunk(path, current))
-                current = para
+                tail = _overlap_tail(current, overlap)
+                current = f"{tail}\n\n{para}" if tail else para
             else:
                 current = f"{current}\n\n{para}" if current else para
             while len(current) > max_chars:

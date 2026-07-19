@@ -95,7 +95,7 @@ YATAY KATMANLAR
 | # | Karar | Durum | Not |
 |---|---|---|---|
 | ADR-1 | RAG servisi custom yazılacak, RAGFlow kullanılmayacak | ✅ Karar | Gerekçe: ACL entegrasyonu + kontrol. Docling parse için kullanılır. |
-| ADR-2 | pgvector ile başla; **çıkış eşiği:** >20M chunk VEYA p95 filtreli ANN >150ms VEYA index build >4saat → Qdrant migrasyonu değerlendir | ✅ Karar | Migrasyon hedefi Qdrant (metadata filtre + ölçek dengesi). |
+| ADR-2 | pgvector ile başla; **çıkış eşiği:** >20M chunk VEYA p95 filtreli ANN >150ms VEYA index build >4saat → Qdrant migrasyonu değerlendir | ✅ Karar · ölçüldü (2026-07-20) | Migrasyon hedefi Qdrant. **Ölçüm (100k chunk):** planlayıcı filtre varken HNSW'yi kullanmıyor, izinli alt kümeyi seq scan ediyor → recall 1.000 ama maliyet *görünür satır* sayısıyla doğrusal; 150ms eşiği ~25k görünür chunk'ta geliyor (toplam korpus değil, **kullanıcı başına görünürlük** eşiği). Index kullanıldığında pgvector varsayılanı `iterative_scan=off` recall'ı 0.367'ye düşürüyor → `relaxed_order` uygulandı (`db.py`). Qdrant'tan önce denenecek: `space_key`'i `chunks`'a denormalize etmek. Rapor: `eval/results/scale-report.md` |
 | ADR-3 | Embedding modeli seçimi: **bge-m3** (reranker: bge-reranker-v2-m3 açık) | ✅ Karar (2026-07-19) | Qwen3-Embedding-0.6B vs bge-m3, golden_v2 (40-sayfa confusable, %100 TR) + GPU ile ölçüldü. bge-m3 rerank'siz kalite (MRR 0.937 vs 0.896), Türkçe token verimi (1.76 vs 2.62 tok/kelime → ~%49 daha az bağlam/maliyet) ve latency'de üstün; reranker ile ikisi de tavana ulaşıyor. Not: 0.6B Qwen3 karşılaştırıldı; daha büyük Qwen3 (4B/8B) gerçek pilotta yeniden değerlendirilebilir. Rapor: `eval/results/g2-report.md`. |
 | ADR-4 | ACL deseni: OpenFGA `ListObjects` → erişim seti → pgvector sorgusunda metadata pre-filter | ✅ Karar | Faz 0 PoC ile doğrulanacak; başarısızsa mimari revize edilir. |
 | ADR-5 | Gateway metadata standardı: `agent_id, user_id, trace_id, kb_ids[], prompt_version, flow_version` her LLM çağrısında zorunlu | ✅ Karar | LiteLLM middleware'de enforce edilir; eksikse çağrı reddedilir. |
@@ -277,7 +277,8 @@ YATAY KATMANLAR
 | İzin drift'i → veri sızıntısı | Orta | Kritik | ≤15 dk sync + gecelik reconciliation + sızıntı testleri her release'de |
 | Zehirlenmiş doküman + tool = aksiyon saldırısı | Orta | Yüksek | ADR-8 (untrusted içerik) + onay matrisi + kırmızı takım |
 | Embedding modeli Türkçe'de zayıf kalır | ~~Orta~~ Düşük | Yüksek | ✅ G-2 kapattı: bge-m3 seçildi (Qwen3-0.6B'yi kalite+token veriminde geçti); reranker açık. Gerçek pilot içerikte tekrar ölçülecek (G-0). |
-| pgvector ölçek tavanı | Düşük (ilk yıl) | Orta | ADR-2 eşikleri + izleme; Qdrant çıkış planı hazır |
+| pgvector ölçek tavanı | Düşük (ilk yıl) | Orta | ADR-2 eşikleri **ölçüldü** (`eval/results/scale-report.md`): sınır toplam korpus değil, kullanıcı başına görünür chunk (~25k'da p95>150ms). Geniş yetkili kullanıcılar belirleyici. Önce denormalizasyon denenecek, sonra Qdrant. |
+| HNSW index kurulumu veritabanını düşürür | Orta | Yüksek | Ölçüldü: 200k satırda `maintenance_work_mem=64MB` (docker varsayılanı) backend'i çökertti; paralel kurulum 64MB `/dev/shm` sınırında düşüyor. `shm_size: 1gb` eklendi; G-4'te index kurulum parametreleri dokümante edilecek. |
 | Golden set bakımsız kalır, eval kapısı anlamsızlaşır | Yüksek | Orta | Feedback triage'ı ile sürekli besleme (Faz 3); set sahibi atanır |
 | GPU maliyeti plansız büyür | Orta | Orta | Ayrı havuzlar + LiteLLM bütçe limitleri + chargeback görünürlüğü |
 | RAGFlow yerine custom → eng eforu küçümsenir | Orta | Orta | Faz 1 kapsamı bilinçli dar: tek KB, tek akış; genişleme Faz 3'te |

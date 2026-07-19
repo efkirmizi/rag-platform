@@ -122,6 +122,31 @@ The loader validates referential integrity up front (unknown space, unknown grou
 duplicate keys, a space nobody can see) so mistakes surface as clear errors rather
 than silently wrong permissions. A working example is in [`examples/docs/`](examples/docs).
 
+## Answers with citations (optional)
+
+Retrieval is the default; generation is opt-in. Enabled, the service answers from
+**only** what the asking user is permitted to see:
+
+```bash
+# echo: no model (tests) · local: your GPU · openai: vLLM/OpenAI-compatible endpoint
+GENERATION_PROVIDER=local GENERATION_MODEL=Qwen/Qwen2.5-1.5B-Instruct \
+  uvicorn ragplatform.api.main:app --port 8000
+
+curl -X POST localhost:8000/v1/answer -H 'Content-Type: application/json' \
+  -d '{"query":"yıllık izin kaç gün","user_id":"ayse"}'
+```
+
+You get the answer plus the citations it actually used. Three properties matter:
+
+- **ACL still governs.** The answer is generated only from retrieved chunks, and
+  retrieval applies the permission filter in SQL. If the user may see nothing, the
+  model is never called at all.
+- **Retrieved text is untrusted data, not instructions** (ADR-8). Sources are
+  delimited and the system prompt states that instructions inside them must be
+  ignored. The service calls no tools, so a poisoned document has nothing to trigger.
+- **Fabricated citations are surfaced,** not laundered — citation numbers that
+  don't correspond to a real source are returned in `unsupported_citations`.
+
 ## How it works
 
 ```mermaid
@@ -188,11 +213,13 @@ Qwen3-Embedding-0.6B → smaller context, lower cost), and latency. The reranker
 ## Testing
 
 ```bash
-pytest                                                        # 49 unit tests, no services needed
+pytest                                                        # 75 unit tests, no services needed
 python scripts/acl_leak_test.py                               # ACL gate — must be 0
-python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl   # eval gate
+python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl   # eval gate (+ --min-mrr etc.)
 python scripts/smoke_api.py                                   # end-to-end ACL check vs a running API
-python scripts/run_g2_matrix.py                               # full model matrix (GPU)
+python scripts/run_g2_matrix.py                               # embedding × reranker matrix (GPU)
+python scripts/run_chunking_matrix.py                         # chunk size / overlap matrix (GPU)
+python scripts/scale_test.py --rows 100000                    # ACL-filtered ANN at scale ⚠️ heavy
 ```
 
 CI runs the lint, unit tests, ACL leak test, eval gate, connector validation, and
@@ -217,7 +244,8 @@ examples/docs/  bring-your-own-docs template
 ## Deliberate Phase 0 limits
 
 - **No authentication** — `user_id` comes from the request body; OIDC is Phase 1.
-- **No generation** — retrieval only; the LLM sits behind a gateway in Phase 1.
+- **Generation is minimal and opt-in** — single-turn, no streaming, no query
+  rewriting; in production the LLM belongs behind the LiteLLM gateway (Phase 1).
 - **Reranker runs in-process** — moves to a served pool in Phase 1.
 - **Access set cached in-process** (short TTL) — durable materialization and
   permission sync are Phase 2.

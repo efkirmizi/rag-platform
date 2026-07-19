@@ -109,7 +109,15 @@ def build_tuples(corpus: Corpus) -> list[tuple[str, str, str]]:
     return tuples
 
 
-async def index_corpus(pool, embedder, corpus: Corpus, *, quiet: bool = False) -> int:
+async def index_corpus(
+    pool,
+    embedder,
+    corpus: Corpus,
+    *,
+    quiet: bool = False,
+    max_chars: int = 1600,
+    overlap: int = 0,
+) -> int:
     """Korpusu chunk'layıp embed'leyerek indexler; toplam chunk sayısını döner.
 
     index_page upsert + chunk replace olduğu için idempotenttir: aynı korpusu
@@ -133,6 +141,8 @@ async def index_corpus(pool, embedder, corpus: Corpus, *, quiet: bool = False) -
             content_md=page.content,
             url=page.url,
             is_restricted=page.is_restricted,
+            max_chars=max_chars,
+            overlap=overlap,
         )
         total += n
         if not quiet:

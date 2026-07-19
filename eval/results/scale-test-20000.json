@@ -1,0 +1,79 @@
+{
+  "run_at": "2026-07-19T22:23:25+00:00",
+  "rows": 20000,
+  "spaces": 100,
+  "k": 10,
+  "cells": [
+    {
+      "selectivity": 1.0,
+      "allowed_spaces": 100,
+      "visible_chunks": 20000,
+      "mode": "off",
+      "recall": 0.8667,
+      "min_recall": 0.0,
+      "mean_shortfall": 0,
+      "p95_ms": 62.9,
+      "index_used": true
+    },
+    {
+      "selectivity": 1.0,
+      "allowed_spaces": 100,
+      "visible_chunks": 20000,
+      "mode": "relaxed_order",
+      "recall": 1.0,
+      "min_recall": 1.0,
+      "mean_shortfall": 0,
+      "p95_ms": 66.7,
+      "index_used": true
+    },
+    {
+      "selectivity": 0.1,
+      "allowed_spaces": 10,
+      "visible_chunks": 2011,
+      "mode": "off",
+      "recall": 1.0,
+      "min_recall": 1.0,
+      "mean_shortfall": 0,
+      "p95_ms": 12.2,
+      "index_used": true
+    },
+    {
+      "selectivity": 0.1,
+      "allowed_spaces": 10,
+      "visible_chunks": 2011,
+      "mode": "relaxed_order",
+      "recall": 1.0,
+      "min_recall": 1.0,
+      "mean_shortfall": 0,
+      "p95_ms": 12.4,
+      "index_used": true
+    },
+    {
+      "selectivity": 0.01,
+      "allowed_spaces": 1,
+      "visible_chunks": 196,
+      "mode": "off",
+      "recall": 1.0,
+      "min_recall": 1.0,
+      "mean_shortfall": 0,
+      "p95_ms": 3.6,
+      "index_used": false
+    },
+    {
+      "selectivity": 0.01,
+      "allowed_spaces": 1,
+      "visible_chunks": 196,
+      "mode": "relaxed_order",
+      "recall": 1.0,
+      "min_recall": 1.0,
+      "mean_shortfall": 0,
+      "p95_ms": 3.8,
+      "index_used": false
+    }
+  ],
+  "generate_s": 1.2,
+  "index_build_s": 4.6,
+  "table_size": "133 MB",
+  "index_size": "25 MB",
+  "chunks": 20000
+}
