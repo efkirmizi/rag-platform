@@ -5,8 +5,20 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ragplatform"
 version = "0.1.0"
-description = "Kurumsal RAG platformu — Faz 0: ACL-filtered hybrid retrieval PoC"
+description = "ACL-native enterprise RAG: OpenFGA-filtered hybrid retrieval with citations (Turkish-first)"
+readme = "README.md"
 requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Enis Furkan Kırmızı" }]
+keywords = ["rag", "retrieval", "openfga", "pgvector", "acl", "turkish", "hybrid-search"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Natural Language :: Turkish",
+]
 dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
@@ -21,10 +33,16 @@ dev = [
     "pytest-asyncio>=0.24",
     "ruff>=0.6",
 ]
-# G-2 yerel model denemeleri (CPU); üretimde embedding vLLM'den servis edilir
+# Yerel embedding/reranker (GPU varsa otomatik kullanılır); üretimde vLLM havuzu
 local = [
     "sentence-transformers>=3.0",
+    "transformers>=4.51",  # token_efficiency.py doğrudan tokenizer kullanır
 ]
+
+[project.urls]
+Homepage = "https://github.com/efkirmizi/rag-platform"
+Repository = "https://github.com/efkirmizi/rag-platform"
+Issues = "https://github.com/efkirmizi/rag-platform/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

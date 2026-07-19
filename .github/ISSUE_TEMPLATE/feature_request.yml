@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest a capability or improvement
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The roadmap lives in [PROJE-PLANI.md](../blob/main/PROJE-PLANI.md) — it may
+        already be planned for a later phase.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the need, not only the proposed solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+    validations:
+      required: false
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Does this touch any of these?
+      options:
+        - label: Retrieval or ACL behaviour (must keep the leak test at 0)
+        - label: Retrieval quality (should come with an eval measurement)
+        - label: New runtime dependency

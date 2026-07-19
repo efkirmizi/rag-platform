@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-test:
+    name: Lint + unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Ruff
+        run: ruff check src scripts tests
+      - name: Unit tests
+        run: pytest -q
+
+  acl-gate:
+    name: ACL leak gate + eval
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Start Postgres (pgvector) + OpenFGA
+        run: docker compose up -d --wait
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      # Varsayılan `fake` embedding: model indirmesi/GPU yok. Bu iş retrieval
+      # KALİTESİNİ değil, yetki sınırlarını doğrular — ACL filtresi embedding'den
+      # bağımsızdır. Kalite ölçümü GPU gerektirir (scripts/run_g2_matrix.py).
+      - name: Seed synthetic corpus + permissions
+        run: python scripts/seed_synthetic.py
+
+      - name: ACL leak test (must be 0 leaks)
+        run: python scripts/acl_leak_test.py
+
+      - name: Golden set eval (fails on any authorization-boundary violation)
+        run: python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl
+
+      - name: Bring-your-own-docs connector (validate bundled example)
+        run: python scripts/ingest_folder.py --docs examples/docs --check
+
+      - name: Service logs on failure
+        if: failure()
+        run: docker compose logs --tail=100
+
+  docker-demo:
+    name: One-command demo boots
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Bring up full demo stack (one command)
+        run: docker compose --profile demo up -d --wait --build
+
+      # Uçtan uca kapı: sağlık + yetkili kullanıcı sonuç alıyor + KISITLI sayfa
+      # yetkisiz kullanıcıya dönmüyor. Payload'lar Python'dan JSON olarak
+      # gider — kabuk/locale kaynaklı UTF-8 bozulmasına açık değil.
+      - name: End-to-end ACL smoke test
+        run: |
+          pip install httpx
+          python scripts/smoke_api.py
+
+      - name: Stack logs on failure
+        if: failure()
+        run: docker compose --profile demo logs --tail=100

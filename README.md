@@ -1,67 +1,145 @@
 <div align="center">
 
-# 🔐 Kurumsal RAG Platformu
+# 🔐 ACL-Native Enterprise RAG
 
-**Erişim yetkilerine tam saygılı, kaynak gösteren, izlenebilir kurumsal RAG platformu.**
+**Retrieval that respects document permissions — provably, on every commit.**
 
-*Turkish-first · ACL-native · citation-backed retrieval*
+*Turkish-first · OpenFGA-filtered · citation-backed*
 
+[![CI](https://github.com/efkirmizi/rag-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/efkirmizi/rag-platform/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11+-3776AB?logo=python&logoColor=white)
-![Faz 0](https://img.shields.io/badge/Faz%200-G--1%20%7C%20G--2%20%7C%20G--3%20done-2ea44f)
-![Tests](https://img.shields.io/badge/tests-29%20passing-2ea44f)
-![ADR-3](https://img.shields.io/badge/ADR--3-bge--m3-0969da)
+![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![ACL](https://img.shields.io/badge/ACL%20leaks-0%2F480-2ea44f)
+![Phase](https://img.shields.io/badge/status-Phase%200%20PoC-orange)
+
+**English** · [Türkçe](README.tr.md)
 
 </div>
 
 ---
 
-Kurum içi dokümanlar (Confluence, PDF/DOCX/HTML) üzerinde çalışan bir soru-cevap
-platformu. Ayırt edici yanı: **retrieval, kullanıcının erişim yetkilerine sorgu
-anında ve fail-closed saygı gösterir** — izinsiz içerik aday listesine bile giremez.
-LibreChat ilk tüketici; platform API'si üzerinden Teams/Slack/iç uygulamalar da bağlanabilir.
+Most RAG systems treat authorization as an afterthought — they retrieve first and
+filter later, or ignore permissions entirely. That breaks the moment you point one
+at a real company's documents, where an HR salary page and a public handbook live
+side by side.
 
-> **Bu repo Faz 0'dır** — projeyi batırabilecek riskli varsayımların prototiple
-> doğrulandığı aşama. Tam vizyon, mimari ve yol haritası: **[PROJE-PLANI.md](PROJE-PLANI.md)**.
+This project makes permissions a **first-class part of retrieval**: the user's
+permitted set is resolved from [OpenFGA](https://openfga.dev) and applied *inside
+the SQL query*, so unauthorized content never enters the candidate list. There is
+no post-filter to forget.
 
-## ✨ Neden farklı?
+> [!WARNING]
+> **Phase 0 proof of concept — do not deploy as-is.** The API takes `user_id` in
+> the request body and has **no authentication**. See [SECURITY.md](SECURITY.md).
+
+## Why this is different
 
 | | |
 |---|---|
-| 🔐 **ACL-native retrieval** | OpenFGA erişim seti → SQL'de **pre-filter**. Post-filter yok; dar yetkili kullanıcı boş sonuç değil, *doğru ve izinli* sonuç alır. Sızıntı testi her sürümde koşar (0/480). |
-| 🇹🇷 **Türkçe-öncelikli** | Postgres FTS `turkish` stemmer + `unaccent`; embedding/reranker Türkçe skoruna göre seçildi; token verimliliği ölçülüp maliyet planına bağlandı. |
-| 🔎 **Hybrid + rerank** | pgvector HNSW (dense) + FTS (lexical) → RRF füzyonu → cross-encoder reranker. Hata kodu/kısaltma gibi lexical sorgular dense aramada kaçmaz. |
-| 📄 **Citation-backed** | Her sonuç kaynak sayfa + başlık yolu + güncelleme tarihiyle döner. |
-| 🧪 **Eval-gated** | Golden set + offline eval harness; kalite düşüren değişiklik ölçülebilir (Faz 2'de CI kapısı). |
+| 🔐 **Fail-closed ACL pre-filter** | Permitted spaces/pages are applied as a SQL predicate in *both* retrieval arms. Empty access set ⇒ zero rows. A narrowly-permitted user gets correct results, not an empty page. |
+| ✅ **Continuously proven** | Every push runs a leak test across every user × query combination and asserts each returned chunk is one that user is independently expected to see. Currently **0 leaks / 480 results**. |
+| 🇹🇷 **Turkish-first** | Postgres FTS with the `turkish` stemmer + `unaccent`; embedding and reranker chosen by measured Turkish performance, including tokenizer efficiency. |
+| 🔎 **Hybrid + rerank** | pgvector HNSW (dense) + full-text (lexical) fused with RRF, then a cross-encoder reranker. Error codes and acronyms don't slip through the cracks of dense-only search. |
+| 📊 **Decisions are measured** | Model choices are settled with a golden-set eval harness, not vibes — see the [G-2 report](eval/results/g2-report.md). |
 
-## 📊 Durum
+## Quickstart
 
-| Görev | Durum | Özet |
-|---|:--:|---|
-| **G-1** ACL-filtered hybrid retrieval PoC | ✅ | Sızıntı **0/480**, p95 **57ms** (40 sayfa, 6 kullanıcı) |
-| **G-2** Embedding + reranker seçimi (ADR-3) | ✅ | **bge-m3** seçildi; reranker açık → [rapor](eval/results/g2-report.md) |
-| **G-3** Golden eval seti + harness | ✅ | `golden_v2` 45 soru; hit@k / MRR / yetki-sınırı / latency |
-| **G-0** Keşif (kurum bilgileri, pilot space, IdP) | ⬜ | Kurumsal erişim bekliyor |
-| **G-4** Altyapı iskeleti (K8s, vLLM, OIDC) | ⬜ | Faz 0 sonu |
+**One command** (Docker; seeds a synthetic corpus and serves the API):
 
-## 🏗️ Mimari (Faz 0 — retrieval hattı)
+```bash
+docker compose --profile demo up --build
+```
+
+Then query it as two different users and watch authorization work:
+
+```bash
+# ayşe can read the public leave policy
+curl -X POST localhost:8000/v1/retrieve -H 'Content-Type: application/json' \
+  -d '{"query":"yıllık izin kaç gün","user_id":"ayse"}'
+
+# zeynep (HR management) can see the restricted salary page
+curl -X POST localhost:8000/v1/retrieve -H 'Content-Type: application/json' \
+  -d '{"query":"maaş bantları","user_id":"zeynep"}'
+
+# mehmet can see the same space — but never that page
+curl -X POST localhost:8000/v1/retrieve -H 'Content-Type: application/json' \
+  -d '{"query":"maaş bantları","user_id":"mehmet"}'
+```
+
+<details>
+<summary><b>Local development setup (without Docker for the app)</b></summary>
+
+```bash
+docker compose up -d                 # Postgres + pgvector, OpenFGA
+python -m venv .venv && . .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+python scripts/seed_synthetic.py     # synthetic corpus + permissions
+python scripts/acl_leak_test.py      # the ACL acceptance test
+
+python scripts/dev_query.py ayse "yıllık izin kaç gün"
+uvicorn ragplatform.api.main:app --port 8000
+```
+
+For local embedding/reranker models (GPU auto-detected): `pip install -e ".[local]"`
+</details>
+
+## Use your own documents
+
+Point it at a folder of markdown files with a permission manifest:
+
+```bash
+python scripts/ingest_folder.py --docs ./examples/docs --check   # validate first
+python scripts/ingest_folder.py --docs ./examples/docs --reset   # index it
+```
+
+```
+mydocs/
+  permissions.json          # spaces, groups, who can see what
+  handbook/onboarding.md    # markdown with front-matter
+  eng/deployment.md
+```
+
+```markdown
+---
+space: HANDBOOK
+title: Compensation bands
+restricted_to: leadership     # optional: restricts this page within the space
+---
+Band figures are confidential...
+```
+
+`permissions.json` declares the org structure:
+
+```json
+{
+  "spaces":        {"HANDBOOK": "Company Handbook", "ENG": "Engineering"},
+  "groups":        {"everyone": ["alice","bob"], "leadership": ["alice"]},
+  "space_viewers": {"HANDBOOK": ["everyone"], "ENG": ["engineering"]}
+}
+```
+
+The loader validates referential integrity up front (unknown space, unknown group,
+duplicate keys, a space nobody can see) so mistakes surface as clear errors rather
+than silently wrong permissions. A working example is in [`examples/docs/`](examples/docs).
+
+## How it works
 
 ```mermaid
 flowchart LR
-    Q["🔎 Sorgu + user_id"] --> R["AccessResolver<br/>OpenFGA ListObjects<br/>(TTL cache)"]
+    Q["🔎 Query + user_id"] --> R["AccessResolver<br/>OpenFGA ListObjects<br/>(TTL cache)"]
     Q --> E["embed_query<br/>bge-m3 · GPU"]
-    R -->|"izinli space/sayfa seti"| H
-    E -->|"1024-d vektör"| H["🔐 Hybrid arama · tek SQL<br/>ACL pre-filter · pgvector HNSW<br/>+ FTS turkish_unaccent · RRF"]
-    H -->|"top-50 aday"| K["Reranker<br/>bge-reranker-v2-m3<br/>cross-encoder"]
-    K -->|"top-8"| C["📄 Citation'lı sonuç<br/>başlık yolu · URL · tarih"]
+    R -->|"permitted spaces/pages"| H
+    E -->|"1024-d vector"| H["🔐 Hybrid search · single SQL<br/>ACL pre-filter · pgvector HNSW<br/>+ FTS turkish_unaccent · RRF"]
+    H -->|"top-50 candidates"| K["Reranker<br/>bge-reranker-v2-m3<br/>cross-encoder"]
+    K -->|"top-8"| C["📄 Cited results<br/>heading path · URL · date"]
 ```
 
-**Akış:** kullanıcının erişim seti OpenFGA'dan çözülür (kısa TTL cache) → sorgu
-embed'lenir → hybrid arama **erişim setini SQL filtresine gömerek** (fail-closed)
-top-50 aday çeker → cross-encoder reranker top-8'e indirger → citation üretilir.
+The access set is resolved once per user (short TTL cache) and passed into the
+query as a filter — see [`hybrid.py`](src/ragplatform/retrieval/hybrid.py), the
+file where the project's core claim lives.
 
 <details>
-<summary><b>OpenFGA yetki modeli (ReBAC)</b></summary>
+<summary><b>Authorization model (OpenFGA ReBAC)</b></summary>
 
 ```
 space:  viewer: [user, group#member]
@@ -70,118 +148,88 @@ page:   parent: [space]
         viewer: restricted_viewer or viewer from parent
 ```
 
-Confluence semantiği: kısıt erişimi **daraltır**, genişletmez. Kısıtlı sayfayı
-görmek için hem space erişimi hem açık `restricted_viewer` gerekir; SQL filtresi
-her iki koşulu da uygular.
+Confluence semantics: a page restriction **narrows** access, never widens it.
+Seeing a restricted page requires *both* space access and explicit
+`restricted_viewer` membership; the SQL predicate enforces both.
 </details>
 
-## 🧠 G-2 sonuçları — ADR-3 nasıl kapandı
+## Status
 
-Ölçüm: `golden_v2` (45 soru) · 40-sayfalık *confusable* korpus · RTX 4050 (fp16).
-Tam analiz: **[eval/results/g2-report.md](eval/results/g2-report.md)**.
+| Milestone | | |
+|---|:--:|---|
+| **G-1** ACL-filtered hybrid retrieval | ✅ | 0 leaks / 480 results, p95 57ms |
+| **G-2** Embedding + reranker selection | ✅ | bge-m3 chosen → [report](eval/results/g2-report.md) |
+| **G-3** Golden eval set + harness | ✅ | 45 questions; hit@k, MRR, boundary, latency |
+| **G-0** Discovery (real corpus, IdP, pilot) | ⬜ | Needs organizational access |
+| **G-4** Infrastructure (K8s, vLLM, OIDC) | ⬜ | End of Phase 0 |
 
-| embedding | reranker | MRR | hit@1 | parafraz@5 | tok/kelime |
+Full roadmap and architecture decisions: [PROJE-PLANI.md](PROJE-PLANI.md) *(Turkish)*.
+
+## Model selection (G-2)
+
+Measured on 45 golden questions over a 40-page deliberately-confusable corpus,
+on an RTX 4050. Full analysis: [eval/results/g2-report.md](eval/results/g2-report.md).
+
+| embedding | reranker | MRR | hit@1 | paraphrase@5 | tok/word |
 |---|---|:--:|:--:|:--:|:--:|
 | **bge-m3** ⭐ | bge-reranker-v2-m3 | **0.969** | **0.946** | **1.000** | **1.76** |
-| bge-m3 | noop | 0.937 | 0.919 | 0.909 | 1.76 |
+| bge-m3 | none | 0.937 | 0.919 | 0.909 | 1.76 |
 | qwen3-0.6b | bge-reranker-v2-m3 | 0.969 | 0.946 | 1.000 | 2.62 |
-| qwen3-0.6b | noop | 0.896 | 0.838 | 0.909 | 2.62 |
+| qwen3-0.6b | none | 0.896 | 0.838 | 0.909 | 2.62 |
 
-**Karar: bge-m3 + reranker.** Rerank'siz kalitede Qwen3-Embedding-0.6B'yi geçiyor
-(MRR 0.937 vs 0.896), Türkçe token verimi belirgin daha iyi (1.76 vs 2.62 tok/kelime
-→ ~%49 daha küçük bağlam/maliyet) ve daha düşük latency. Reranker MRR'ı +0.032 artırıp
-parafrazı 1.00'a taşıyor. **Tüm hücrelerde ACL ihlali 0.**
+**bge-m3 wins** on raw quality, Turkish token efficiency (~49% fewer tokens than
+Qwen3-Embedding-0.6B → smaller context, lower cost), and latency. The reranker adds
++0.032 MRR and lifts paraphrase recall to 1.00. Zero ACL violations in all four cells.
 
-## 🚀 Kurulum
+> The corpus is synthetic (real pilot content is blocked on G-0), so this is a
+> well-founded provisional decision — plus the tooling to re-run it in one command
+> once real data exists: `python scripts/run_g2_matrix.py`.
 
-**Ön koşul:** Docker Desktop · Python 3.11+ · (opsiyonel) yerel model denemeleri için NVIDIA GPU.
+## Testing
 
-```powershell
-# 1) Altyapı (Postgres+pgvector, OpenFGA)
-docker compose up -d
-
-# 2) Python ortamı
-python -m venv .venv
-.venv\Scripts\activate
-pip install -e ".[dev]"
-
-# 3) Sentetik veri + izinler (OpenFGA store + 40 sayfa index)
-python scripts/seed_synthetic.py
-
-# 4) G-1 kabul testi: sızıntı = 0 + latency
-python scripts/acl_leak_test.py
+```bash
+pytest                                                        # 49 unit tests, no services needed
+python scripts/acl_leak_test.py                               # ACL gate — must be 0
+python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl   # eval gate
+python scripts/smoke_api.py                                   # end-to-end ACL check vs a running API
+python scripts/run_g2_matrix.py                               # full model matrix (GPU)
 ```
 
-> Yerel embedding/reranker (bge-m3, bge-reranker-v2-m3) için: `pip install -e ".[local]"`
-> (ilk koşuda modeller iner). GPU otomatik algılanır (`EMBEDDINGS_DEVICE=auto`).
+CI runs the lint, unit tests, ACL leak test, eval gate, connector validation, and
+boots the full Docker demo to assert end-to-end that a restricted page is not
+returned to an unauthorized user.
 
-## 💻 Kullanım
-
-```powershell
-# CLI ile hızlı sorgu — kullanıcı bazlı ACL uygulanır
-python scripts/dev_query.py ayse   "yıllık izin kaç gün"
-python scripts/dev_query.py zeynep "maaş bantları"     # kısıtlı sayfayı sadece zeynep görür
-python scripts/dev_query.py mehmet "maaş bantları"     # mehmet göremez → sonuçta yok
-
-# API
-uvicorn ragplatform.api.main:app --port 8000
-# POST http://localhost:8000/v1/retrieve  {"query": "...", "user_id": "ayse"}
-```
-
-### Eval ve model karşılaştırması
-
-```powershell
-# Golden set eval (hit@k / MRR / yetki-sınırı / latency)
-python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl
-
-# G-2 tam matris: bge-m3 vs Qwen3 × noop vs reranker + token verimliliği (GPU)
-python scripts/run_g2_matrix.py            # -> eval/results/g2-report.md
-
-# Raporu kayıtlı JSON'dan yeniden render et (GPU gerekmez)
-python scripts/g2_report.py
-```
-
-Golden set formatı ve kuralları: [eval/golden/README.md](eval/golden/README.md).
-Eval sonuçları `eval/results/` altına yazılır ve baseline takibi için commit'lenir.
-
-## 🧪 Testler
-
-```powershell
-pytest                              # birim testleri (servis/GPU gerektirmez) — 29 test
-python scripts/acl_leak_test.py     # entegrasyon: G-1 kabul kriteri (sızıntı = 0)
-python scripts/run_eval.py          # golden set eval: hit@k / MRR / yetki-sınırı
-```
-
-## 📁 Dizin yapısı
+## Project layout
 
 ```
 src/ragplatform/
-  acl/          OpenFGA istemcisi + erişim seti çözümü (ADR-4)
-  embeddings/   fake (test) · local (bge-m3/Qwen3, GPU) · openai-uyumlu (vLLM)
-  ingestion/    chunker (Faz 1'de Docling ile değişecek) + indexer
-  retrieval/    hybrid arama + RRF + reranker (noop/cross-encoder) + servis
-  api/          FastAPI retrieval servisi
-  hardware.py   GPU device/dtype çözümü (embedding + reranker paylaşır)
-infra/
-  db/init/      Postgres şeması (pgvector + turkish_unaccent FTS)
-  openfga/      yetki modeli (DSL + JSON)
-scripts/        seed · leak testi · dev CLI · eval · G-2 matris · token verimi
-eval/           golden set + sonuçlar (baseline takibi)
-tests/          birim testleri
-docs/           tasarım spec'leri
+  acl/          OpenFGA client, access-set resolution, store bootstrap
+  embeddings/   fake (tests) · local (GPU) · openai-compatible (vLLM)
+  ingestion/    chunking · indexing · corpus model · folder connector
+  retrieval/    hybrid search + RRF + reranker + service
+  api/          FastAPI retrieval service
+infra/          Postgres schema (pgvector + Turkish FTS), OpenFGA model
+scripts/        seed · leak test · eval · model matrix · folder ingest
+eval/           golden sets + committed result baselines
+examples/docs/  bring-your-own-docs template
 ```
 
-## 🚧 Bilinçli sınırlar (Faz 0)
+## Deliberate Phase 0 limits
 
-- **Reranker** bge-reranker-v2-m3 uygulandı ve ölçüldü (`RERANKER_PROVIDER=local`);
-  varsayılan `noop`. Üretimde ayrı vLLM/servis havuzuna taşınacak.
-- **`user_id`** istek gövdesinde — Faz 1'de OIDC token'dan gelecek.
-- **Generation yok** — bu servis yalnız retrieval; LLM, LiteLLM gateway arkasında Faz 1'de.
-- **Erişim seti cache'i** in-process TTL — Faz 1'de kalıcı materializasyon + izin senkronu.
-- **Sentetik korpus** — gerçek Confluence erişimi (G-0) gelene kadar gerçekçi Türkçe senaryo.
+- **No authentication** — `user_id` comes from the request body; OIDC is Phase 1.
+- **No generation** — retrieval only; the LLM sits behind a gateway in Phase 1.
+- **Reranker runs in-process** — moves to a served pool in Phase 1.
+- **Access set cached in-process** (short TTL) — durable materialization and
+  permission sync are Phase 2.
+- **Synthetic corpus** — real connectors (Confluence, Docling parsing) are Phase 1.
 
-## 🗺️ Yol haritası
+## Contributing
 
-Faz 1 (MVP: uçtan uca ACL'li + citation'lı Q&A) → Faz 2 (governance, güvenlik, eval
-kapısı, izin tazeliği) → Faz 3 (ölçek, cache, HA). Kilit mimari kararlar (ADR) ve faz
-çıkış kriterleri: **[PROJE-PLANI.md](PROJE-PLANI.md)**.
+See [CONTRIBUTING.md](CONTRIBUTING.md). The one rule: retrieval must never return
+content a user is not permitted to see — `python scripts/acl_leak_test.py` must
+stay at 0. Found a permission bypass? Please report it privately
+([SECURITY.md](SECURITY.md)).
+
+## License
+
+[Apache-2.0](LICENSE)
