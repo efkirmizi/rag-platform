@@ -59,7 +59,7 @@ jobs:
       # sabittir; düşerse FTS/RRF füzyonunda gerçek bir regresyon var demektir.
       - name: Golden set eval (authorization boundary + quality floor)
         run: |
-          python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl \
+          python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl --no-save \
             --min-mrr 0.60 --min-hit5 0.85 --min-category-hit5 faktuel=0.90
 
       - name: Bring-your-own-docs connector (validate bundled example)

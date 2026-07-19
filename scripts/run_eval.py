@@ -135,6 +135,11 @@ async def main() -> int:
     # Regresyon eşikleri (CI kapısı). ACL ihlali zaten koşulsuz başarısızlıktır;
     # bunlar retrieval KALİTESİNİN sessizce bozulmasını yakalar (ör. FTS/RRF
     # füzyonu kırılırsa `fake` embedding'le bile skor çöker).
+    parser.add_argument(
+        "--no-save",
+        action="store_true",
+        help="Sonuç JSON'unu yazma (CI/doğrulama koşuları baseline dizinini kirletmesin)",
+    )
     parser.add_argument("--min-mrr", type=float, default=None)
     parser.add_argument("--min-hit5", type=float, default=None)
     parser.add_argument(
@@ -183,12 +188,14 @@ async def main() -> int:
     scored = [i for i in summary["items"] if i["expected"]]
     per_item = summary["items"]
 
-    results_dir = ROOT / "eval" / "results"
-    results_dir.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    safe_model = embedder.name.replace("/", "-").replace("\\", "-").replace(":", "-")
-    out = results_dir / f"{stamp}_{safe_model}.json"
-    out.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    out = None
+    if not args.no_save:
+        results_dir = ROOT / "eval" / "results"
+        results_dir.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        safe_model = embedder.name.replace("/", "-").replace("\\", "-").replace(":", "-")
+        out = results_dir / f"{stamp}_{safe_model}.json"
+        out.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # --- Konsol raporu ---
     m = summary["metrics"]
@@ -236,7 +243,8 @@ async def main() -> int:
         print("\n❌ KALİTE REGRESYONU — eval BAŞARISIZ")
         return 1
 
-    print(f"\nSonuç dosyası: {out.relative_to(ROOT)}")
+    if out is not None:
+        print(f"\nSonuç dosyası: {out.relative_to(ROOT)}")
     return 0
 
 
