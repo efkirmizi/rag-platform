@@ -1,0 +1,57 @@
+{
+  "run_at": "2026-07-19T22:32:48+00:00",
+  "rows": 30000,
+  "spaces": 100,
+  "k": 10,
+  "cells": [
+    {
+      "selectivity": 1.0,
+      "allowed_spaces": 100,
+      "visible_chunks": 30000,
+      "mode": "off",
+      "recall": 1.0,
+      "min_recall": 1.0,
+      "mean_shortfall": 0,
+      "p95_ms": 121.5,
+      "index_used": true
+    },
+    {
+      "selectivity": 1.0,
+      "allowed_spaces": 100,
+      "visible_chunks": 30000,
+      "mode": "relaxed_order",
+      "recall": 1.0,
+      "min_recall": 1.0,
+      "mean_shortfall": 0,
+      "p95_ms": 124.4,
+      "index_used": true
+    },
+    {
+      "selectivity": 0.1,
+      "allowed_spaces": 10,
+      "visible_chunks": 3017,
+      "mode": "off",
+      "recall": 1.0,
+      "min_recall": 1.0,
+      "mean_shortfall": 0,
+      "p95_ms": 13.9,
+      "index_used": true
+    },
+    {
+      "selectivity": 0.1,
+      "allowed_spaces": 10,
+      "visible_chunks": 3017,
+      "mode": "relaxed_order",
+      "recall": 1.0,
+      "min_recall": 1.0,
+      "mean_shortfall": 0,
+      "p95_ms": 15.4,
+      "index_used": true
+    }
+  ],
+  "generate_s": 5.2,
+  "index_build_s": 10.8,
+  "table_size": "395 MB",
+  "index_size": "234 MB",
+  "chunks": 30000
+}

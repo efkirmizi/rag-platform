@@ -33,9 +33,11 @@ async def index_page(
     content_md: str,
     url: str | None = None,
     is_restricted: bool = False,
+    max_chars: int = 1600,
+    overlap: int = 0,
 ) -> int:
     """Sayfayı chunk'layıp embed'leyerek indexler; chunk sayısını döner."""
-    chunks = chunk_markdown(content_md)
+    chunks = chunk_markdown(content_md, max_chars=max_chars, overlap=overlap)
     if not chunks:
         return 0
     # Bağlam başlığı: sayfa başlığı + heading yolu chunk metnine gömülür.

@@ -50,6 +50,32 @@ def test_oversized_paragraph_never_splits_mid_word():
     assert " ".join(" ".join(c.content.split()) for c in chunks).split() == words
 
 
+def test_overlap_shares_text_between_consecutive_chunks():
+    paras = ["\n\n".join([f"paragraf {i} " + "dolgu " * 30 for i in range(6)])]
+    text = "## Başlık\n" + paras[0]
+    without = chunk_markdown(text, max_chars=400, overlap=0)
+    with_ov = chunk_markdown(text, max_chars=400, overlap=120)
+
+    assert len(with_ov) >= len(without)
+    # ardışık chunk'lar ortak metin paylaşmalı
+    shared = [
+        bool(set(a.content.split()[-8:]) & set(b.content.split()[:12]))
+        for a, b in zip(with_ov, with_ov[1:])
+    ]
+    assert any(shared), "overlap ile ardışık chunk'lar örtüşmeli"
+
+
+def test_overlap_respects_max_chars():
+    text = "## Başlık\n" + "\n\n".join(["kelime " * 40 for _ in range(8)])
+    for c in chunk_markdown(text, max_chars=300, overlap=100):
+        assert len(c.content) <= 300
+
+
+def test_overlap_zero_is_unchanged_default():
+    text = "## Başlık\n" + "\n\n".join(["kelime " * 40 for _ in range(5)])
+    assert chunk_markdown(text, max_chars=300) == chunk_markdown(text, max_chars=300, overlap=0)
+
+
 def test_unbreakable_token_still_splits():
     """Boşluksuz dev token (blob/URL) sert kesilir — döngü ilerlemek zorunda."""
     text = "## Başlık\n" + "x" * 900

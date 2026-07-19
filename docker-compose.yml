@@ -1,6 +1,10 @@
 services:
   postgres:
     image: pgvector/pgvector:pg16
+    # Docker varsayılanı /dev/shm = 64MB. Paralel index kurulumu (HNSW dahil)
+    # dinamik shared memory kullanır ve bu sınırda "No space left on device"
+    # ile düşer. Ölçek arttıkça gerçek bir kısıt — bkz. scripts/scale_test.py
+    shm_size: 1gb
     environment:
       POSTGRES_USER: rag
       POSTGRES_PASSWORD: ragpass

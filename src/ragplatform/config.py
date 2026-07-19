@@ -31,6 +31,14 @@ class Settings(BaseSettings):
     reranker_provider: str = "noop"
     reranker_model: str = ""
 
+    # none: /v1/answer kapalı (varsayılan — bu servis Faz 0'da yalnız retrieval).
+    # echo: model gerektirmez (test/CI) · local: yerel GPU · openai: vLLM endpoint.
+    generation_provider: str = "none"
+    generation_model: str = ""
+    generation_endpoint: str = ""
+    generation_api_key: str = ""
+    generation_max_tokens: int = 512
+
     acl_cache_ttl_seconds: int = 60
 
 

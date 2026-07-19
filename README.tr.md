@@ -123,6 +123,31 @@ Yükleyici referans bütünlüğünü baştan doğrular (tanımsız space, tanı
 tekrar eden anahtar, kimsenin göremediği space) — hatalar sessiz yanlış izin
 yerine anlaşılır mesaj olarak çıkar. Çalışan örnek: [`examples/docs/`](examples/docs).
 
+## Citation'lı cevap (opsiyonel)
+
+Varsayılan yalnız retrieval'dır; üretim isteğe bağlı açılır. Açıldığında servis
+**yalnız soruyu soran kullanıcının görmeye yetkili olduğu** içerikten cevap üretir:
+
+```powershell
+# echo: model gerektirmez (test) · local: yerel GPU · openai: vLLM endpoint
+$env:GENERATION_PROVIDER='local'; $env:GENERATION_MODEL='Qwen/Qwen2.5-1.5B-Instruct'
+uvicorn ragplatform.api.main:app --port 8000
+
+curl -X POST localhost:8000/v1/answer -H 'Content-Type: application/json' `
+  -d '{"query":"yıllık izin kaç gün","user_id":"ayse"}'
+```
+
+Cevapla birlikte gerçekten kullanılan citation'lar döner. Üç özellik önemli:
+
+- **ACL yine belirleyici.** Cevap yalnız retrieval'ın döndürdüğü chunk'lardan
+  üretilir, retrieval de izin filtresini SQL'de uygular. Kullanıcının görebileceği
+  hiçbir şey yoksa model hiç çağrılmaz.
+- **Getirilen metin talimat değil, veridir** (ADR-8). Kaynaklar sınırlayıcılarla
+  sarılır ve sistem talimatı içlerindeki komutların yok sayılacağını söyler;
+  servis hiç tool çağırmadığı için zehirli doküman tetikleyecek bir şey bulamaz.
+- **Uydurulan atıflar gizlenmez** — gerçek bir kaynağa karşılık gelmeyen atıf
+  numaraları `unsupported_citations` alanında raporlanır.
+
 ## Nasıl çalışır
 
 ```mermaid
@@ -190,11 +215,13 @@ ihlali sıfır.
 ## Testler
 
 ```powershell
-pytest                                                        # 49 birim testi, servis gerekmez
+pytest                                                        # 75 birim testi, servis gerekmez
 python scripts/acl_leak_test.py                               # ACL kapısı — 0 olmalı
-python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl   # eval kapısı
+python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl   # eval kapısı (+ --min-mrr vb.)
 python scripts/smoke_api.py                                   # çalışan API'ye uçtan uca ACL testi
-python scripts/run_g2_matrix.py                               # tam model matrisi (GPU)
+python scripts/run_g2_matrix.py                               # embedding × reranker matrisi (GPU)
+python scripts/run_chunking_matrix.py                         # chunk boyutu / overlap matrisi (GPU)
+python scripts/scale_test.py --rows 100000                    # ölçekte ACL-filtreli ANN ⚠️ ağır
 ```
 
 CI; lint, birim testleri, ACL sızıntı testi, eval kapısı ve connector
@@ -219,7 +246,8 @@ examples/docs/  kendi-dokümanını-getir şablonu
 ## Bilinçli Faz 0 sınırları
 
 - **Kimlik doğrulama yok** — `user_id` istek gövdesinden gelir; OIDC Faz 1'de.
-- **Generation yok** — yalnız retrieval; LLM Faz 1'de gateway arkasında.
+- **Üretim asgari ve opsiyonel** — tek turlu, streaming yok, sorgu yeniden
+  yazma yok; üretimde LLM LiteLLM gateway'i arkasında olmalı (Faz 1).
 - **Reranker in-process** — Faz 1'de ayrı servis havuzuna taşınır.
 - **Erişim seti in-process cache** (kısa TTL) — kalıcı materializasyon ve izin
   senkronu Faz 2'de.
