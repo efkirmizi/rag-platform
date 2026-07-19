@@ -97,6 +97,7 @@ python scripts/ingest_folder.py --docs ./examples/docs --reset   # indexle
 belgelerim/
   permissions.json          # space'ler, gruplar, kim neyi görür
   elkitabi/oryantasyon.md   # front-matter'lı markdown
+  elkitabi/yonetmelik.pdf   # PDF/DOCX/HTML → Docling  (pip install -e ".[docs]")
   eng/dagitim.md
 ```
 
@@ -109,15 +110,24 @@ restricted_to: leadership     # opsiyonel: sayfayı space içinde kısıtlar
 Bant bilgileri gizlidir...
 ```
 
-`permissions.json` kurum yapısını tanımlar:
+`permissions.json` kurum yapısını tanımlar. `path_rules` metadata'yı dizine göre
+atar — PDF ve DOCX front-matter taşıyamadığı için gerekli (en uzun eşleşen önek
+kazanır, böylece genel kuralın üstüne istisna yazılabilir):
 
 ```json
 {
   "spaces":        {"HANDBOOK": "El Kitabı", "ENG": "Mühendislik"},
   "groups":        {"everyone": ["alice","bob"], "leadership": ["alice"]},
-  "space_viewers": {"HANDBOOK": ["everyone"], "ENG": ["engineering"]}
+  "space_viewers": {"HANDBOOK": ["everyone"], "ENG": ["engineering"]},
+
+  "path_rules": [
+    {"prefix": "elkitabi/",       "space": "HANDBOOK"},
+    {"prefix": "elkitabi/gizli/", "space": "HANDBOOK", "restricted_to": "leadership"}
+  ]
 }
 ```
+
+İkisi birden geçerliyse front-matter kuralı ezer.
 
 Yükleyici referans bütünlüğünü baştan doğrular (tanımsız space, tanımsız grup,
 tekrar eden anahtar, kimsenin göremediği space) — hatalar sessiz yanlış izin

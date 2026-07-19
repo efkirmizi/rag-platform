@@ -79,10 +79,15 @@ async def setup(conn, clusters: int, rng: random.Random) -> list[list[float]]:
             is_restricted boolean NOT NULL DEFAULT false
         )""")
     await conn.execute("CREATE INDEX ON scale.pages (space_key)")
+    # space_key/is_restricted BİLEREK iki yerde: `page_id` üzerinden JOIN'li
+    # (mevcut şema) ile chunks'a denormalize edilmiş hâli aynı veri üzerinde
+    # karşılaştırılabilsin diye. Tek değişken sorgu ŞEKLİ olur.
     await conn.execute(f"""
         CREATE TABLE scale.chunks (
             id bigserial PRIMARY KEY,
             page_id bigint NOT NULL REFERENCES scale.pages(id),
+            space_key text NOT NULL,
+            is_restricted boolean NOT NULL DEFAULT false,
             embedding vector({DIM})
         )""")
     # Küme merkezleri: gerçek embedding'ler konuya göre kümelenir; düzgün
@@ -121,8 +126,8 @@ async def generate(conn, rows: int, spaces: int, clusters: int, noise: float) ->
     # ölçülür (ölçüm artefaktı). Değişken f gerçek mesafe dağılımı yaratır.
     await conn.execute(
         f"""
-        INSERT INTO scale.chunks(page_id, embedding)
-        SELECT s.pid, c.v + nz.noise
+        INSERT INTO scale.chunks(page_id, space_key, is_restricted, embedding)
+        SELECT s.pid, pg.space_key, pg.is_restricted, c.v + nz.noise
         FROM (
             -- Sayfa ve küme BAĞIMSIZ rastgele atanır. Modüler aritmetikle
             -- (g % pages / g % clusters) atanırsa moduller birbirinin katı
@@ -134,6 +139,7 @@ async def generate(conn, rows: int, spaces: int, clusters: int, noise: float) ->
                    floor(random() * {clusters})::int          AS cid
             FROM generate_series(1, $1) g
         ) s
+        JOIN scale.pages pg ON pg.id = s.pid
         JOIN scale.centers c ON c.id = s.cid
         CROSS JOIN LATERAL (
             -- Ölçek çarpanı fx.f LATERAL'in KENDİ FROM'unda üretilir: aggregate
@@ -168,7 +174,9 @@ async def generate(conn, rows: int, spaces: int, clusters: int, noise: float) ->
     return time.perf_counter() - t0
 
 
-async def build_index(conn, maintenance_mem: str, parallel_workers: int = 0) -> float:
+async def build_index(
+    conn, maintenance_mem: str, parallel_workers: int = 0, space_index: bool = False
+) -> float:
     """HNSW index'i kurar.
 
     maintenance_work_mem KRİTİK: docker varsayılanı 64MB'dır ve 200k × 1024
@@ -189,12 +197,15 @@ async def build_index(conn, maintenance_mem: str, parallel_workers: int = 0) -> 
         "CREATE INDEX scale_chunks_hnsw ON scale.chunks "
         "USING hnsw (embedding vector_cosine_ops)"
     )
+    if space_index:
+        await conn.execute("CREATE INDEX scale_chunks_space ON scale.chunks (space_key)")
     await conn.execute("ANALYZE scale.chunks")
     await conn.execute("ANALYZE scale.pages")
     return time.perf_counter() - t0
 
 
-_SQL = """
+# Mevcut şema: yetki filtresi JOIN'lenen `pages` tablosundan gelir.
+_SQL_JOINED = """
 SELECT c.id
 FROM scale.chunks c
 JOIN scale.pages p ON p.id = c.page_id
@@ -203,8 +214,22 @@ ORDER BY c.embedding <=> $1::vector
 LIMIT $3
 """
 
+# Denormalize: filtre ile vektör AYNI tabloda → planlayıcı JOIN'siz bir index
+# yolu değerlendirebilir. Ölçek raporunun önerdiği deney bu.
+_SQL_DENORM = """
+SELECT c.id
+FROM scale.chunks c
+WHERE c.space_key = ANY($2::text[])
+ORDER BY c.embedding <=> $1::vector
+LIMIT $3
+"""
 
-async def _topk(conn, qvec: str, allowed: list[str], k: int, mode: str) -> tuple[list[int], float]:
+SHAPES = {"joined": _SQL_JOINED, "denorm": _SQL_DENORM}
+
+
+async def _topk(
+    conn, qvec: str, allowed: list[str], k: int, mode: str, shape: str = "joined"
+) -> tuple[list[int], float]:
     """mode: 'exact' | 'off' | 'relaxed_order' | bunların '+forced' hâli.
 
     '+forced' → enable_seqscan=off: planlayıcı filtreli sorguda seq scan'i
@@ -222,13 +247,13 @@ async def _topk(conn, qvec: str, allowed: list[str], k: int, mode: str) -> tuple
             if forced:
                 await conn.execute("SET LOCAL enable_seqscan = off")
         t0 = time.perf_counter()
-        rows = await conn.fetch(_SQL, qvec, allowed, k)
+        rows = await conn.fetch(SHAPES[shape], qvec, allowed, k)
         ms = (time.perf_counter() - t0) * 1000
     return [r["id"] for r in rows], ms
 
 
-async def _uses_index(conn, qvec: str, allowed: list[str], k: int) -> bool:
-    plan = await conn.fetch("EXPLAIN " + _SQL, qvec, allowed, k)
+async def _uses_index(conn, qvec: str, allowed: list[str], k: int, shape: str) -> bool:
+    plan = await conn.fetch("EXPLAIN " + SHAPES[shape], qvec, allowed, k)
     return any("scale_chunks_hnsw" in r[0] for r in plan)
 
 
@@ -242,6 +267,24 @@ async def main() -> int:
     ap.add_argument("--noise", type=float, default=0.3, help="gürültü NORMU (merkezler birim)")
     ap.add_argument("--selectivity", type=float, nargs="*", default=[1.0, 0.1, 0.01])
     ap.add_argument("--keep", action="store_true", help="scale şemasını bırak")
+    ap.add_argument(
+        "--shapes",
+        nargs="*",
+        default=["joined", "denorm"],
+        choices=list(SHAPES),
+        help="joined: filtre pages'ten JOIN ile · denorm: space_key chunks'ta",
+    )
+    ap.add_argument(
+        "--modes",
+        nargs="*",
+        default=["off", "relaxed_order"],
+        help="hnsw.iterative_scan modları; '+forced' eki enable_seqscan=off ekler",
+    )
+    ap.add_argument(
+        "--space-index",
+        action="store_true",
+        help="chunks(space_key) üzerine btree ekle (denorm için planlayıcıya seçenek)",
+    )
     ap.add_argument(
         "--maintenance-mem",
         default="1GB",
@@ -271,7 +314,7 @@ async def main() -> int:
         print(f"      {n:,} chunk / {gen_s:.1f}s")
 
         print(f"[3/4] HNSW index kuruluyor (maintenance_work_mem={args.maintenance_mem})...")
-        idx_s = await build_index(conn, args.maintenance_mem)
+        idx_s = await build_index(conn, args.maintenance_mem, space_index=args.space_index)
         size = await conn.fetchval("SELECT pg_size_pretty(pg_total_relation_size('scale.chunks'))")
         isize = await conn.fetchval(
             "SELECT pg_size_pretty(pg_relation_size('scale.scale_chunks_hnsw'))"
@@ -298,39 +341,43 @@ async def main() -> int:
                 "WHERE p.space_key = ANY($1::text[])",
                 allowed,
             )
-            used_idx = await _uses_index(conn, queries[0], allowed, args.k)
+            for shape in args.shapes:
+                used_idx = await _uses_index(conn, queries[0], allowed, args.k, shape)
 
-            # Tam (brute-force) referans sorgu başına BİR kez hesaplanır; iki mod
-            # da aynı referansa göre puanlanır (hem doğru hem iki kat hızlı).
-            exacts = [(await _topk(conn, q, allowed, args.k, "exact"))[0] for q in queries]
+                # Tam (brute-force) referans sorgu başına BİR kez hesaplanır; tüm
+                # modlar aynı referansa göre puanlanır (hem doğru hem hızlı).
+                exacts = [
+                    (await _topk(conn, q, allowed, args.k, "exact", shape))[0]
+                    for q in queries
+                ]
 
-            for mode in ("off", "relaxed_order", "off+forced", "relaxed_order+forced"):
-                recalls, lats, shortfalls = [], [], []
-                for q, exact in zip(queries, exacts):
-                    got, ms = await _topk(conn, q, allowed, args.k, mode)
-                    lats.append(ms)
-                    shortfalls.append(args.k - len(got))
-                    recalls.append(
-                        len(set(got) & set(exact)) / len(exact) if exact else 1.0
+                for mode in args.modes:
+                    recalls, lats, shortfalls = [], [], []
+                    for q, exact in zip(queries, exacts):
+                        got, ms = await _topk(conn, q, allowed, args.k, mode, shape)
+                        lats.append(ms)
+                        shortfalls.append(args.k - len(got))
+                        recalls.append(
+                            len(set(got) & set(exact)) / len(exact) if exact else 1.0
+                        )
+                    cell = {
+                        "selectivity": sel,
+                        "allowed_spaces": take,
+                        "visible_chunks": visible,
+                        "shape": shape,
+                        "mode": mode,
+                        "recall": round(statistics.mean(recalls), 4),
+                        "min_recall": round(min(recalls), 4),
+                        "mean_shortfall": round(statistics.mean(shortfalls), 2),
+                        "p95_ms": round(sorted(lats)[max(0, int(len(lats) * 0.95) - 1)], 1),
+                        "index_used": used_idx,
+                    }
+                    report["cells"].append(cell)
+                    print(
+                        f"  sel={sel:<6} görünür={visible:>8,} {shape:<7} {mode:<20} "
+                        f"recall={cell['recall']:.3f} eksik={cell['mean_shortfall']:.1f}/{args.k} "
+                        f"p95={cell['p95_ms']:>7.1f}ms index={used_idx}"
                     )
-                cell = {
-                    "selectivity": sel,
-                    "allowed_spaces": take,
-                    "visible_chunks": visible,
-                    "mode": mode,
-                    "recall": round(statistics.mean(recalls), 4),
-                    "min_recall": round(min(recalls), 4),
-                    "mean_shortfall": round(statistics.mean(shortfalls), 2),
-                    "p95_ms": round(sorted(lats)[max(0, int(len(lats) * 0.95) - 1)], 1),
-                    "index_used": used_idx,
-                }
-                report["cells"].append(cell)
-                print(
-                    f"  sel={sel:<6} görünür={visible:>8,} mode={mode:<14} "
-                    f"recall={cell['recall']:.3f} (min {cell['min_recall']:.3f}) "
-                    f"eksik={cell['mean_shortfall']:.1f}/{args.k} "
-                    f"p95={cell['p95_ms']:.1f}ms index={used_idx}"
-                )
 
         if not args.keep:
             await conn.execute("DROP SCHEMA scale CASCADE")

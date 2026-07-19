@@ -11,5 +11,11 @@
   "space_viewers": {
     "HANDBOOK": ["everyone"],
     "ENG": ["engineering"]
-  }
+  },
+
+  "path_rules": [
+    { "prefix": "handbook/", "space": "HANDBOOK" },
+    { "prefix": "eng/", "space": "ENG" },
+    { "prefix": "handbook/private/", "space": "HANDBOOK", "restricted_to": "leadership" }
+  ]
 }

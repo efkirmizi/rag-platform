@@ -73,10 +73,36 @@ başladığında doğru davranış hazır olacak.
    bu bir *toplam korpus* değil *kullanıcı başına görünürlük* eşiği. Geniş
    yetkili kullanıcılar (plan §G-1: "50+ space'li kullanıcı dahil test edilecek")
    belirleyici olacak.
-3. **Denenmesi gereken bir sonraki adım**: `space_key`'i `chunks` tablosuna
-   denormalize edip filtre ile vektörü aynı tabloya almak; böylece planlayıcı
-   JOIN'siz bir index yolu değerlendirebilir (kısmi/bileşik index seçenekleri
-   açılır). Bu test edilmeden Qdrant migrasyonu düşünülmemeli.
+3. **Denormalizasyon denendi — İŞE YARAMADI** (aşağıdaki Bulgu 4).
+
+## Bulgu 4 — Denormalizasyon daha YAVAŞ (negatif sonuç)
+
+Rapordaki öneri üzerine `space_key` `chunks` tablosuna kopyalandı ve filtre
+JOIN'siz uygulandı (aynı veri, aynı HNSW index, tek değişken sorgu şekli;
+`chunks(space_key)` üzerine btree de eklendi):
+
+| görünür satır | JOIN'li p95 | denormalize p95 | fark |
+|---:|---:|---:|---|
+| 100.000 | 468 ms | 748 ms | %60 daha yavaş |
+| 24.901 | **163 ms** (HNSW kullanıldı) | 304 ms (kullanılmadı) | %86 |
+| 10.083 | 61 ms | 108 ms | %76 |
+| 3.004 | 22 ms | 44 ms | %102 |
+| 1.011 | 13 ms | 21 ms | %58 |
+
+Recall her iki şekilde de 1.000. **Sezginin tersine, JOIN bir maliyet değil bir
+optimizasyon:** Postgres önce küçük `pages` tablosunu (5.000 satır, space_key
+index'li) filtreliyor ve chunks'a bunu tamsayı `page_id` üzerinden hash join
+olarak taşıyor. Denormalize şekilde ise her chunk satırı için
+`space_key = ANY(<400 elemanlı text[]>)` değerlendiriliyor — satır başına metin
+dizisi araması, tamsayı hash probe'undan belirgin şekilde pahalı.
+
+**Sonuç: mevcut şema korunmalı.** Bu yol kapandı.
+
+⚠️ Dar kapsamlı bir çekince: test edilen denormalizasyon `text` space_key +
+`= ANY(text[])` biçimiydi. Darboğaz büyük olasılıkla metin karşılaştırması;
+tamsayı `space_id` + `= ANY(int[])` (ya da rol bazlı bitmap) farklı sonuç
+verebilir. Denormalizasyon yeniden gündeme gelirse **metin değil tamsayı**
+kimlikle denenmeli.
 
 ## Yeniden üretim
 
