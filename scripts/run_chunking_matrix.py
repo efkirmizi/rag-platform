@@ -130,6 +130,25 @@ async def main() -> int:
     path = ROOT / "eval" / "results" / "chunking-matrix.json"
     path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    # --- Deneyin geçerliliği: parametreler gerçekten devreye girdi mi? ---
+    # Tüm yapılandırmalar aynı sayıda chunk ürettiyse metin hiç bölünmemiştir:
+    # max_chars sınırı bağlamamış, dolayısıyla overlap de hiç tetiklenmemiştir.
+    # Bu durumda "fark yok" sonucu chunking hakkında BİR ŞEY SÖYLEMEZ — deney
+    # boştur. Sessizce yanlış karara varmamak için açıkça uyar.
+    distinct_counts = {r["chunks"] for r in rows}
+    out["conclusive"] = len(distinct_counts) > 1
+    if not out["conclusive"]:
+        print(
+            f"\n⚠️  SONUÇSUZ: tüm yapılandırmalar aynı {rows[0]['chunks']} chunk'ı üretti.\n"
+            "   Korpustaki bölümler max_chars sınırının altında kaldığı için metin hiç\n"
+            "   bölünmedi; overlap de hiç devreye girmedi. Bu koşu chunking hakkında\n"
+            "   kanıt üretmez — parametreleri ölçmek için daha uzun dokümanlar gerekir\n"
+            "   (gerçek Confluence sayfaları bu sentetik sayfalardan çok daha uzundur).\n"
+            "   Karar G-0 pilot içeriğine ertelenmeli."
+        )
+        print(f"Sonuç dosyası: {path.relative_to(ROOT)}")
+        return 0
+
     print(
         f"\nBaseline (1600/0) MRR={base['mrr']:.3f} · "
         f"En iyi ({best['max_chars']}/{best['overlap']}) MRR={best['mrr']:.3f} "
