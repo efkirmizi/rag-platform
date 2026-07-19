@@ -10,12 +10,21 @@ class OpenAICompatEmbeddings(EmbeddingProvider):
     bu istemci Faz 0'da G-2 model karşılaştırması için de kullanılır.
     """
 
-    def __init__(self, endpoint: str, model: str, dim: int, api_key: str = ""):
+    def __init__(
+        self,
+        endpoint: str,
+        model: str,
+        dim: int,
+        api_key: str = "",
+        *,
+        transport: httpx.AsyncBaseTransport | None = None,
+    ):
+        """transport: yalnız test için (httpx.MockTransport) — üretimde None."""
         self._base = endpoint.rstrip("/")
         self.name = model
         self.dim = dim
         headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
-        self._http = httpx.AsyncClient(timeout=60.0, headers=headers)
+        self._http = httpx.AsyncClient(timeout=60.0, headers=headers, transport=transport)
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
         r = await self._http.post(
