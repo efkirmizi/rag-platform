@@ -132,6 +132,18 @@ async def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--golden", default=str(ROOT / "eval" / "golden" / "golden_v1.jsonl"))
     parser.add_argument("--top-k", type=int, default=8)
+    # Regresyon eşikleri (CI kapısı). ACL ihlali zaten koşulsuz başarısızlıktır;
+    # bunlar retrieval KALİTESİNİN sessizce bozulmasını yakalar (ör. FTS/RRF
+    # füzyonu kırılırsa `fake` embedding'le bile skor çöker).
+    parser.add_argument("--min-mrr", type=float, default=None)
+    parser.add_argument("--min-hit5", type=float, default=None)
+    parser.add_argument(
+        "--min-category-hit5",
+        action="append",
+        default=[],
+        metavar="KATEGORI=DEGER",
+        help="Örn: --min-category-hit5 faktuel=0.90 (birden çok kez verilebilir)",
+    )
     args = parser.parse_args()
 
     items = [
@@ -200,6 +212,30 @@ async def main() -> int:
             print("  ❌ " + v)
         print("\n❌ ACL İHLALİ — eval BAŞARISIZ")
         return 1
+
+    # --- Kalite regresyon eşikleri ---
+    failed: list[str] = []
+    if args.min_mrr is not None and m["mrr"] < args.min_mrr:
+        failed.append(f"MRR {m['mrr']:.3f} < eşik {args.min_mrr}")
+    if args.min_hit5 is not None and m["hit@5"] < args.min_hit5:
+        failed.append(f"hit@5 {m['hit@5']:.3f} < eşik {args.min_hit5}")
+    for spec in args.min_category_hit5:
+        cat, _, raw = spec.partition("=")
+        if not raw:
+            print(f"\n❌ Geçersiz --min-category-hit5 '{spec}' (KATEGORI=DEGER bekleniyor)")
+            return 2
+        stats = summary["per_category"].get(cat)
+        if stats is None:
+            failed.append(f"kategori '{cat}' sette yok (eşik doğrulanamadı)")
+        elif stats["hit@5"] < float(raw):
+            failed.append(f"{cat} hit@5 {stats['hit@5']:.3f} < eşik {raw}")
+
+    if failed:
+        for f in failed:
+            print("  ❌ " + f)
+        print("\n❌ KALİTE REGRESYONU — eval BAŞARISIZ")
+        return 1
+
     print(f"\nSonuç dosyası: {out.relative_to(ROOT)}")
     return 0
 

@@ -39,6 +39,22 @@ def _sections(text: str):
         yield path, "\n".join(buf).strip()
 
 
+def _flush_oversized(chunks: list["Chunk"], path: str, current: str, max_chars: int) -> str:
+    """max_chars'ı aşan metinden bir parça koparıp ekler; kalanı döner.
+
+    Kesim boşlukta yapılır — kelimeyi ortadan bölmek hem FTS token'ını hem
+    embedding anlamını bozar ("politikas" gibi yarım kelime hiçbir şeyle
+    eşleşmez). Boşluksuz dev bir token varsa (base64 blob, uzun URL) mecburen
+    sert kesilir; aksi hâlde döngü ilerlemez.
+    """
+    window = current[: max_chars + 1]
+    cut = max(window.rfind(" "), window.rfind("\n"), window.rfind("\t"))
+    if cut <= 0:
+        cut = max_chars
+    chunks.append(Chunk(path, current[:cut].rstrip()))
+    return current[cut:].lstrip()
+
+
 def chunk_markdown(text: str, max_chars: int = 1600) -> list[Chunk]:
     """Bölüm içindeki paragrafları max_chars sınırına kadar paketler.
 
@@ -57,8 +73,7 @@ def chunk_markdown(text: str, max_chars: int = 1600) -> list[Chunk]:
             else:
                 current = f"{current}\n\n{para}" if current else para
             while len(current) > max_chars:
-                chunks.append(Chunk(path, current[:max_chars]))
-                current = current[max_chars:].lstrip()
+                current = _flush_oversized(chunks, path, current, max_chars)
         if current:
             chunks.append(Chunk(path, current))
     return chunks

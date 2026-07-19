@@ -54,8 +54,13 @@ jobs:
       - name: ACL leak test (must be 0 leaks)
         run: python scripts/acl_leak_test.py
 
-      - name: Golden set eval (fails on any authorization-boundary violation)
-        run: python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl
+      # Eşikler `fake` embedding baseline'ının (MRR 0.664 · hit@5 0.919 ·
+      # faktuel 0.950) güvenli altında. fake deterministik olduğundan bu sayılar
+      # sabittir; düşerse FTS/RRF füzyonunda gerçek bir regresyon var demektir.
+      - name: Golden set eval (authorization boundary + quality floor)
+        run: |
+          python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl \
+            --min-mrr 0.60 --min-hit5 0.85 --min-category-hit5 faktuel=0.90
 
       - name: Bring-your-own-docs connector (validate bundled example)
         run: python scripts/ingest_folder.py --docs examples/docs --check

@@ -36,6 +36,28 @@ def test_oversized_single_paragraph_is_split():
     assert sum(len(c.content) for c in chunks) >= 3900
 
 
+def test_oversized_paragraph_never_splits_mid_word():
+    """Kelime ortasından kesmek FTS token'ını ve embedding anlamını bozar."""
+    words = ["politikası", "çalışan", "izin", "yönetim", "değerlendirme"] * 120
+    text = "## Başlık\n" + " ".join(words)
+    chunks = chunk_markdown(text, max_chars=200)
+
+    assert len(chunks) > 1
+    assert all(len(c.content) <= 200 for c in chunks)
+    # Her parça yalnız tam kelimelerden oluşmalı ve sıra korunmalı
+    for c in chunks:
+        assert all(w in words for w in c.content.split())
+    assert " ".join(" ".join(c.content.split()) for c in chunks).split() == words
+
+
+def test_unbreakable_token_still_splits():
+    """Boşluksuz dev token (blob/URL) sert kesilir — döngü ilerlemek zorunda."""
+    text = "## Başlık\n" + "x" * 900
+    chunks = chunk_markdown(text, max_chars=200)
+    assert all(len(c.content) <= 200 for c in chunks)
+    assert "".join(c.content for c in chunks) == "x" * 900
+
+
 def test_no_heading_content():
     chunks = chunk_markdown("Başlıksız düz metin paragrafı.")
     assert len(chunks) == 1
