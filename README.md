@@ -3,26 +3,34 @@
 ACL'e tam saygılı, kaynak gösteren, izlenebilir kurumsal RAG platformu.
 Detaylı yol haritası ve mimari kararlar için: **[PROJE-PLANI.md](PROJE-PLANI.md)**
 
-## Şu anki durum: Faz 0 — G-1 PoC
+## Şu anki durum: Faz 0 — G-1 ✅ · G-2 ✅ (ADR-3 kapandı: bge-m3)
 
-Bu repo şu an planın en kritik doğrulamasını içerir: **ACL-filtered hybrid retrieval**.
+Bu repo planın en kritik doğrulamasını içerir: **ACL-filtered hybrid retrieval** (G-1),
+ve embedding/reranker seçimini (G-2 → ADR-3).
 
 - **ACL pre-filter (ADR-4):** OpenFGA `ListObjects` → kullanıcının erişim seti →
   SQL'de metadata filtresi. Post-filter yok; izinsiz içerik aday listesine giremez.
 - **Hybrid arama:** pgvector HNSW (dense) + Postgres FTS `turkish_unaccent` (lexical),
-  RRF füzyonu.
-- **Sentetik veri:** Gerçek Confluence erişimi henüz yok → 3 space, 15 sayfa,
-  6 kullanıcı, 7 gruplu gerçekçi Türkçe kurum senaryosu (`scripts/synthetic_corpus.py`).
-- **Embedding:** Varsayılan `fake` (deterministik, sadece ACL/latency testi için).
-  Gerçek model: `local` (sentence-transformers, CPU — G-2 denemeleri) veya
-  `openai` (vLLM/OpenAI-uyumlu endpoint — üretim hedefi).
+  RRF füzyonu, ardından cross-encoder reranker (bge-reranker-v2-m3).
+- **Sentetik veri:** Gerçek Confluence erişimi henüz yok → 3 space, **40 sayfa**
+  (confusable kümeler), 6 kullanıcı, 7 gruplu gerçekçi Türkçe kurum senaryosu
+  (`scripts/synthetic_corpus.py`).
+- **Embedding (ADR-3 ✅ bge-m3):** Varsayılan `fake` (deterministik, sadece ACL/latency
+  testi için). Seçilen model: `local` (sentence-transformers, **GPU otomatik**) veya
+  `openai` (vLLM/OpenAI-uyumlu endpoint — üretim hedefi). Karşılaştırma raporu:
+  [`eval/results/g2-report.md`](eval/results/g2-report.md).
 
   ```powershell
-  # bge-m3 ile yeniden index + eval (ilk koşuda ~2.3GB model iner):
+  # G-2 karşılaştırma matrisi: bge-m3 vs Qwen3 × noop vs reranker + token verimi
+  # (GPU'da otomatik fp16; ilk koşuda modeller iner ~3.4GB):
   pip install -e ".[local]"
+  python scripts/run_g2_matrix.py          # -> eval/results/g2-report.md
+
+  # veya tek model ile index + eval:
   $env:EMBEDDINGS_PROVIDER='local'; $env:EMBEDDINGS_MODEL='BAAI/bge-m3'
+  $env:RERANKER_PROVIDER='local'           # cross-encoder reranker'ı aç
   python scripts/seed_synthetic.py
-  python scripts/run_eval.py
+  python scripts/run_eval.py --golden eval/golden/golden_v2.jsonl
   ```
 
 ## Kurulum
@@ -87,7 +95,9 @@ tests/          birim testleri
 
 ## Bilinçli sınırlar (Faz 0)
 
-- Reranker `Noop` — Faz 1'de bge-reranker-v2-m3 bağlanacak (arayüz hazır).
+- Reranker: bge-reranker-v2-m3 cross-encoder uygulandı ve G-2'de ölçüldü
+  (`RERANKER_PROVIDER=local`); varsayılan hâlâ `noop`. Üretimde ayrı vLLM/servis
+  havuzuna taşınacak (şimdilik in-process, yerel model).
 - `user_id` istek gövdesinde — Faz 1'de OIDC token'dan gelecek.
 - Generation (LLM cevabı) yok — bu servis yalnız retrieval; LLM, LiteLLM gateway
   arkasına Faz 1'de eklenecek.

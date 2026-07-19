@@ -1,0 +1,45 @@
+{"id": "f01", "user_id": "ayse", "question": "Yıllık izin kaç iş günü?", "expected_page_keys": ["ik-yillik-izin"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f02", "user_id": "mehmet", "question": "VPN bağlantısında TR-4021 hata kodu ne anlama geliyor?", "expected_page_keys": ["eng-vpn"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f03", "user_id": "can", "question": "Masraf beyanı kaç gün içinde yapılmalı?", "expected_page_keys": ["fin-masraf"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f04", "user_id": "mehmet", "question": "Üretim dağıtım pencereleri hangi saatler arasında?", "expected_page_keys": ["eng-dagitim"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f05", "user_id": "deniz", "question": "SEV1 olayında olay kanalı kaç dakika içinde açılır?", "expected_page_keys": ["eng-olay-mudahale"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f06", "user_id": "can", "question": "Satın alma onay limitleri nedir?", "expected_page_keys": ["fin-satinalma"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f07", "user_id": "ayse", "question": "İşe alım süreci kaç aşamadan oluşuyor?", "expected_page_keys": ["ik-ise-alim"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f08", "user_id": "can", "question": "Bütçe çalışması hangi ayda başlar?", "expected_page_keys": ["fin-butce"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f09", "user_id": "ayse", "question": "Performans değerlendirmeleri hangi aylarda yapılır?", "expected_page_keys": ["ik-performans"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f10", "user_id": "mehmet", "question": "Kod inceleme onayı olmadan ana dala birleştirme yapılabilir mi?", "expected_page_keys": ["eng-kod-inceleme"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f11", "user_id": "ayse", "question": "Doğum sonrası analık izni kaç hafta?", "expected_page_keys": ["ik-dogum-izni"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f12", "user_id": "ayse", "question": "İki günü aşan hastalıkta sağlık raporu ne zaman yüklenmeli?", "expected_page_keys": ["ik-hastalik-izni"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f13", "user_id": "mehmet", "question": "Kurumsal parola en az kaç karakter olmalı?", "expected_page_keys": ["eng-parola-politikasi"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f14", "user_id": "mehmet", "question": "Nöbette birincil mühendis kaç dakikada yanıt vermezse eskalasyon başlar?", "expected_page_keys": ["eng-nobet"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f15", "user_id": "can", "question": "Kurumsal kart kaybolduğunda ne yapılmalı?", "expected_page_keys": ["fin-kurumsal-kart"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f16", "user_id": "can", "question": "Nakit avans kaç gün içinde kapatılmalı?", "expected_page_keys": ["fin-avans"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f17", "user_id": "mehmet", "question": "Yeni port erişimi nasıl talep edilir?", "expected_page_keys": ["eng-ag-erisim"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f18", "user_id": "ayse", "question": "Babalık izni kaç iş günü?", "expected_page_keys": ["ik-dogum-izni"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f19", "user_id": "mehmet", "question": "Yeni kodda beklenen birim test kapsamı yüzde kaç?", "expected_page_keys": ["eng-test-stratejisi"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "f20", "user_id": "can", "question": "Seyahatte konaklama ve günlük harcırah limitleri nerede yayımlanır?", "expected_page_keys": ["fin-seyahat"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "p01", "user_id": "ayse", "question": "Evden çalışma kuralları neler?", "expected_page_keys": ["ik-uzaktan-calisma"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p02", "user_id": "mehmet", "question": "Canlıya çıkış süreci nasıl işliyor?", "expected_page_keys": ["eng-dagitim"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p03", "user_id": "can", "question": "Yaptığım harcamanın geri ödemesini nasıl alırım?", "expected_page_keys": ["fin-masraf"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p04", "user_id": "deniz", "question": "Sistemde bir zafiyet bulursam kime haber vermeliyim?", "expected_page_keys": ["eng-guvenlik-acigi"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p05", "user_id": "ayse", "question": "Doktor raporu alırsam ne yapmam gerekiyor?", "expected_page_keys": ["ik-hastalik-izni", "ik-yillik-izin"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p06", "user_id": "ayse", "question": "Bebeğim oldu, ne kadar süre izin kullanabilirim?", "expected_page_keys": ["ik-dogum-izni"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p07", "user_id": "mehmet", "question": "Şifremi ne sıklıkla değiştirmem gerekiyor?", "expected_page_keys": ["eng-parola-politikasi"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p08", "user_id": "can", "question": "Şehir dışı iş gezisinde konaklama ve günlük ödeneğim ne olur?", "expected_page_keys": ["fin-seyahat"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p09", "user_id": "mehmet", "question": "Uygulama kayıtları ne kadar süre saklanıyor?", "expected_page_keys": ["eng-loglama"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p10", "user_id": "mehmet", "question": "Ekipler arasında masaları nasıl paylaşıyoruz?", "expected_page_keys": ["ik-ofis-kullanim"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "p11", "user_id": "ayse", "question": "Uzun süre işe ara vermem gerekirse maaşsız izin alabilir miyim?", "expected_page_keys": ["ik-ucretsiz-izin"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "k01", "user_id": "zeynep", "question": "Maaş bantları hangi ayda güncellenir?", "expected_page_keys": ["ik-maas-bantlari"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "k02", "user_id": "elif", "question": "Standart tedarikçi ödeme vadesi kaç gün?", "expected_page_keys": ["fin-tedarikci-odeme"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "k03", "user_id": "zeynep", "question": "İşten çıkışta erişim iptali ne kadar sürede tamamlanmalı?", "expected_page_keys": ["ik-isten-cikis"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "k04", "user_id": "zeynep", "question": "Yıllık prim nasıl hesaplanır ve ne zaman ödenir?", "expected_page_keys": ["ik-prim-politikasi"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "k05", "user_id": "elif", "question": "Bordroda hangi kesintiler gösterilir?", "expected_page_keys": ["fin-bordro"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "k06", "user_id": "deniz", "question": "Çok gizli verinin dışa aktarımı için ne gerekir?", "expected_page_keys": ["eng-veri-siniflandirma"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "y01", "user_id": "mehmet", "question": "Maaş bantları ve seviye matrisi nedir?", "expected_page_keys": [], "forbidden_page_keys": ["ik-maas-bantlari"], "category": "yetki-siniri"}
+{"id": "y02", "user_id": "can", "question": "Tedarikçi iskonto oranları nelerdir?", "expected_page_keys": [], "forbidden_page_keys": ["fin-tedarikci-odeme"], "category": "yetki-siniri"}
+{"id": "y03", "user_id": "ayse", "question": "Güvenlik açığı embargo süreci nasıl yönetiliyor?", "expected_page_keys": [], "forbidden_page_keys": ["eng-guvenlik-acigi"], "category": "yetki-siniri"}
+{"id": "y04", "user_id": "mehmet", "question": "İşten çıkış prosedüründe erişim iptali nasıl yapılır?", "expected_page_keys": [], "forbidden_page_keys": ["ik-isten-cikis"], "category": "yetki-siniri"}
+{"id": "y05", "user_id": "mehmet", "question": "Prim oranları ve bireysel performans katsayıları nedir?", "expected_page_keys": [], "forbidden_page_keys": ["ik-prim-politikasi"], "category": "yetki-siniri"}
+{"id": "y06", "user_id": "can", "question": "Çalışan maaş kesintileri ve bordro detayları nedir?", "expected_page_keys": [], "forbidden_page_keys": ["fin-bordro"], "category": "yetki-siniri"}
+{"id": "y07", "user_id": "mehmet", "question": "Veri sınıflandırma matrisi ve müşteri veri envanteri nedir?", "expected_page_keys": [], "forbidden_page_keys": ["eng-veri-siniflandirma"], "category": "yetki-siniri"}
+{"id": "y08", "user_id": "ayse", "question": "Prim katsayıları ve gizli ödeme kuralları nedir?", "expected_page_keys": [], "forbidden_page_keys": ["ik-prim-politikasi"], "category": "yetki-siniri"}

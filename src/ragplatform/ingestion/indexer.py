@@ -46,7 +46,7 @@ async def index_page(
         f"[{title if not c.heading_path else f'{title} > {c.heading_path}'}]\n{c.content}"
         for c in chunks
     ]
-    embeddings = await embedder.embed(contents)
+    embeddings = await embedder.embed_documents(contents)
     content_hash = hashlib.sha256(content_md.encode("utf-8")).hexdigest()
 
     async with pool.acquire() as conn:

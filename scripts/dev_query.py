@@ -13,7 +13,7 @@ from ragplatform.acl.fga import FgaClient
 from ragplatform.config import get_settings
 from ragplatform.db import create_pool
 from ragplatform.embeddings import create_embeddings
-from ragplatform.retrieval.rerank import NoopReranker
+from ragplatform.retrieval.rerank import create_reranker
 from ragplatform.retrieval.service import RetrievalService
 
 if sys.platform == "win32":
@@ -36,7 +36,7 @@ async def main() -> None:
         pool=pool,
         embedder=embedder,
         resolver=AccessResolver(fga, ttl_seconds=settings.acl_cache_ttl_seconds),
-        reranker=NoopReranker(),
+        reranker=create_reranker(settings),
     )
     try:
         resp = await service.retrieve(args.user_id, args.query, args.top_k)
