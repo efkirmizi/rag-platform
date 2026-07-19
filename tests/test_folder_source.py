@@ -14,6 +14,7 @@ from ragplatform.ingestion.corpus import Corpus, Page, build_tuples
 from ragplatform.ingestion.folder_source import (
     FolderSourceError,
     load_folder,
+    match_path_rule,
     parse_front_matter,
 )
 
@@ -194,6 +195,81 @@ def test_build_tuples_shape():
     assert ("group:yonetim#member", "viewer", "space:IK") in t
     assert ("space:IK", "parent", "page:gizli") in t
     assert ("group:yonetim#member", "restricted_viewer", "page:gizli") in t
+
+
+# --- path_rules (PDF/DOCX front-matter taşıyamaz) ---
+
+
+def test_match_path_rule_longest_prefix_wins():
+    rules = [
+        {"prefix": "ik/", "space": "IK"},
+        {"prefix": "ik/gizli/", "space": "IK", "restricted_to": "yonetim"},
+    ]
+    assert match_path_rule("ik/izin.md", rules)["space"] == "IK"
+    assert match_path_rule("ik/gizli/maas.pdf", rules)["restricted_to"] == "yonetim"
+    assert match_path_rule("baska/x.md", rules) == {}
+
+
+def test_markdown_without_front_matter_uses_path_rule(tmp_path):
+    _perms(tmp_path, path_rules=[{"prefix": "ik/", "space": "IK"}])
+    _write(tmp_path, "ik/izin.md", "front-matter yok ama kural var")
+    c = load_folder(tmp_path)
+    assert c.validate() == []
+    assert c.pages[0].space == "IK"
+    assert c.pages[0].title == "izin"  # dosya adına düşer
+
+
+def test_path_rule_can_restrict(tmp_path):
+    _perms(
+        tmp_path,
+        path_rules=[
+            {"prefix": "ik/", "space": "IK"},
+            {"prefix": "ik/gizli/", "space": "IK", "restricted_to": "yonetim"},
+        ],
+    )
+    _write(tmp_path, "ik/acik.md", "acik icerik")
+    _write(tmp_path, "ik/gizli/maas.md", "gizli icerik")
+    c = load_folder(tmp_path)
+    by_key = {p.page_key: p for p in c.pages}
+    assert by_key["ik-acik"].restricted_to is None
+    assert by_key["ik-gizli-maas"].restricted_to == "yonetim"
+    assert "ik-gizli-maas" not in c.allowed_pages("mehmet")
+
+
+def test_front_matter_overrides_path_rule(tmp_path):
+    _perms(tmp_path, path_rules=[{"prefix": "ik/", "space": "IK", "title": "Kural"}])
+    _write(tmp_path, "ik/x.md", "---\ntitle: Front-matter\n---\nicerik")
+    assert load_folder(tmp_path).pages[0].title == "Front-matter"
+
+
+def test_no_space_anywhere_gives_actionable_error(tmp_path):
+    _perms(tmp_path)  # path_rules yok
+    _write(tmp_path, "ik/x.md", "front-matter yok")
+    with pytest.raises(FolderSourceError, match="path_rules"):
+        load_folder(tmp_path)
+
+
+def test_unsupported_extension_ignored(tmp_path):
+    _perms(tmp_path, path_rules=[{"prefix": "", "space": "IK"}])
+    _write(tmp_path, "notlar.txt", "desteklenmeyen")
+    _write(tmp_path, "gecerli.md", "icerik")
+    keys = [p.page_key for p in load_folder(tmp_path).pages]
+    assert keys == ["gecerli"]
+
+
+def test_docling_missing_gives_actionable_error(tmp_path):
+    """Docling kurulu değilken PDF net bir kurulum mesajı vermeli."""
+    pytest.importorskip  # noqa: B018 - açıklık için
+    try:
+        import docling  # noqa: F401
+
+        pytest.skip("docling kurulu — bu test kurulu olmadığı durumu doğrular")
+    except ImportError:
+        pass
+    _perms(tmp_path, path_rules=[{"prefix": "", "space": "IK"}])
+    (tmp_path / "rapor.pdf").write_bytes(b"%PDF-1.4 sahte")
+    with pytest.raises(FolderSourceError, match="docs"):
+        load_folder(tmp_path)
 
 
 # --- repodaki örnek klasör ---

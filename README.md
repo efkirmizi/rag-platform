@@ -96,6 +96,7 @@ python scripts/ingest_folder.py --docs ./examples/docs --reset   # index it
 mydocs/
   permissions.json          # spaces, groups, who can see what
   handbook/onboarding.md    # markdown with front-matter
+  handbook/policy.pdf       # PDF/DOCX/HTML via Docling  (pip install -e ".[docs]")
   eng/deployment.md
 ```
 
@@ -108,15 +109,24 @@ restricted_to: leadership     # optional: restricts this page within the space
 Band figures are confidential...
 ```
 
-`permissions.json` declares the org structure:
+`permissions.json` declares the org structure. `path_rules` assigns metadata by
+directory — necessary for PDFs and DOCX, which can't carry front-matter (longest
+matching prefix wins, so you can carve out an exception):
 
 ```json
 {
   "spaces":        {"HANDBOOK": "Company Handbook", "ENG": "Engineering"},
   "groups":        {"everyone": ["alice","bob"], "leadership": ["alice"]},
-  "space_viewers": {"HANDBOOK": ["everyone"], "ENG": ["engineering"]}
+  "space_viewers": {"HANDBOOK": ["everyone"], "ENG": ["engineering"]},
+
+  "path_rules": [
+    {"prefix": "handbook/",         "space": "HANDBOOK"},
+    {"prefix": "handbook/private/", "space": "HANDBOOK", "restricted_to": "leadership"}
+  ]
 }
 ```
+
+Front-matter overrides a rule when both apply.
 
 The loader validates referential integrity up front (unknown space, unknown group,
 duplicate keys, a space nobody can see) so mistakes surface as clear errors rather

@@ -39,6 +39,11 @@ local = [
     "transformers>=4.51",  # token_efficiency.py doğrudan tokenizer kullanır
 ]
 
+# PDF/DOCX/HTML ayrıştırma (bring-your-own-docs). Ağır: layout modelleri iner.
+docs = [
+    "docling>=2.0",
+]
+
 [project.urls]
 Homepage = "https://github.com/efkirmizi/rag-platform"
 Repository = "https://github.com/efkirmizi/rag-platform"
