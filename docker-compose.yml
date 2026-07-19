@@ -44,5 +44,50 @@ services:
       timeout: 3s
       retries: 20
 
+  # --- Demo profili: `docker compose --profile demo up` ---
+  # Varsayılan `docker compose up -d` yalnız altyapıyı (postgres+openfga) ayağa
+  # kaldırır; geliştirme akışı değişmez. Demo profili ek olarak korpusu seed'ler
+  # ve retrieval API'sini yayına alır.
+
+  seed:
+    profiles: ["demo"]
+    build: .
+    command: python scripts/seed_synthetic.py
+    environment:
+      DATABASE_URL: postgresql://rag:ragpass@postgres:5432/rag
+      FGA_API_URL: http://openfga:8080
+      # State dosyası imajdaki infra/openfga'yı gölgelemesin diye ayrı yolda
+      FGA_STATE_FILE: /app/state/store.state.json
+    volumes:
+      - fgastate:/app/state
+    depends_on:
+      postgres:
+        condition: service_healthy
+      openfga:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    profiles: ["demo"]
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://rag:ragpass@postgres:5432/rag
+      FGA_API_URL: http://openfga:8080
+      FGA_STATE_FILE: /app/state/store.state.json
+    volumes:
+      - fgastate:/app/state
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
 volumes:
   pgdata:
+  fgastate:

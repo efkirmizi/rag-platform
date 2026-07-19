@@ -1,0 +1,15 @@
+{
+  "spaces": {
+    "HANDBOOK": "Company Handbook",
+    "ENG": "Engineering"
+  },
+  "groups": {
+    "everyone": ["alice", "bob", "carol"],
+    "engineering": ["bob", "carol"],
+    "leadership": ["alice"]
+  },
+  "space_viewers": {
+    "HANDBOOK": ["everyone"],
+    "ENG": ["engineering"]
+  }
+}
