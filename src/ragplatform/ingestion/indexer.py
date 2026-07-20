@@ -33,8 +33,8 @@ async def index_page(
     content_md: str,
     url: str | None = None,
     is_restricted: bool = False,
-    max_chars: int = 1600,
-    overlap: int = 0,
+    max_chars: int = 800,
+    overlap: int = 150,
 ) -> int:
     """Sayfayı chunk'layıp embed'leyerek indexler; chunk sayısını döner."""
     chunks = chunk_markdown(content_md, max_chars=max_chars, overlap=overlap)

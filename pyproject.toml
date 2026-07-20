@@ -40,6 +40,16 @@ local = [
 ]
 
 # PDF/DOCX/HTML ayrıştırma (bring-your-own-docs). Ağır: layout modelleri iner.
+#
+# ⚠️ GPU UYARISI: docling bağımlılıklarıyla birlikte torch'un **CPU** yapısını
+# kurabilir ve daha önce kurulmuş CUDA yapısını değiştirebilir (gözlendi:
+# 2.12.1+cu130 → 2.13.0+cpu). Bu sessizce olur; embedding/reranker CPU'ya düşer.
+# `.[docs]` kurduktan sonra kontrol edin:
+#     python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+# CPU'ya düştüyse CUDA yapısını geri kurun:
+#     pip install --index-url https://download.pytorch.org/whl/cu130 torch==<sürüm>+cu130
+# (local_st/reranker seçtiği device'ı stderr'e loglar — çıktıda `device=cpu`
+#  görüyorsanız sebebi budur.)
 docs = [
     "docling>=2.0",
 ]

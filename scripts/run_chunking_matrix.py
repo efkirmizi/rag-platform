@@ -157,9 +157,6 @@ async def main() -> int:
         "delta_mrr_vs_baseline": round(best["mrr"] - base["mrr"], 4),
         "rows": rows,
     }
-    path = ROOT / "eval" / "results" / "chunking-matrix.json"
-    path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
-
     # --- Deneyin geçerliliği: parametreler gerçekten devreye girdi mi? ---
     # Tüm yapılandırmalar aynı sayıda chunk ürettiyse metin hiç bölünmemiştir:
     # max_chars sınırı bağlamamış, dolayısıyla overlap de hiç tetiklenmemiştir.
@@ -167,6 +164,18 @@ async def main() -> int:
     # boştur. Sessizce yanlış karara varmamak için açıkça uyar.
     distinct_counts = {r["chunks"] for r in rows}
     out["conclusive"] = len(distinct_counts) > 1
+    # hit@5 her yapılandırmada aynıysa set k=5'te doygundur; ayrım yalnız
+    # MRR/hit@1'de kalır. Sonucu okuyan bunu bilmeli.
+    out["saturated_at_hit5"] = len({r["hit@5"] for r in rows}) == 1
+
+    # Dosya, geçerlilik bayrakları HESAPLANDIKTAN SONRA yazılır (aksi hâlde
+    # JSON'a conclusive=None düşüyordu).
+    path = ROOT / "eval" / "results" / "chunking-matrix.json"
+    path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    if out["saturated_at_hit5"]:
+        print(f"\nNot: hit@5 tüm yapılandırmalarda {rows[0]['hit@5']:.3f} — set k=5'te "
+              "doygun; ayrım MRR ve hit@1'de.")
     if not out["conclusive"]:
         print(
             f"\n⚠️  SONUÇSUZ: tüm yapılandırmalar aynı {rows[0]['chunks']} chunk'ı üretti.\n"

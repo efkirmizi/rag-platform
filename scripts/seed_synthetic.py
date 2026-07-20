@@ -89,6 +89,12 @@ async def main() -> None:
     pool = await create_pool(settings.database_url)
     embedder = create_embeddings(settings)
     try:
+        # Seed, ortamı KURAR — mevcut index'e eklemez. Başka bir korpus (ör.
+        # klasör connector'ıyla yüklenen gerçek korpus) index'te kalırsa
+        # sızıntı testi onları "beklenmeyen sayfa" olarak raporlar (oracle
+        # yalnız sentetik sayfaları bilir) ve gerçek bir ACL hatasıymış gibi
+        # görünür. Space anahtarları da çakışabilir.
+        await pool.execute("TRUNCATE spaces CASCADE")
         total_chunks = await index_corpus(pool, embedder)
         print(
             f"\nÖzet: {len(corpus.SPACES)} space, {len(corpus.PAGES)} sayfa, "
