@@ -71,9 +71,28 @@ def test_overlap_respects_max_chars():
         assert len(c.content) <= 300
 
 
-def test_overlap_zero_is_unchanged_default():
+def test_defaults_match_measured_configuration():
+    """Varsayılanlar ölçümle seçildi — sessizce kaymasınlar.
+
+    scripts/run_chunking_matrix.py (27 gerçek Türkçe doküman, 45 soru, bge-m3):
+    800/150 → MRR 0.974 · hit@1 0.949; eski varsayılan 1600/0 → 0.949 / 0.897.
+    Bu değerler değişecekse ölçüm de yenilenmeli.
+    """
+    import inspect
+
+    params = inspect.signature(chunk_markdown).parameters
+    assert params["max_chars"].default == 800
+    assert params["overlap"].default == 150
+
+
+def test_overlap_zero_disables_sharing():
     text = "## Başlık\n" + "\n\n".join(["kelime " * 40 for _ in range(5)])
-    assert chunk_markdown(text, max_chars=300) == chunk_markdown(text, max_chars=300, overlap=0)
+    no_ov = chunk_markdown(text, max_chars=300, overlap=0)
+    with_ov = chunk_markdown(text, max_chars=300, overlap=120)
+    assert len(with_ov) >= len(no_ov)
+    total_no_ov = sum(len(c.content) for c in no_ov)
+    total_with_ov = sum(len(c.content) for c in with_ov)
+    assert total_with_ov > total_no_ov, "overlap toplam metni artırmalı (paylaşım var)"
 
 
 def test_unbreakable_token_still_splits():

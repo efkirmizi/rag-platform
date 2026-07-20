@@ -64,13 +64,26 @@ def _overlap_tail(text: str, overlap: int) -> str:
     return tail[cut + 1:] if cut != -1 else tail
 
 
-def chunk_markdown(text: str, max_chars: int = 1600, overlap: int = 0) -> list[Chunk]:
+def chunk_markdown(text: str, max_chars: int = 800, overlap: int = 150) -> list[Chunk]:
     """Bölüm içindeki paragrafları max_chars sınırına kadar paketler.
 
-    `overlap`: ardışık chunk'ların paylaştığı karakter sayısı. Sınırın tam
+    Varsayılanlar **ölçülerek** seçildi (`scripts/run_chunking_matrix.py`,
+    27 gerçek Türkçe doküman / 45 soru, bge-m3):
+
+        max_chars/overlap   MRR     hit@1
+        2400 / 0            0.923   0.846
+        1600 / 0            0.949   0.897   <- eski varsayılan
+         800 / 0            0.962   0.923
+         800 / 150          0.974   0.949   <- yeni varsayılan
+
+    Küçük chunk tekdüze biçimde daha iyi; overlap 800 ve 2400'de katkı veriyor
+    (1600'de vermiyor). Uyarı: ölçüm Vikipedi metinlerinde yapıldı ve set k=5'te
+    doygundu — ayrım MRR/hit@1'den geliyor. Farklı bir doküman türünde
+    yeniden ölçmeye değer.
+
+    `overlap`: ardışık chunk'ların paylaştığı karakter sayısı; sınırın tam
     üstüne düşen bir cevabın ikiye bölünüp hiçbir chunk'ta bütün görünmemesini
-    engellemeyi amaçlar. Varsayılan 0 — katkısı ölçülerek kanıtlanmalı
-    (bkz. scripts/run_chunking_matrix.py).
+    engeller.
 
     Not: Türkçe'de token/karakter oranı İngilizce'den farklıdır; karakter
     limiti kaba bir vekildir (G-2 ölçümü: bge-m3 ~1.76 token/kelime).

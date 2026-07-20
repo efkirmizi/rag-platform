@@ -1,16 +1,45 @@
-# Kurumsal RAG Platformu — Proje Planı
+# ACL-Native RAG — Proje Planı
 
-> **Son güncelleme:** 2026-07-19
-> **Durum:** Faz 0 devam ediyor — G-1 sentetik PoC ✅ (sızıntı 0/480) · G-3 harness ✅ · **G-2 tam ölçüm ✅ → ADR-3 kapandı: bge-m3 seçildi** (GPU/RTX 4050, golden_v2 40-sayfa confusable korpus: bge-m3 rerank'siz MRR 0.937 / hit@1 0.919 vs Qwen3-0.6B 0.896 / 0.838; bge-reranker-v2-m3 katkısı +0.032 MRR, parafraz 0.909→1.00; bge-m3 Türkçe token verimi 1.76 vs 2.62 tok/kelime; ACL 0 ihlal/4 hücre). Rapor: `eval/results/g2-report.md`. Sırada: G-0 keşif (kurum bilgileri) + gerçek pilot içerikle G-2 doğrulaması. Kod: `src/ragplatform/`, kurulum: `README.md`
-> **Takip kuralı:** Görevler `- [ ]` / `- [x]` ile işaretlenir. Her faz sonunda "Faz Çıkış Kriterleri" sağlanmadan sonraki faza geçilmez. Kararlar §3'e (ADR), yeni riskler §6'ya eklenir.
+> **Son güncelleme:** 2026-07-20
+> **Ne bu:** Yetki-farkındalıklı (ACL-native) retrieval'ın **açık kaynak referans
+> uygulaması**. Kişisel bir projedir — bir kurum dağıtımı değildir.
+> **Durum:** ACL PoC ✅ (sızıntı 0/480) · eval harness ✅ · ADR-3 ✅ bge-m3 ·
+> ölçek doğrulaması ✅ (gizli recall riski bulundu ve kapatıldı) · üretim
+> (generation) ✅ opsiyonel · klasör + Docling ingest ✅ · gerçek Türkçe korpus ✅
+> Kod: `src/ragplatform/` · kurulum: `README.md` · ölçümler: `eval/results/`
+
+> [!NOTE]
+> **Kapsam değişikliği (2026-07-20).** Bu doküman başlangıçta bir *kurum içi
+> dağıtım planı* olarak yazılmıştı: Confluence connector'ı, pilot kullanıcı
+> grubu, K8s/GPU havuzları, LiteLLM gateway, control plane, compliance onayı…
+> Böyle bir kurumsal bağlam **yok** ve olmayacak. Proje kişisel/açık kaynak
+> olarak sürüyor.
+>
+> Gerçekçi yol haritası §4'tedir. Özgün kurumsal plan silinmedi — mimari düşünce
+> değerli olduğu için **[Ek A](#ek-a--kurumsal-dağıtım-planı-arşiv)**'da
+> arşivlendi. Ek A **taahhüt değildir**; bir kurum bağlamı doğarsa referans olsun
+> diye durur.
 
 ---
 
 ## 1. Vizyon ve Kapsam
 
-Kurum içi dokümanlar (Confluence, PDF/DOCX/HTML) üzerinde, **erişim yetkilerine tam saygılı**, kaynak gösteren (citation), izlenebilir ve yönetilebilir bir AI platformu. LibreChat ilk tüketici; platform API'si üzerinden Teams/Slack/iç uygulamalar da bağlanabilir.
+**Retrieval, kullanıcının doküman izinlerine sorgu anında ve fail-closed saygı
+göstermeli.** RAG projelerinin çoğu yetkilendirmeyi ya sonradan filtreleyerek ya
+da hiç ele almayarak geçiştirir; gerçek bir doküman kümesinde (İK'nın maaş
+sayfasıyla herkese açık el kitabı yan yana) bu kırılır.
 
-**Kapsam dışı (v1):** Fine-tuning, ses/görüntü, internet araması, otonom yazma aksiyonları (tool'lar onay matrisine tabi).
+Bu proje bunu doğru yapmanın çalışan, ölçülmüş ve kopyalanabilir bir örneğini
+sunar: OpenFGA erişim seti → SQL'de pre-filter → hybrid arama → reranker →
+citation. Türkçe-öncelikli, çünkü Türkçe retrieval (stemming, token verimliliği,
+model seçimi) yeterince ele alınmamış bir alan.
+
+**Hedef kitle:** kendi dokümanlarını yetki-farkındalıklı biçimde aramak isteyen
+geliştiriciler; ve ACL'li RAG'ın nasıl kurulduğuna bakmak isteyenler.
+
+**Kapsam dışı:** fine-tuning, ses/görüntü, internet araması, otonom yazma
+aksiyonları. Ayrıca kurumsal altyapı katmanı (Ek A) — tek kişilik bir projenin
+sürdüremeyeceği yük.
 
 ---
 
@@ -106,7 +135,87 @@ YATAY KATMANLAR
 
 ---
 
-## 4. Yol Haritası
+## 4. Yol Haritası (kişisel proje)
+
+Tarih yok, faz yok, "çıkış kriteri" yok — tek kişilik bir projede bunlar kurgu
+olur. Sıra, değer/efor oranına göre.
+
+### Yapıldı (ölçümüyle birlikte)
+
+- [x] **ACL-filtered hybrid retrieval** — OpenFGA erişim seti → SQL pre-filter,
+      fail-closed. Sızıntı **0/480**. `scripts/acl_leak_test.py`
+- [x] **Eval harness + golden setler** — hit@k, MRR, yetki-sınırı, latency;
+      kalite eşikleriyle CI kapısı. `scripts/run_eval.py`
+- [x] **ADR-3: embedding + reranker seçimi** — bge-m3 (Qwen3-0.6B'ye karşı
+      ölçüldü), bge-reranker-v2-m3 katkısı +0.032 MRR. `eval/results/g2-report.md`
+- [x] **Ölçek doğrulaması** — 100k chunk. Gizli bir recall riski bulundu
+      (`hnsw.iterative_scan=off` ile filtreli aramada recall 0.367) ve kapatıldı;
+      denormalizasyon denendi ve reddedildi. `eval/results/scale-report.md`
+- [x] **Üretim (generation)** — `/v1/answer`, citation doğrulamalı, ADR-8
+      çerçevelemesiyle; opsiyonel ve varsayılan kapalı
+- [x] **Kendi dokümanını getir** — klasör connector'ı (markdown + Docling ile
+      PDF/DOCX/HTML), `path_rules` ile dizin bazlı izin
+- [x] **Gerçek Türkçe korpus** — sentetik sayfalar chunking'i ölçemeyecek kadar
+      kısaydı; Vikipedi'den 27 uzun doküman + 45 soruluk golden set
+      (`scripts/fetch_corpus.py`, `eval/golden/golden_tr_v1.jsonl`)
+
+### Sırada
+
+- [ ] **Chunking parametrelerini gerçek metinle karara bağla** — sentetik
+      korpusta deney boştu (parametreler hiç devreye girmiyordu); gerçek korpusla
+      tekrar. `scripts/run_chunking_matrix.py --docs data/tr-corpus`
+- [ ] **ADR-3'ü gerçek metinle doğrula** — embedding/reranker karşılaştırması
+      sentetik içerikte yapılmıştı; aynı matrisi gerçek korpusta koştur
+- [ ] **Demo'yu gerçek embedding'le çalıştır** — şu an demo `fake` embedding
+      kullanıyor, yani ziyaretçi anlamsız semantik sonuç görüyor
+- [ ] **Artımlı senkron** — `content_hash` var ama kullanılmıyor; değişmeyen
+      dokümanı yeniden embed etmemek (klasör connector'ı için anlamlı)
+
+### Belki (kanıt gerektirir)
+
+- [ ] Query rewrite / multi-query — eval ile faydası gösterilirse
+- [ ] Basit web arayüzü — yetki-farkındalıklı retrieval'ı tarayıcıda göstermek
+- [ ] Yeni kaynaklar (Notion/Obsidian/dosya paylaşımı) — klasör connector'ı deseni üstünden
+- [ ] Semantic cache — önce exact-match'in isabet oranı ölçülmeli
+
+### Bilinçli olarak YAPILMAYACAK
+
+K8s/GPU havuzları, Argo Workflows, LiteLLM gateway, Langfuse, control plane,
+agent/MCP registry, chargeback, DR tatbikatı, compliance süreçleri. Hepsi bir
+kurum bağlamında doğru; tek kişilik bir projede sürdürülemez yük. Gerekçeleriyle
+birlikte [Ek A](#ek-a--kurumsal-dağıtım-planı-arşiv)'da duruyor.
+
+---
+
+## 5. Ölçülmüş Bulgular (kanıt dizini)
+
+Bu projede "daha iyi" iddiaları ölçümle desteklenir. Raporlar:
+
+| Konu | Sonuç | Rapor |
+|---|---|---|
+| Embedding + reranker (ADR-3) | bge-m3 seçildi; reranker +0.032 MRR | `eval/results/g2-report.md` |
+| Ölçekte ACL-filtreli ANN | Recall riski bulundu+kapatıldı; denormalizasyon reddedildi | `eval/results/scale-report.md` |
+| Chunking parametreleri | Sentetik korpusta **sonuçsuz** (deney boştu) — gerçek korpusla tekrar ediliyor | `eval/results/chunking-matrix.json` |
+| Türkçe token verimliliği | bge-m3 1.76 vs Qwen3 2.62 tok/kelime | `eval/results/g2-report.md` |
+
+**Ölçüm dürüstlüğü notu:** golden sorular korpus bilinerek yazıldı; sayılar
+*göreli* karşılaştırma (model A vs B) için geçerli, mutlak kalite kanıtı değil.
+Ölçüm harness'ları birkaç kez yanlış sayı üretip düzeltildi (yinelenen vektörler,
+boş chunking deneyi) — bu yüzden artık kendi geçerliliklerini denetliyorlar.
+
+---
+
+## Ek A — Kurumsal Dağıtım Planı (arşiv)
+
+> [!WARNING]
+> **Aşağıdakiler PLANLANMIYOR.** Bu bölüm, projenin başlangıçtaki kurum içi
+> dağıtım tasarımıdır. Böyle bir bağlam bulunmadığı için hiçbiri yapılmayacak.
+> Mimari muhakeme (neden pre-filter, neden custom RAG servisi, neden bu eşikler)
+> değerli olduğu ve bir gün bir kurum bağlamı doğarsa başlangıç noktası olacağı
+> için silinmedi.
+>
+> Aşağıdaki tarihler, "faz çıkış kriterleri", pilot grup ve ekip varsayımları
+> tarihseldir; gerçek bir taahhüt olarak okunmamalıdır.
 
 ### FAZ 0 — Riskli Varsayımların Doğrulanması (4–6 hafta)
 
@@ -254,7 +363,7 @@ YATAY KATMANLAR
 
 ---
 
-## 5. Orijinal 8 Maddenin Plana Eşlemesi
+### (arşiv) Orijinal 8 Maddenin Plana Eşlemesi
 
 | # | Orijinal madde | Nerede |
 |---|---|---|
@@ -269,7 +378,7 @@ YATAY KATMANLAR
 
 ---
 
-## 6. Riskler
+### (arşiv) Riskler
 
 | Risk | Olasılık | Etki | Azaltma |
 |---|---|---|---|
@@ -285,7 +394,7 @@ YATAY KATMANLAR
 
 ---
 
-## 7. Başarı Metrikleri (KPI)
+### (arşiv) Başarı Metrikleri (KPI)
 
 | Metrik | Hedef | Ölçüm yeri |
 |---|---|---|
@@ -300,7 +409,7 @@ YATAY KATMANLAR
 
 ---
 
-## 8. Açık Sorular ve Çalışma Varsayımları
+### (arşiv) Açık Sorular ve Çalışma Varsayımları
 
 **Cevaplananlar:**
 - [x] **Dil dağılımı:** Büyük oranda Türkçe *(2026-07-06)*. Sonuçları: G-2 test seti ~%90 Türkçe; PG FTS `turkish` config + `unaccent`; embedding/reranker seçiminde Türkçe skoru belirleyici; token verimliliği ölçümü G-2'ye eklendi.

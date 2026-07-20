@@ -115,8 +115,8 @@ async def index_corpus(
     corpus: Corpus,
     *,
     quiet: bool = False,
-    max_chars: int = 1600,
-    overlap: int = 0,
+    max_chars: int = 800,
+    overlap: int = 150,
 ) -> int:
     """Korpusu chunk'layıp embed'leyerek indexler; toplam chunk sayısını döner.
 

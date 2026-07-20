@@ -1,0 +1,45 @@
+{"id": "rf01", "user_id": "ayse", "question": "Asgari ücret nedir?", "expected_page_keys": ["ik-asgari-ucret"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf02", "user_id": "ayse", "question": "Emeklilik fonları kimler tarafından oluşturulur?", "expected_page_keys": ["ik-emeklilik"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf03", "user_id": "mehmet", "question": "Güvenlik duvarı hangi filtreleme özelliklerine sahiptir?", "expected_page_keys": ["bt-guvenlik-duvari"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf04", "user_id": "mehmet", "question": "Kriptografi ne anlama gelir?", "expected_page_keys": ["bt-kriptografi"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf05", "user_id": "can", "question": "Katma değer vergisi oranları nedir?", "expected_page_keys": ["fin-katma-deger-vergisi"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf06", "user_id": "ayse", "question": "KVKK hangi tarihte Resmi Gazete'de yayımlandı?", "expected_page_keys": ["hukuk-kisisel-verilerin-korunmasi-kanunu"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf07", "user_id": "ayse", "question": "İdare hukuku neyi düzenler?", "expected_page_keys": ["hukuk-idare-hukuku"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf08", "user_id": "mehmet", "question": "Bilgisayar ağı topolojileri nelerdir?", "expected_page_keys": ["bt-bilgisayar-agi"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf09", "user_id": "can", "question": "Muhasebenin temel kavramları nelerdir?", "expected_page_keys": ["fin-muhasebe"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf10", "user_id": "can", "question": "Enflasyonun çeşitleri nelerdir?", "expected_page_keys": ["fin-enflasyon"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf11", "user_id": "ayse", "question": "İş sağlığı ve güvenliğinde işyeri tehlikeleri nelerdir?", "expected_page_keys": ["ik-is-sagligi-ve-guvenligi"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf12", "user_id": "ayse", "question": "İşçi sendikaları nedir?", "expected_page_keys": ["ik-sendika"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf13", "user_id": "mehmet", "question": "Bulut bilişimin hizmet modelleri nelerdir?", "expected_page_keys": ["bt-bulut-bilisim"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf14", "user_id": "mehmet", "question": "Truva atları ve virüsler gibi kötü amaçlı yazılım türleri nelerdir?", "expected_page_keys": ["bt-kotu-amacli-yazilim"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf15", "user_id": "mehmet", "question": "İlişkisel veritabanı sistemleri nedir?", "expected_page_keys": ["bt-veri-tabani"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf16", "user_id": "can", "question": "Sigortanın işleyişi nasıldır?", "expected_page_keys": ["fin-sigorta"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf17", "user_id": "can", "question": "Bankaların işlevleri ve parasal işlemleri nelerdir?", "expected_page_keys": ["fin-banka"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf18", "user_id": "ayse", "question": "İnsan kaynakları yönetiminin amacı nedir?", "expected_page_keys": ["ik-insan-kaynaklari-yonetimi"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf19", "user_id": "ayse", "question": "Ceza hukukunun amacı nedir?", "expected_page_keys": ["hukuk-ceza-hukuku"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf20", "user_id": "mehmet", "question": "Yapay zekânın hedefleri ve akıl yürütme yaklaşımı nedir?", "expected_page_keys": ["bt-yapay-zek"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rf21", "user_id": "ayse", "question": "Anayasanın hazırlanma süreci nasıl olmuştur?", "expected_page_keys": ["hukuk-turkiye-cumhuriyeti-anayasasi"], "forbidden_page_keys": [], "category": "faktuel"}
+{"id": "rp01", "user_id": "ayse", "question": "İşverenin çalışanına yasal olarak ödeyebileceği en düşük tutar nedir?", "expected_page_keys": ["ik-asgari-ucret"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp02", "user_id": "mehmet", "question": "Ağa gelen ve giden paketleri bir kural kümesine göre denetleyen sistem hangisidir?", "expected_page_keys": ["bt-guvenlik-duvari"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp03", "user_id": "mehmet", "question": "Veriyi istenmeyen kişilerin anlayamayacağı hale dönüştürme yöntemleri nelerdir?", "expected_page_keys": ["bt-kriptografi"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp04", "user_id": "ayse", "question": "Çalışanların yaşlılık nedeniyle işi bırakması nasıl adlandırılır?", "expected_page_keys": ["ik-emeklilik"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp05", "user_id": "ayse", "question": "Özel hayatın gizliliğini koruyan 2016 tarihli düzenleme hangisidir?", "expected_page_keys": ["hukuk-kisisel-verilerin-korunmasi-kanunu"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp06", "user_id": "can", "question": "Mal ve hizmet tesliminde alıcıya yüklenen harcama vergisi hangisidir?", "expected_page_keys": ["fin-katma-deger-vergisi"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp07", "user_id": "mehmet", "question": "Zararlı programların bulaşma ve gizlenme yolları nelerdir?", "expected_page_keys": ["bt-kotu-amacli-yazilim"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp08", "user_id": "ayse", "question": "Çalışanların haklarını savunmak için kurduğu örgütlenme biçimi nedir?", "expected_page_keys": ["ik-sendika"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp09", "user_id": "can", "question": "Paranın alım gücünün zamanla azalması durumu nedir?", "expected_page_keys": ["fin-enflasyon"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp10", "user_id": "mehmet", "question": "İnternet üzerinden talep üzerine sunulan paylaşımlı kaynak modeli nedir?", "expected_page_keys": ["bt-bulut-bilisim"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp11", "user_id": "can", "question": "İşletmelerin parasal olayları kaydetme ve raporlama düzeni nedir?", "expected_page_keys": ["fin-muhasebe"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rp12", "user_id": "ayse", "question": "Çalışanların işyerinde karşılaştığı risklerden korunması nasıl sağlanır?", "expected_page_keys": ["ik-is-sagligi-ve-guvenligi"], "forbidden_page_keys": [], "category": "parafraz"}
+{"id": "rk01", "user_id": "zeynep", "question": "Sosyal Güvenlik Kurumu hangi kanunla kurulmuştur?", "expected_page_keys": ["ik-sosyal-guvenlik-kurumu"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "rk02", "user_id": "zeynep", "question": "SGK hangi organlardan oluşur?", "expected_page_keys": ["ik-sosyal-guvenlik-kurumu"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "rk03", "user_id": "zeynep", "question": "Türk Ticaret Kanunu'nun kapsamı nedir?", "expected_page_keys": ["hukuk-ticaret-hukuku"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "rk04", "user_id": "deniz", "question": "Sızma testi aşamaları nelerdir?", "expected_page_keys": ["bt-sizma-testi"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "rk05", "user_id": "deniz", "question": "Sızma testi modelleri ve kullanılan araçlar nelerdir?", "expected_page_keys": ["bt-sizma-testi"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "rk06", "user_id": "elif", "question": "Bilançoda hangi tablolar bulunur?", "expected_page_keys": ["fin-bilanco"], "forbidden_page_keys": [], "category": "kisitli-erisim"}
+{"id": "ry01", "user_id": "mehmet", "question": "Sosyal Güvenlik Kurumu hangi kanunla kurulmuştur ve görevleri nelerdir?", "expected_page_keys": [], "forbidden_page_keys": ["ik-sosyal-guvenlik-kurumu"], "category": "yetki-siniri"}
+{"id": "ry02", "user_id": "ayse", "question": "Türk Ticaret Kanunu kapsamı ve ticaret hukuku sistemleri nedir?", "expected_page_keys": [], "forbidden_page_keys": ["hukuk-ticaret-hukuku"], "category": "yetki-siniri"}
+{"id": "ry03", "user_id": "mehmet", "question": "Sızma testi aşamaları ve araçları nelerdir?", "expected_page_keys": [], "forbidden_page_keys": ["bt-sizma-testi"], "category": "yetki-siniri"}
+{"id": "ry04", "user_id": "can", "question": "Bilanço eşitliği ile aktif ve pasif tabloları nedir?", "expected_page_keys": [], "forbidden_page_keys": ["fin-bilanco"], "category": "yetki-siniri"}
+{"id": "ry05", "user_id": "deniz", "question": "SGK hizmet birimleri ve MEDULA nedir?", "expected_page_keys": [], "forbidden_page_keys": ["ik-sosyal-guvenlik-kurumu"], "category": "yetki-siniri"}
+{"id": "ry06", "user_id": "elif", "question": "Sızma testi nasıl yapılır?", "expected_page_keys": [], "forbidden_page_keys": ["bt-sizma-testi"], "category": "yetki-siniri"}

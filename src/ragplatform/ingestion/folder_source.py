@@ -45,12 +45,23 @@ bağımlılığı eklemeden okunabilir kalır.
 
 import json
 import re
+from fnmatch import fnmatch
 from pathlib import Path
 
 from ragplatform.ingestion.corpus import Corpus, Page
 
 _FRONT_MATTER = re.compile(r"^---\s*\n(.*?)\n---\s*\n?", re.DOTALL)
 _KNOWN_KEYS = {"space", "title", "restricted_to", "url", "page_key"}
+
+# İçerik olmayan, klasörlerde sık bulunan dosyalar. Bunlar indexlenmeye
+# çalışılırsa (front-matter'ları olmadığı için) yükleme komple hata verir —
+# oysa kullanıcının docs klasöründe bir README bulunması son derece olağan.
+# permissions.json'daki "ignore" ile değiştirilebilir (fnmatch kalıpları).
+_DEFAULT_IGNORE = [
+    "README.md", "readme.md", "README.markdown",
+    "ATTRIBUTION.md", "LICENSE.md", "LICENCE.md", "NOTICE.md", "CHANGELOG.md",
+    ".*",  # nokta ile başlayan gizli dosyalar
+]
 
 _MARKDOWN_EXT = {".md", ".markdown"}
 # Docling'in yapısal parse ettiği formatlar (tablo/başlık hiyerarşisi korunur)
@@ -148,10 +159,15 @@ def load_folder(root: str | Path) -> Corpus:
         space_viewers=perms.get("space_viewers", {}),
     )
     rules = perms.get("path_rules", [])
+    ignore = perms.get("ignore", _DEFAULT_IGNORE)
     converter = _DoclingConverter()
 
     files = sorted(
-        p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in _SUPPORTED_EXT
+        p
+        for p in root.rglob("*")
+        if p.is_file()
+        and p.suffix.lower() in _SUPPORTED_EXT
+        and not any(fnmatch(p.name, pat) for pat in ignore)
     )
     for path in files:
         rel_posix = path.relative_to(root).as_posix()
