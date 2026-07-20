@@ -54,6 +54,12 @@ jobs:
       - name: ACL leak test (must be 0 leaks)
         run: python scripts/acl_leak_test.py
 
+      # Tüketici kontrol: her kullanıcı × her doküman. Sorgu, hedef dokümanın
+      # KENDİ metninden üretilir (maksimum baskı) ve iki yön birden doğrulanır —
+      # yetkisize sızmıyor VE yetkiliye erişilebilir kalıyor (aşırı filtreleme).
+      - name: ACL matrix (every user × every document, both directions)
+        run: python scripts/acl_matrix_test.py
+
       # Eşikler `fake` embedding baseline'ının (MRR 0.664 · hit@5 0.919 ·
       # faktuel 0.950) güvenli altında. fake deterministik olduğundan bu sayılar
       # sabittir; düşerse FTS/RRF füzyonunda gerçek bir regresyon var demektir.

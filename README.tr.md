@@ -37,7 +37,7 @@ post-filter yoktur.
 | | |
 |---|---|
 | 🔐 **Fail-closed ACL pre-filter** | İzinli space/sayfa seti her iki arama kolunda da SQL koşulu olarak uygulanır. Boş erişim seti ⇒ sıfır satır. Dar yetkili kullanıcı boş sayfa değil, doğru sonuç alır. |
-| ✅ **Sürekli kanıtlanır** | Her push'ta her kullanıcı × sorgu kombinasyonu koşulur; dönen her chunk'ın o kullanıcının bağımsız olarak görmesi beklenen bir chunk olduğu doğrulanır. Şu an **0 sızıntı / 480 sonuç**. |
+| ✅ **Sürekli kanıtlanır, iki yönde** | Her push'ta **her kullanıcı × her doküman** yoklanır: sorgu, hedef dokümanın KENDİ metninden üretilir ve erişim *ancak ve ancak* yetkiliyse beklenir. Böylece hem sızıntı hem **aşırı filtreleme** (yetkili kullanıcının haksız yere boş sonuç alması — pre-filter tercihinin bütün gerekçesi) yakalanır. Şu an **402 çiftte 0 ihlal**, ayrıca sorgu bazlı testte 0 sızıntı / 480 sonuç. Test fault-injection ile doğrulandı: izinler kasten gevşetildiğinde 80 sızıntı raporluyor — yani yeşil olması anlamlı. |
 | 🇹🇷 **Türkçe-öncelikli** | Postgres FTS `turkish` stemmer + `unaccent`; embedding ve reranker ölçülmüş Türkçe performansına (tokenizer verimliliği dahil) göre seçildi. |
 | 🔎 **Hybrid + rerank** | pgvector HNSW (dense) + tam metin (lexical), RRF ile füzyon, ardından cross-encoder reranker. Hata kodu ve kısaltmalar yalnız-dense aramanın çatlaklarından kaçmaz. |
 | 📊 **Kararlar ölçülür** | Model seçimleri golden set eval harness'ı ile kapanır, sezgiyle değil — bkz. [G-2 raporu](eval/results/g2-report.md). |

@@ -37,7 +37,7 @@ no post-filter to forget.
 | | |
 |---|---|
 | 🔐 **Fail-closed ACL pre-filter** | Permitted spaces/pages are applied as a SQL predicate in *both* retrieval arms. Empty access set ⇒ zero rows. A narrowly-permitted user gets correct results, not an empty page. |
-| ✅ **Continuously proven** | Every push runs a leak test across every user × query combination and asserts each returned chunk is one that user is independently expected to see. Currently **0 leaks / 480 results**. |
+| ✅ **Continuously proven, both directions** | Every push probes **every user × every document** with a query derived from that document's own text, and asserts reachable *if and only if* permitted — catching leakage **and** over-filtering (a permitted user wrongly getting nothing, which is the whole reason to pre-filter). Currently **0 violations across 402 pairs**, plus 0 leaks / 480 results on the query-based test. The probe is fault-injection verified: with permissions deliberately loosened it reports 80 leaks, so a green run is meaningful. |
 | 🇹🇷 **Turkish-first** | Postgres FTS with the `turkish` stemmer + `unaccent`; embedding and reranker chosen by measured Turkish performance, including tokenizer efficiency. |
 | 🔎 **Hybrid + rerank** | pgvector HNSW (dense) + full-text (lexical) fused with RRF, then a cross-encoder reranker. Error codes and acronyms don't slip through the cracks of dense-only search. |
 | 📊 **Decisions are measured** | Model choices are settled with a golden-set eval harness, not vibes — see the [G-2 report](eval/results/g2-report.md). |
