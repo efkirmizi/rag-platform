@@ -1,0 +1,3971 @@
+{
+  "run_at": "2026-07-20T08:12:35+00:00",
+  "golden_file": "golden_tr_v1.jsonl",
+  "corpus_pages": 27,
+  "top_k": 8,
+  "embeddings": [
+    "bge-m3",
+    "qwen3-0.6b"
+  ],
+  "rerankers": [
+    "noop",
+    "bge-reranker-v2-m3"
+  ],
+  "cells": [
+    {
+      "embedding": "bge-m3",
+      "reranker": "noop",
+      "summary": {
+        "run_at": "2026-07-20T08:10:35+00:00",
+        "golden_file": "golden_tr_v1.jsonl",
+        "item_count": 45,
+        "embedding_model": "BAAI/bge-m3",
+        "reranker": "noop",
+        "top_k": 8,
+        "metrics": {
+          "mrr": 0.9744,
+          "hit@1": 0.9487,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "hit@8": 1.0,
+          "acl_violations": 0,
+          "latency_p95_ms": 107.2
+        },
+        "per_category": {
+          "faktuel": {
+            "n": 21,
+            "hit@1": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          },
+          "kisitli-erisim": {
+            "n": 6,
+            "hit@1": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          },
+          "parafraz": {
+            "n": 12,
+            "hit@1": 0.8333,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          }
+        },
+        "boundary_items": {
+          "n": 6,
+          "violations": []
+        },
+        "items": [
+          {
+            "id": "rf01",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Asgari ücret nedir?",
+            "expected": [
+              "ik-asgari-ucret"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 113.6,
+            "returned_pages": [
+              "ik-asgari-ucret",
+              "ik-ucret"
+            ]
+          },
+          {
+            "id": "rf02",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Emeklilik fonları kimler tarafından oluşturulur?",
+            "expected": [
+              "ik-emeklilik"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 56.4,
+            "returned_pages": [
+              "ik-emeklilik",
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "rf03",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Güvenlik duvarı hangi filtreleme özelliklerine sahiptir?",
+            "expected": [
+              "bt-guvenlik-duvari"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 115.0,
+            "returned_pages": [
+              "bt-guvenlik-duvari"
+            ]
+          },
+          {
+            "id": "rf04",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Kriptografi ne anlama gelir?",
+            "expected": [
+              "bt-kriptografi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 44.7,
+            "returned_pages": [
+              "bt-kriptografi"
+            ]
+          },
+          {
+            "id": "rf05",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Katma değer vergisi oranları nedir?",
+            "expected": [
+              "fin-katma-deger-vergisi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 92.4,
+            "returned_pages": [
+              "fin-katma-deger-vergisi",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rf06",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "KVKK hangi tarihte Resmi Gazete'de yayımlandı?",
+            "expected": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 39.2,
+            "returned_pages": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rf07",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İdare hukuku neyi düzenler?",
+            "expected": [
+              "hukuk-idare-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 36.2,
+            "returned_pages": [
+              "hukuk-idare-hukuku"
+            ]
+          },
+          {
+            "id": "rf08",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Bilgisayar ağı topolojileri nelerdir?",
+            "expected": [
+              "bt-bilgisayar-agi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 38.8,
+            "returned_pages": [
+              "bt-bilgisayar-agi"
+            ]
+          },
+          {
+            "id": "rf09",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Muhasebenin temel kavramları nelerdir?",
+            "expected": [
+              "fin-muhasebe"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 34.3,
+            "returned_pages": [
+              "fin-muhasebe"
+            ]
+          },
+          {
+            "id": "rf10",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Enflasyonun çeşitleri nelerdir?",
+            "expected": [
+              "fin-enflasyon"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 43.9,
+            "returned_pages": [
+              "fin-enflasyon"
+            ]
+          },
+          {
+            "id": "rf11",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İş sağlığı ve güvenliğinde işyeri tehlikeleri nelerdir?",
+            "expected": [
+              "ik-is-sagligi-ve-guvenligi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 37.6,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi"
+            ]
+          },
+          {
+            "id": "rf12",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İşçi sendikaları nedir?",
+            "expected": [
+              "ik-sendika"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 35.3,
+            "returned_pages": [
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "rf13",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Bulut bilişimin hizmet modelleri nelerdir?",
+            "expected": [
+              "bt-bulut-bilisim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 36.5,
+            "returned_pages": [
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "rf14",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Truva atları ve virüsler gibi kötü amaçlı yazılım türleri nelerdir?",
+            "expected": [
+              "bt-kotu-amacli-yazilim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 43.0,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "rf15",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "İlişkisel veritabanı sistemleri nedir?",
+            "expected": [
+              "bt-veri-tabani"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 35.6,
+            "returned_pages": [
+              "bt-veri-tabani"
+            ]
+          },
+          {
+            "id": "rf16",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Sigortanın işleyişi nasıldır?",
+            "expected": [
+              "fin-sigorta"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 33.1,
+            "returned_pages": [
+              "fin-sigorta"
+            ]
+          },
+          {
+            "id": "rf17",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Bankaların işlevleri ve parasal işlemleri nelerdir?",
+            "expected": [
+              "fin-banka"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 35.5,
+            "returned_pages": [
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rf18",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İnsan kaynakları yönetiminin amacı nedir?",
+            "expected": [
+              "ik-insan-kaynaklari-yonetimi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 44.5,
+            "returned_pages": [
+              "ik-insan-kaynaklari-yonetimi"
+            ]
+          },
+          {
+            "id": "rf19",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Ceza hukukunun amacı nedir?",
+            "expected": [
+              "hukuk-ceza-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 34.1,
+            "returned_pages": [
+              "hukuk-ceza-hukuku",
+              "hukuk-idare-hukuku"
+            ]
+          },
+          {
+            "id": "rf20",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Yapay zekânın hedefleri ve akıl yürütme yaklaşımı nedir?",
+            "expected": [
+              "bt-yapay-zek"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 39.6,
+            "returned_pages": [
+              "bt-yapay-zek"
+            ]
+          },
+          {
+            "id": "rf21",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Anayasanın hazırlanma süreci nasıl olmuştur?",
+            "expected": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 34.8,
+            "returned_pages": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rp01",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "İşverenin çalışanına yasal olarak ödeyebileceği en düşük tutar nedir?",
+            "expected": [
+              "ik-asgari-ucret"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 41.4,
+            "returned_pages": [
+              "ik-asgari-ucret",
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-insan-kaynaklari-yonetimi",
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "rp02",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Ağa gelen ve giden paketleri bir kural kümesine göre denetleyen sistem hangisidir?",
+            "expected": [
+              "bt-guvenlik-duvari"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 50.1,
+            "returned_pages": [
+              "bt-guvenlik-duvari",
+              "bt-bilgisayar-agi",
+              "bt-kotu-amacli-yazilim",
+              "bt-bulut-bilisim",
+              "bt-yapay-zek"
+            ]
+          },
+          {
+            "id": "rp03",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Veriyi istenmeyen kişilerin anlayamayacağı hale dönüştürme yöntemleri nelerdir?",
+            "expected": [
+              "bt-kriptografi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 40.9,
+            "returned_pages": [
+              "bt-kriptografi",
+              "bt-bilgi-guvenligi",
+              "bt-kotu-amacli-yazilim",
+              "bt-veri-tabani"
+            ]
+          },
+          {
+            "id": "rp04",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların yaşlılık nedeniyle işi bırakması nasıl adlandırılır?",
+            "expected": [
+              "ik-emeklilik"
+            ],
+            "rank": 2,
+            "hits": {
+              "1": false,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 37.6,
+            "returned_pages": [
+              "ik-insan-kaynaklari-yonetimi",
+              "ik-emeklilik",
+              "ik-is-sagligi-ve-guvenligi"
+            ]
+          },
+          {
+            "id": "rp05",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Özel hayatın gizliliğini koruyan 2016 tarihli düzenleme hangisidir?",
+            "expected": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ],
+            "rank": 2,
+            "hits": {
+              "1": false,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 36.6,
+            "returned_pages": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ]
+          },
+          {
+            "id": "rp06",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "Mal ve hizmet tesliminde alıcıya yüklenen harcama vergisi hangisidir?",
+            "expected": [
+              "fin-katma-deger-vergisi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 35.7,
+            "returned_pages": [
+              "fin-katma-deger-vergisi",
+              "fin-enflasyon",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rp07",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Zararlı programların bulaşma ve gizlenme yolları nelerdir?",
+            "expected": [
+              "bt-kotu-amacli-yazilim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 39.2,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "rp08",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların haklarını savunmak için kurduğu örgütlenme biçimi nedir?",
+            "expected": [
+              "ik-sendika"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 39.0,
+            "returned_pages": [
+              "ik-sendika",
+              "hukuk-idare-hukuku",
+              "ik-insan-kaynaklari-yonetimi",
+              "ik-asgari-ucret",
+              "ik-emeklilik"
+            ]
+          },
+          {
+            "id": "rp09",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "Paranın alım gücünün zamanla azalması durumu nedir?",
+            "expected": [
+              "fin-enflasyon"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 36.9,
+            "returned_pages": [
+              "fin-enflasyon",
+              "ik-ucret",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rp10",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "İnternet üzerinden talep üzerine sunulan paylaşımlı kaynak modeli nedir?",
+            "expected": [
+              "bt-bulut-bilisim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 41.9,
+            "returned_pages": [
+              "bt-bulut-bilisim",
+              "bt-bilgisayar-agi"
+            ]
+          },
+          {
+            "id": "rp11",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "İşletmelerin parasal olayları kaydetme ve raporlama düzeni nedir?",
+            "expected": [
+              "fin-muhasebe"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 36.2,
+            "returned_pages": [
+              "fin-muhasebe",
+              "fin-banka",
+              "ik-insan-kaynaklari-yonetimi"
+            ]
+          },
+          {
+            "id": "rp12",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların işyerinde karşılaştığı risklerden korunması nasıl sağlanır?",
+            "expected": [
+              "ik-is-sagligi-ve-guvenligi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 48.4,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-emeklilik",
+              "ik-insan-kaynaklari-yonetimi"
+            ]
+          },
+          {
+            "id": "rk01",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "Sosyal Güvenlik Kurumu hangi kanunla kurulmuştur?",
+            "expected": [
+              "ik-sosyal-guvenlik-kurumu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 90.6,
+            "returned_pages": [
+              "ik-sosyal-guvenlik-kurumu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rk02",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "SGK hangi organlardan oluşur?",
+            "expected": [
+              "ik-sosyal-guvenlik-kurumu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 32.4,
+            "returned_pages": [
+              "ik-sosyal-guvenlik-kurumu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rk03",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "Türk Ticaret Kanunu'nun kapsamı nedir?",
+            "expected": [
+              "hukuk-ticaret-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 36.8,
+            "returned_pages": [
+              "hukuk-ticaret-hukuku"
+            ]
+          },
+          {
+            "id": "rk04",
+            "category": "kisitli-erisim",
+            "user_id": "deniz",
+            "question": "Sızma testi aşamaları nelerdir?",
+            "expected": [
+              "bt-sizma-testi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 85.9,
+            "returned_pages": [
+              "bt-sizma-testi"
+            ]
+          },
+          {
+            "id": "rk05",
+            "category": "kisitli-erisim",
+            "user_id": "deniz",
+            "question": "Sızma testi modelleri ve kullanılan araçlar nelerdir?",
+            "expected": [
+              "bt-sizma-testi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 38.9,
+            "returned_pages": [
+              "bt-sizma-testi"
+            ]
+          },
+          {
+            "id": "rk06",
+            "category": "kisitli-erisim",
+            "user_id": "elif",
+            "question": "Bilançoda hangi tablolar bulunur?",
+            "expected": [
+              "fin-bilanco"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 87.3,
+            "returned_pages": [
+              "fin-bilanco",
+              "fin-muhasebe",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "ry01",
+            "category": "yetki-siniri",
+            "user_id": "mehmet",
+            "question": "Sosyal Güvenlik Kurumu hangi kanunla kurulmuştur ve görevleri nelerdir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 43.1,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-emeklilik",
+              "bt-guvenlik-duvari",
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "ry02",
+            "category": "yetki-siniri",
+            "user_id": "ayse",
+            "question": "Türk Ticaret Kanunu kapsamı ve ticaret hukuku sistemleri nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 36.0,
+            "returned_pages": [
+              "hukuk-idare-hukuku",
+              "hukuk-ceza-hukuku"
+            ]
+          },
+          {
+            "id": "ry03",
+            "category": "yetki-siniri",
+            "user_id": "mehmet",
+            "question": "Sızma testi aşamaları ve araçları nelerdir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 42.8,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim",
+              "bt-veri-tabani",
+              "bt-yapay-zek",
+              "bt-bilgi-guvenligi",
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "ry04",
+            "category": "yetki-siniri",
+            "user_id": "can",
+            "question": "Bilanço eşitliği ile aktif ve pasif tabloları nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 34.7,
+            "returned_pages": [
+              "fin-banka",
+              "fin-muhasebe"
+            ]
+          },
+          {
+            "id": "ry05",
+            "category": "yetki-siniri",
+            "user_id": "deniz",
+            "question": "SGK hizmet birimleri ve MEDULA nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 37.8,
+            "returned_pages": [
+              "bt-sizma-testi",
+              "bt-bulut-bilisim",
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "ry06",
+            "category": "yetki-siniri",
+            "user_id": "elif",
+            "question": "Sızma testi nasıl yapılır?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 38.2,
+            "returned_pages": [
+              "fin-sigorta",
+              "fin-muhasebe",
+              "ik-emeklilik",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "embedding": "bge-m3",
+      "reranker": "bge-reranker-v2-m3",
+      "summary": {
+        "run_at": "2026-07-20T08:11:11+00:00",
+        "golden_file": "golden_tr_v1.jsonl",
+        "item_count": 45,
+        "embedding_model": "BAAI/bge-m3",
+        "reranker": "BAAI/bge-reranker-v2-m3",
+        "top_k": 8,
+        "metrics": {
+          "mrr": 0.9872,
+          "hit@1": 0.9744,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "hit@8": 1.0,
+          "acl_violations": 0,
+          "latency_p95_ms": 678.1
+        },
+        "per_category": {
+          "faktuel": {
+            "n": 21,
+            "hit@1": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          },
+          "kisitli-erisim": {
+            "n": 6,
+            "hit@1": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          },
+          "parafraz": {
+            "n": 12,
+            "hit@1": 0.9167,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          }
+        },
+        "boundary_items": {
+          "n": 6,
+          "violations": []
+        },
+        "items": [
+          {
+            "id": "rf01",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Asgari ücret nedir?",
+            "expected": [
+              "ik-asgari-ucret"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 895.6,
+            "returned_pages": [
+              "ik-asgari-ucret",
+              "ik-ucret"
+            ]
+          },
+          {
+            "id": "rf02",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Emeklilik fonları kimler tarafından oluşturulur?",
+            "expected": [
+              "ik-emeklilik"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 529.1,
+            "returned_pages": [
+              "ik-emeklilik",
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "rf03",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Güvenlik duvarı hangi filtreleme özelliklerine sahiptir?",
+            "expected": [
+              "bt-guvenlik-duvari"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 508.9,
+            "returned_pages": [
+              "bt-guvenlik-duvari"
+            ]
+          },
+          {
+            "id": "rf04",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Kriptografi ne anlama gelir?",
+            "expected": [
+              "bt-kriptografi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 540.2,
+            "returned_pages": [
+              "bt-kriptografi"
+            ]
+          },
+          {
+            "id": "rf05",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Katma değer vergisi oranları nedir?",
+            "expected": [
+              "fin-katma-deger-vergisi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 535.4,
+            "returned_pages": [
+              "fin-katma-deger-vergisi",
+              "fin-enflasyon",
+              "ik-asgari-ucret"
+            ]
+          },
+          {
+            "id": "rf06",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "KVKK hangi tarihte Resmi Gazete'de yayımlandı?",
+            "expected": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 535.9,
+            "returned_pages": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rf07",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İdare hukuku neyi düzenler?",
+            "expected": [
+              "hukuk-idare-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 541.3,
+            "returned_pages": [
+              "hukuk-idare-hukuku"
+            ]
+          },
+          {
+            "id": "rf08",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Bilgisayar ağı topolojileri nelerdir?",
+            "expected": [
+              "bt-bilgisayar-agi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 626.8,
+            "returned_pages": [
+              "bt-bilgisayar-agi"
+            ]
+          },
+          {
+            "id": "rf09",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Muhasebenin temel kavramları nelerdir?",
+            "expected": [
+              "fin-muhasebe"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 529.2,
+            "returned_pages": [
+              "fin-muhasebe"
+            ]
+          },
+          {
+            "id": "rf10",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Enflasyonun çeşitleri nelerdir?",
+            "expected": [
+              "fin-enflasyon"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 552.3,
+            "returned_pages": [
+              "fin-enflasyon"
+            ]
+          },
+          {
+            "id": "rf11",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İş sağlığı ve güvenliğinde işyeri tehlikeleri nelerdir?",
+            "expected": [
+              "ik-is-sagligi-ve-guvenligi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 461.9,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi"
+            ]
+          },
+          {
+            "id": "rf12",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İşçi sendikaları nedir?",
+            "expected": [
+              "ik-sendika"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 437.6,
+            "returned_pages": [
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "rf13",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Bulut bilişimin hizmet modelleri nelerdir?",
+            "expected": [
+              "bt-bulut-bilisim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 525.2,
+            "returned_pages": [
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "rf14",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Truva atları ve virüsler gibi kötü amaçlı yazılım türleri nelerdir?",
+            "expected": [
+              "bt-kotu-amacli-yazilim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 513.3,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "rf15",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "İlişkisel veritabanı sistemleri nedir?",
+            "expected": [
+              "bt-veri-tabani"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 625.2,
+            "returned_pages": [
+              "bt-veri-tabani"
+            ]
+          },
+          {
+            "id": "rf16",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Sigortanın işleyişi nasıldır?",
+            "expected": [
+              "fin-sigorta"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 507.4,
+            "returned_pages": [
+              "fin-sigorta"
+            ]
+          },
+          {
+            "id": "rf17",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Bankaların işlevleri ve parasal işlemleri nelerdir?",
+            "expected": [
+              "fin-banka"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 489.1,
+            "returned_pages": [
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rf18",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İnsan kaynakları yönetiminin amacı nedir?",
+            "expected": [
+              "ik-insan-kaynaklari-yonetimi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 486.9,
+            "returned_pages": [
+              "ik-insan-kaynaklari-yonetimi"
+            ]
+          },
+          {
+            "id": "rf19",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Ceza hukukunun amacı nedir?",
+            "expected": [
+              "hukuk-ceza-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 511.0,
+            "returned_pages": [
+              "hukuk-ceza-hukuku"
+            ]
+          },
+          {
+            "id": "rf20",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Yapay zekânın hedefleri ve akıl yürütme yaklaşımı nedir?",
+            "expected": [
+              "bt-yapay-zek"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 551.4,
+            "returned_pages": [
+              "bt-yapay-zek"
+            ]
+          },
+          {
+            "id": "rf21",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Anayasanın hazırlanma süreci nasıl olmuştur?",
+            "expected": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 519.3,
+            "returned_pages": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rp01",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "İşverenin çalışanına yasal olarak ödeyebileceği en düşük tutar nedir?",
+            "expected": [
+              "ik-asgari-ucret"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 536.4,
+            "returned_pages": [
+              "ik-asgari-ucret",
+              "ik-ucret",
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-emeklilik",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rp02",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Ağa gelen ve giden paketleri bir kural kümesine göre denetleyen sistem hangisidir?",
+            "expected": [
+              "bt-guvenlik-duvari"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 530.2,
+            "returned_pages": [
+              "bt-guvenlik-duvari",
+              "bt-bilgisayar-agi",
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "rp03",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Veriyi istenmeyen kişilerin anlayamayacağı hale dönüştürme yöntemleri nelerdir?",
+            "expected": [
+              "bt-kriptografi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 691.2,
+            "returned_pages": [
+              "bt-kriptografi",
+              "bt-bilgi-guvenligi",
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "rp04",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların yaşlılık nedeniyle işi bırakması nasıl adlandırılır?",
+            "expected": [
+              "ik-emeklilik"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 507.9,
+            "returned_pages": [
+              "ik-emeklilik",
+              "ik-asgari-ucret",
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-insan-kaynaklari-yonetimi",
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "rp05",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Özel hayatın gizliliğini koruyan 2016 tarihli düzenleme hangisidir?",
+            "expected": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ],
+            "rank": 2,
+            "hits": {
+              "1": false,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 527.8,
+            "returned_pages": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ]
+          },
+          {
+            "id": "rp06",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "Mal ve hizmet tesliminde alıcıya yüklenen harcama vergisi hangisidir?",
+            "expected": [
+              "fin-katma-deger-vergisi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 568.1,
+            "returned_pages": [
+              "fin-katma-deger-vergisi",
+              "fin-enflasyon",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rp07",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Zararlı programların bulaşma ve gizlenme yolları nelerdir?",
+            "expected": [
+              "bt-kotu-amacli-yazilim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 526.3,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "rp08",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların haklarını savunmak için kurduğu örgütlenme biçimi nedir?",
+            "expected": [
+              "ik-sendika"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 583.2,
+            "returned_pages": [
+              "ik-sendika",
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "hukuk-idare-hukuku",
+              "ik-asgari-ucret"
+            ]
+          },
+          {
+            "id": "rp09",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "Paranın alım gücünün zamanla azalması durumu nedir?",
+            "expected": [
+              "fin-enflasyon"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 561.5,
+            "returned_pages": [
+              "fin-enflasyon",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rp10",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "İnternet üzerinden talep üzerine sunulan paylaşımlı kaynak modeli nedir?",
+            "expected": [
+              "bt-bulut-bilisim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 647.4,
+            "returned_pages": [
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "rp11",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "İşletmelerin parasal olayları kaydetme ve raporlama düzeni nedir?",
+            "expected": [
+              "fin-muhasebe"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 542.3,
+            "returned_pages": [
+              "fin-muhasebe",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rp12",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların işyerinde karşılaştığı risklerden korunması nasıl sağlanır?",
+            "expected": [
+              "ik-is-sagligi-ve-guvenligi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 500.4,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-insan-kaynaklari-yonetimi"
+            ]
+          },
+          {
+            "id": "rk01",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "Sosyal Güvenlik Kurumu hangi kanunla kurulmuştur?",
+            "expected": [
+              "ik-sosyal-guvenlik-kurumu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 546.2,
+            "returned_pages": [
+              "ik-sosyal-guvenlik-kurumu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ]
+          },
+          {
+            "id": "rk02",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "SGK hangi organlardan oluşur?",
+            "expected": [
+              "ik-sosyal-guvenlik-kurumu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 527.0,
+            "returned_pages": [
+              "ik-sosyal-guvenlik-kurumu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rk03",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "Türk Ticaret Kanunu'nun kapsamı nedir?",
+            "expected": [
+              "hukuk-ticaret-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 594.0,
+            "returned_pages": [
+              "hukuk-ticaret-hukuku",
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ]
+          },
+          {
+            "id": "rk04",
+            "category": "kisitli-erisim",
+            "user_id": "deniz",
+            "question": "Sızma testi aşamaları nelerdir?",
+            "expected": [
+              "bt-sizma-testi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 507.1,
+            "returned_pages": [
+              "bt-sizma-testi"
+            ]
+          },
+          {
+            "id": "rk05",
+            "category": "kisitli-erisim",
+            "user_id": "deniz",
+            "question": "Sızma testi modelleri ve kullanılan araçlar nelerdir?",
+            "expected": [
+              "bt-sizma-testi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 559.4,
+            "returned_pages": [
+              "bt-sizma-testi"
+            ]
+          },
+          {
+            "id": "rk06",
+            "category": "kisitli-erisim",
+            "user_id": "elif",
+            "question": "Bilançoda hangi tablolar bulunur?",
+            "expected": [
+              "fin-bilanco"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 523.7,
+            "returned_pages": [
+              "fin-bilanco",
+              "fin-banka",
+              "fin-muhasebe"
+            ]
+          },
+          {
+            "id": "ry01",
+            "category": "yetki-siniri",
+            "user_id": "mehmet",
+            "question": "Sosyal Güvenlik Kurumu hangi kanunla kurulmuştur ve görevleri nelerdir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 506.3,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-emeklilik",
+              "ik-asgari-ucret",
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "ry02",
+            "category": "yetki-siniri",
+            "user_id": "ayse",
+            "question": "Türk Ticaret Kanunu kapsamı ve ticaret hukuku sistemleri nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 523.8,
+            "returned_pages": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu",
+              "hukuk-idare-hukuku",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "ry03",
+            "category": "yetki-siniri",
+            "user_id": "mehmet",
+            "question": "Sızma testi aşamaları ve araçları nelerdir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 640.5,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "ry04",
+            "category": "yetki-siniri",
+            "user_id": "can",
+            "question": "Bilanço eşitliği ile aktif ve pasif tabloları nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 575.2,
+            "returned_pages": [
+              "fin-muhasebe",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "ry05",
+            "category": "yetki-siniri",
+            "user_id": "deniz",
+            "question": "SGK hizmet birimleri ve MEDULA nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 506.3,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "bt-sizma-testi",
+              "ik-sendika",
+              "bt-bilgi-guvenligi"
+            ]
+          },
+          {
+            "id": "ry06",
+            "category": "yetki-siniri",
+            "user_id": "elif",
+            "question": "Sızma testi nasıl yapılır?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 588.9,
+            "returned_pages": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu",
+              "fin-sigorta",
+              "fin-bilanco"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "embedding": "qwen3-0.6b",
+      "reranker": "noop",
+      "summary": {
+        "run_at": "2026-07-20T08:11:51+00:00",
+        "golden_file": "golden_tr_v1.jsonl",
+        "item_count": 45,
+        "embedding_model": "Qwen/Qwen3-Embedding-0.6B",
+        "reranker": "noop",
+        "top_k": 8,
+        "metrics": {
+          "mrr": 0.9316,
+          "hit@1": 0.8718,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "hit@8": 1.0,
+          "acl_violations": 0,
+          "latency_p95_ms": 179.5
+        },
+        "per_category": {
+          "faktuel": {
+            "n": 21,
+            "hit@1": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          },
+          "kisitli-erisim": {
+            "n": 6,
+            "hit@1": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          },
+          "parafraz": {
+            "n": 12,
+            "hit@1": 0.5833,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          }
+        },
+        "boundary_items": {
+          "n": 6,
+          "violations": []
+        },
+        "items": [
+          {
+            "id": "rf01",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Asgari ücret nedir?",
+            "expected": [
+              "ik-asgari-ucret"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 112.2,
+            "returned_pages": [
+              "ik-asgari-ucret",
+              "ik-ucret"
+            ]
+          },
+          {
+            "id": "rf02",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Emeklilik fonları kimler tarafından oluşturulur?",
+            "expected": [
+              "ik-emeklilik"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 136.8,
+            "returned_pages": [
+              "ik-emeklilik",
+              "ik-sendika",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rf03",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Güvenlik duvarı hangi filtreleme özelliklerine sahiptir?",
+            "expected": [
+              "bt-guvenlik-duvari"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 223.0,
+            "returned_pages": [
+              "bt-guvenlik-duvari"
+            ]
+          },
+          {
+            "id": "rf04",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Kriptografi ne anlama gelir?",
+            "expected": [
+              "bt-kriptografi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 161.8,
+            "returned_pages": [
+              "bt-kriptografi"
+            ]
+          },
+          {
+            "id": "rf05",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Katma değer vergisi oranları nedir?",
+            "expected": [
+              "fin-katma-deger-vergisi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 169.8,
+            "returned_pages": [
+              "fin-katma-deger-vergisi",
+              "ik-ucret",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rf06",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "KVKK hangi tarihte Resmi Gazete'de yayımlandı?",
+            "expected": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 108.6,
+            "returned_pages": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rf07",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İdare hukuku neyi düzenler?",
+            "expected": [
+              "hukuk-idare-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 109.1,
+            "returned_pages": [
+              "hukuk-idare-hukuku"
+            ]
+          },
+          {
+            "id": "rf08",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Bilgisayar ağı topolojileri nelerdir?",
+            "expected": [
+              "bt-bilgisayar-agi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 104.5,
+            "returned_pages": [
+              "bt-bilgisayar-agi",
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "rf09",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Muhasebenin temel kavramları nelerdir?",
+            "expected": [
+              "fin-muhasebe"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 117.2,
+            "returned_pages": [
+              "fin-muhasebe"
+            ]
+          },
+          {
+            "id": "rf10",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Enflasyonun çeşitleri nelerdir?",
+            "expected": [
+              "fin-enflasyon"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 120.4,
+            "returned_pages": [
+              "fin-enflasyon"
+            ]
+          },
+          {
+            "id": "rf11",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İş sağlığı ve güvenliğinde işyeri tehlikeleri nelerdir?",
+            "expected": [
+              "ik-is-sagligi-ve-guvenligi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 106.4,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-insan-kaynaklari-yonetimi"
+            ]
+          },
+          {
+            "id": "rf12",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İşçi sendikaları nedir?",
+            "expected": [
+              "ik-sendika"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 109.0,
+            "returned_pages": [
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "rf13",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Bulut bilişimin hizmet modelleri nelerdir?",
+            "expected": [
+              "bt-bulut-bilisim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 108.6,
+            "returned_pages": [
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "rf14",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Truva atları ve virüsler gibi kötü amaçlı yazılım türleri nelerdir?",
+            "expected": [
+              "bt-kotu-amacli-yazilim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 104.9,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "rf15",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "İlişkisel veritabanı sistemleri nedir?",
+            "expected": [
+              "bt-veri-tabani"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 108.2,
+            "returned_pages": [
+              "bt-veri-tabani",
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "rf16",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Sigortanın işleyişi nasıldır?",
+            "expected": [
+              "fin-sigorta"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 109.1,
+            "returned_pages": [
+              "fin-sigorta"
+            ]
+          },
+          {
+            "id": "rf17",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Bankaların işlevleri ve parasal işlemleri nelerdir?",
+            "expected": [
+              "fin-banka"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 108.4,
+            "returned_pages": [
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rf18",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İnsan kaynakları yönetiminin amacı nedir?",
+            "expected": [
+              "ik-insan-kaynaklari-yonetimi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 95.8,
+            "returned_pages": [
+              "ik-insan-kaynaklari-yonetimi"
+            ]
+          },
+          {
+            "id": "rf19",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Ceza hukukunun amacı nedir?",
+            "expected": [
+              "hukuk-ceza-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 112.5,
+            "returned_pages": [
+              "hukuk-ceza-hukuku"
+            ]
+          },
+          {
+            "id": "rf20",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Yapay zekânın hedefleri ve akıl yürütme yaklaşımı nedir?",
+            "expected": [
+              "bt-yapay-zek"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 128.0,
+            "returned_pages": [
+              "bt-yapay-zek"
+            ]
+          },
+          {
+            "id": "rf21",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Anayasanın hazırlanma süreci nasıl olmuştur?",
+            "expected": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 116.2,
+            "returned_pages": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rp01",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "İşverenin çalışanına yasal olarak ödeyebileceği en düşük tutar nedir?",
+            "expected": [
+              "ik-asgari-ucret"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 108.2,
+            "returned_pages": [
+              "ik-asgari-ucret",
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-sendika",
+              "ik-insan-kaynaklari-yonetimi",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rp02",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Ağa gelen ve giden paketleri bir kural kümesine göre denetleyen sistem hangisidir?",
+            "expected": [
+              "bt-guvenlik-duvari"
+            ],
+            "rank": 2,
+            "hits": {
+              "1": false,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 110.1,
+            "returned_pages": [
+              "bt-bilgisayar-agi",
+              "bt-guvenlik-duvari",
+              "bt-yapay-zek",
+              "bt-kotu-amacli-yazilim",
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "rp03",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Veriyi istenmeyen kişilerin anlayamayacağı hale dönüştürme yöntemleri nelerdir?",
+            "expected": [
+              "bt-kriptografi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 111.8,
+            "returned_pages": [
+              "bt-kriptografi",
+              "bt-kotu-amacli-yazilim",
+              "bt-yapay-zek",
+              "bt-bulut-bilisim",
+              "ik-asgari-ucret",
+              "bt-veri-tabani"
+            ]
+          },
+          {
+            "id": "rp04",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların yaşlılık nedeniyle işi bırakması nasıl adlandırılır?",
+            "expected": [
+              "ik-emeklilik"
+            ],
+            "rank": 3,
+            "hits": {
+              "1": false,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 104.4,
+            "returned_pages": [
+              "ik-insan-kaynaklari-yonetimi",
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-emeklilik",
+              "ik-asgari-ucret"
+            ]
+          },
+          {
+            "id": "rp05",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Özel hayatın gizliliğini koruyan 2016 tarihli düzenleme hangisidir?",
+            "expected": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ],
+            "rank": 2,
+            "hits": {
+              "1": false,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 104.0,
+            "returned_pages": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ]
+          },
+          {
+            "id": "rp06",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "Mal ve hizmet tesliminde alıcıya yüklenen harcama vergisi hangisidir?",
+            "expected": [
+              "fin-katma-deger-vergisi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 111.1,
+            "returned_pages": [
+              "fin-katma-deger-vergisi",
+              "fin-banka",
+              "fin-enflasyon"
+            ]
+          },
+          {
+            "id": "rp07",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Zararlı programların bulaşma ve gizlenme yolları nelerdir?",
+            "expected": [
+              "bt-kotu-amacli-yazilim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 104.4,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "rp08",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların haklarını savunmak için kurduğu örgütlenme biçimi nedir?",
+            "expected": [
+              "ik-sendika"
+            ],
+            "rank": 2,
+            "hits": {
+              "1": false,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 117.7,
+            "returned_pages": [
+              "ik-insan-kaynaklari-yonetimi",
+              "ik-sendika",
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "ik-asgari-ucret"
+            ]
+          },
+          {
+            "id": "rp09",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "Paranın alım gücünün zamanla azalması durumu nedir?",
+            "expected": [
+              "fin-enflasyon"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 148.2,
+            "returned_pages": [
+              "fin-enflasyon",
+              "ik-insan-kaynaklari-yonetimi",
+              "fin-banka",
+              "fin-sigorta"
+            ]
+          },
+          {
+            "id": "rp10",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "İnternet üzerinden talep üzerine sunulan paylaşımlı kaynak modeli nedir?",
+            "expected": [
+              "bt-bulut-bilisim"
+            ],
+            "rank": 2,
+            "hits": {
+              "1": false,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 152.7,
+            "returned_pages": [
+              "bt-veri-tabani",
+              "bt-bulut-bilisim",
+              "bt-bilgisayar-agi"
+            ]
+          },
+          {
+            "id": "rp11",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "İşletmelerin parasal olayları kaydetme ve raporlama düzeni nedir?",
+            "expected": [
+              "fin-muhasebe"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 128.5,
+            "returned_pages": [
+              "fin-muhasebe",
+              "ik-insan-kaynaklari-yonetimi",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rp12",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların işyerinde karşılaştığı risklerden korunması nasıl sağlanır?",
+            "expected": [
+              "ik-is-sagligi-ve-guvenligi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 105.6,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-insan-kaynaklari-yonetimi"
+            ]
+          },
+          {
+            "id": "rk01",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "Sosyal Güvenlik Kurumu hangi kanunla kurulmuştur?",
+            "expected": [
+              "ik-sosyal-guvenlik-kurumu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 156.8,
+            "returned_pages": [
+              "ik-sosyal-guvenlik-kurumu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rk02",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "SGK hangi organlardan oluşur?",
+            "expected": [
+              "ik-sosyal-guvenlik-kurumu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 103.0,
+            "returned_pages": [
+              "ik-sosyal-guvenlik-kurumu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rk03",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "Türk Ticaret Kanunu'nun kapsamı nedir?",
+            "expected": [
+              "hukuk-ticaret-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 103.3,
+            "returned_pages": [
+              "hukuk-ticaret-hukuku"
+            ]
+          },
+          {
+            "id": "rk04",
+            "category": "kisitli-erisim",
+            "user_id": "deniz",
+            "question": "Sızma testi aşamaları nelerdir?",
+            "expected": [
+              "bt-sizma-testi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 183.7,
+            "returned_pages": [
+              "bt-sizma-testi"
+            ]
+          },
+          {
+            "id": "rk05",
+            "category": "kisitli-erisim",
+            "user_id": "deniz",
+            "question": "Sızma testi modelleri ve kullanılan araçlar nelerdir?",
+            "expected": [
+              "bt-sizma-testi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 110.3,
+            "returned_pages": [
+              "bt-sizma-testi"
+            ]
+          },
+          {
+            "id": "rk06",
+            "category": "kisitli-erisim",
+            "user_id": "elif",
+            "question": "Bilançoda hangi tablolar bulunur?",
+            "expected": [
+              "fin-bilanco"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 169.7,
+            "returned_pages": [
+              "fin-bilanco",
+              "fin-muhasebe",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "ry01",
+            "category": "yetki-siniri",
+            "user_id": "mehmet",
+            "question": "Sosyal Güvenlik Kurumu hangi kanunla kurulmuştur ve görevleri nelerdir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 104.8,
+            "returned_pages": [
+              "bt-guvenlik-duvari",
+              "ik-is-sagligi-ve-guvenligi",
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "ry02",
+            "category": "yetki-siniri",
+            "user_id": "ayse",
+            "question": "Türk Ticaret Kanunu kapsamı ve ticaret hukuku sistemleri nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 110.4,
+            "returned_pages": [
+              "hukuk-idare-hukuku",
+              "hukuk-ceza-hukuku",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "ry03",
+            "category": "yetki-siniri",
+            "user_id": "mehmet",
+            "question": "Sızma testi aşamaları ve araçları nelerdir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 105.1,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim",
+              "bt-yapay-zek",
+              "bt-veri-tabani",
+              "ik-asgari-ucret",
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "ry04",
+            "category": "yetki-siniri",
+            "user_id": "can",
+            "question": "Bilanço eşitliği ile aktif ve pasif tabloları nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 106.4,
+            "returned_pages": [
+              "fin-banka",
+              "fin-muhasebe"
+            ]
+          },
+          {
+            "id": "ry05",
+            "category": "yetki-siniri",
+            "user_id": "deniz",
+            "question": "SGK hizmet birimleri ve MEDULA nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 110.9,
+            "returned_pages": [
+              "bt-sizma-testi",
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "ry06",
+            "category": "yetki-siniri",
+            "user_id": "elif",
+            "question": "Sızma testi nasıl yapılır?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 115.4,
+            "returned_pages": [
+              "fin-sigorta",
+              "ik-emeklilik",
+              "hukuk-ceza-hukuku",
+              "fin-enflasyon",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "embedding": "qwen3-0.6b",
+      "reranker": "bge-reranker-v2-m3",
+      "summary": {
+        "run_at": "2026-07-20T08:12:28+00:00",
+        "golden_file": "golden_tr_v1.jsonl",
+        "item_count": 45,
+        "embedding_model": "Qwen/Qwen3-Embedding-0.6B",
+        "reranker": "BAAI/bge-reranker-v2-m3",
+        "top_k": 8,
+        "metrics": {
+          "mrr": 0.9872,
+          "hit@1": 0.9744,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "hit@8": 1.0,
+          "acl_violations": 0,
+          "latency_p95_ms": 697.0
+        },
+        "per_category": {
+          "faktuel": {
+            "n": 21,
+            "hit@1": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          },
+          "kisitli-erisim": {
+            "n": 6,
+            "hit@1": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          },
+          "parafraz": {
+            "n": 12,
+            "hit@1": 0.9167,
+            "hit@3": 1.0,
+            "hit@5": 1.0
+          }
+        },
+        "boundary_items": {
+          "n": 6,
+          "violations": []
+        },
+        "items": [
+          {
+            "id": "rf01",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Asgari ücret nedir?",
+            "expected": [
+              "ik-asgari-ucret"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 930.6,
+            "returned_pages": [
+              "ik-asgari-ucret",
+              "ik-ucret"
+            ]
+          },
+          {
+            "id": "rf02",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Emeklilik fonları kimler tarafından oluşturulur?",
+            "expected": [
+              "ik-emeklilik"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 599.0,
+            "returned_pages": [
+              "ik-emeklilik",
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "rf03",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Güvenlik duvarı hangi filtreleme özelliklerine sahiptir?",
+            "expected": [
+              "bt-guvenlik-duvari"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 545.1,
+            "returned_pages": [
+              "bt-guvenlik-duvari"
+            ]
+          },
+          {
+            "id": "rf04",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Kriptografi ne anlama gelir?",
+            "expected": [
+              "bt-kriptografi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 591.2,
+            "returned_pages": [
+              "bt-kriptografi"
+            ]
+          },
+          {
+            "id": "rf05",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Katma değer vergisi oranları nedir?",
+            "expected": [
+              "fin-katma-deger-vergisi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 571.0,
+            "returned_pages": [
+              "fin-katma-deger-vergisi",
+              "fin-enflasyon",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rf06",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "KVKK hangi tarihte Resmi Gazete'de yayımlandı?",
+            "expected": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 592.8,
+            "returned_pages": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rf07",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İdare hukuku neyi düzenler?",
+            "expected": [
+              "hukuk-idare-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 586.9,
+            "returned_pages": [
+              "hukuk-idare-hukuku"
+            ]
+          },
+          {
+            "id": "rf08",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Bilgisayar ağı topolojileri nelerdir?",
+            "expected": [
+              "bt-bilgisayar-agi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 548.6,
+            "returned_pages": [
+              "bt-bilgisayar-agi"
+            ]
+          },
+          {
+            "id": "rf09",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Muhasebenin temel kavramları nelerdir?",
+            "expected": [
+              "fin-muhasebe"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 576.6,
+            "returned_pages": [
+              "fin-muhasebe"
+            ]
+          },
+          {
+            "id": "rf10",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Enflasyonun çeşitleri nelerdir?",
+            "expected": [
+              "fin-enflasyon"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 577.7,
+            "returned_pages": [
+              "fin-enflasyon"
+            ]
+          },
+          {
+            "id": "rf11",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İş sağlığı ve güvenliğinde işyeri tehlikeleri nelerdir?",
+            "expected": [
+              "ik-is-sagligi-ve-guvenligi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 531.6,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi"
+            ]
+          },
+          {
+            "id": "rf12",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İşçi sendikaları nedir?",
+            "expected": [
+              "ik-sendika"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 490.0,
+            "returned_pages": [
+              "ik-sendika"
+            ]
+          },
+          {
+            "id": "rf13",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Bulut bilişimin hizmet modelleri nelerdir?",
+            "expected": [
+              "bt-bulut-bilisim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 563.3,
+            "returned_pages": [
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "rf14",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Truva atları ve virüsler gibi kötü amaçlı yazılım türleri nelerdir?",
+            "expected": [
+              "bt-kotu-amacli-yazilim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 587.1,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "rf15",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "İlişkisel veritabanı sistemleri nedir?",
+            "expected": [
+              "bt-veri-tabani"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 673.8,
+            "returned_pages": [
+              "bt-veri-tabani"
+            ]
+          },
+          {
+            "id": "rf16",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Sigortanın işleyişi nasıldır?",
+            "expected": [
+              "fin-sigorta"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 552.2,
+            "returned_pages": [
+              "fin-sigorta"
+            ]
+          },
+          {
+            "id": "rf17",
+            "category": "faktuel",
+            "user_id": "can",
+            "question": "Bankaların işlevleri ve parasal işlemleri nelerdir?",
+            "expected": [
+              "fin-banka"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 537.8,
+            "returned_pages": [
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rf18",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "İnsan kaynakları yönetiminin amacı nedir?",
+            "expected": [
+              "ik-insan-kaynaklari-yonetimi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 528.5,
+            "returned_pages": [
+              "ik-insan-kaynaklari-yonetimi"
+            ]
+          },
+          {
+            "id": "rf19",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Ceza hukukunun amacı nedir?",
+            "expected": [
+              "hukuk-ceza-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 555.6,
+            "returned_pages": [
+              "hukuk-ceza-hukuku"
+            ]
+          },
+          {
+            "id": "rf20",
+            "category": "faktuel",
+            "user_id": "mehmet",
+            "question": "Yapay zekânın hedefleri ve akıl yürütme yaklaşımı nedir?",
+            "expected": [
+              "bt-yapay-zek"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 565.9,
+            "returned_pages": [
+              "bt-yapay-zek"
+            ]
+          },
+          {
+            "id": "rf21",
+            "category": "faktuel",
+            "user_id": "ayse",
+            "question": "Anayasanın hazırlanma süreci nasıl olmuştur?",
+            "expected": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 566.2,
+            "returned_pages": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rp01",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "İşverenin çalışanına yasal olarak ödeyebileceği en düşük tutar nedir?",
+            "expected": [
+              "ik-asgari-ucret"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 587.5,
+            "returned_pages": [
+              "ik-asgari-ucret",
+              "ik-ucret",
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-emeklilik"
+            ]
+          },
+          {
+            "id": "rp02",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Ağa gelen ve giden paketleri bir kural kümesine göre denetleyen sistem hangisidir?",
+            "expected": [
+              "bt-guvenlik-duvari"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 573.1,
+            "returned_pages": [
+              "bt-guvenlik-duvari",
+              "bt-bilgisayar-agi",
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "rp03",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Veriyi istenmeyen kişilerin anlayamayacağı hale dönüştürme yöntemleri nelerdir?",
+            "expected": [
+              "bt-kriptografi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 706.9,
+            "returned_pages": [
+              "bt-kriptografi",
+              "bt-bilgi-guvenligi",
+              "bt-kotu-amacli-yazilim",
+              "bt-guvenlik-duvari"
+            ]
+          },
+          {
+            "id": "rp04",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların yaşlılık nedeniyle işi bırakması nasıl adlandırılır?",
+            "expected": [
+              "ik-emeklilik"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 520.4,
+            "returned_pages": [
+              "ik-emeklilik",
+              "ik-asgari-ucret",
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-insan-kaynaklari-yonetimi"
+            ]
+          },
+          {
+            "id": "rp05",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Özel hayatın gizliliğini koruyan 2016 tarihli düzenleme hangisidir?",
+            "expected": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ],
+            "rank": 2,
+            "hits": {
+              "1": false,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 550.5,
+            "returned_pages": [
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ]
+          },
+          {
+            "id": "rp06",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "Mal ve hizmet tesliminde alıcıya yüklenen harcama vergisi hangisidir?",
+            "expected": [
+              "fin-katma-deger-vergisi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 568.8,
+            "returned_pages": [
+              "fin-katma-deger-vergisi",
+              "fin-enflasyon",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rp07",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "Zararlı programların bulaşma ve gizlenme yolları nelerdir?",
+            "expected": [
+              "bt-kotu-amacli-yazilim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 537.2,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim"
+            ]
+          },
+          {
+            "id": "rp08",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların haklarını savunmak için kurduğu örgütlenme biçimi nedir?",
+            "expected": [
+              "ik-sendika"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 577.5,
+            "returned_pages": [
+              "ik-sendika",
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "ik-asgari-ucret"
+            ]
+          },
+          {
+            "id": "rp09",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "Paranın alım gücünün zamanla azalması durumu nedir?",
+            "expected": [
+              "fin-enflasyon"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 591.1,
+            "returned_pages": [
+              "fin-enflasyon",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rp10",
+            "category": "parafraz",
+            "user_id": "mehmet",
+            "question": "İnternet üzerinden talep üzerine sunulan paylaşımlı kaynak modeli nedir?",
+            "expected": [
+              "bt-bulut-bilisim"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 618.7,
+            "returned_pages": [
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "rp11",
+            "category": "parafraz",
+            "user_id": "can",
+            "question": "İşletmelerin parasal olayları kaydetme ve raporlama düzeni nedir?",
+            "expected": [
+              "fin-muhasebe"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 577.2,
+            "returned_pages": [
+              "fin-muhasebe",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "rp12",
+            "category": "parafraz",
+            "user_id": "ayse",
+            "question": "Çalışanların işyerinde karşılaştığı risklerden korunması nasıl sağlanır?",
+            "expected": [
+              "ik-is-sagligi-ve-guvenligi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 537.5,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-insan-kaynaklari-yonetimi",
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ]
+          },
+          {
+            "id": "rk01",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "Sosyal Güvenlik Kurumu hangi kanunla kurulmuştur?",
+            "expected": [
+              "ik-sosyal-guvenlik-kurumu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 568.6,
+            "returned_pages": [
+              "ik-sosyal-guvenlik-kurumu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "hukuk-kisisel-verilerin-korunmasi-kanunu"
+            ]
+          },
+          {
+            "id": "rk02",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "SGK hangi organlardan oluşur?",
+            "expected": [
+              "ik-sosyal-guvenlik-kurumu"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 599.4,
+            "returned_pages": [
+              "ik-sosyal-guvenlik-kurumu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi"
+            ]
+          },
+          {
+            "id": "rk03",
+            "category": "kisitli-erisim",
+            "user_id": "zeynep",
+            "question": "Türk Ticaret Kanunu'nun kapsamı nedir?",
+            "expected": [
+              "hukuk-ticaret-hukuku"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 600.5,
+            "returned_pages": [
+              "hukuk-ticaret-hukuku"
+            ]
+          },
+          {
+            "id": "rk04",
+            "category": "kisitli-erisim",
+            "user_id": "deniz",
+            "question": "Sızma testi aşamaları nelerdir?",
+            "expected": [
+              "bt-sizma-testi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 548.9,
+            "returned_pages": [
+              "bt-sizma-testi"
+            ]
+          },
+          {
+            "id": "rk05",
+            "category": "kisitli-erisim",
+            "user_id": "deniz",
+            "question": "Sızma testi modelleri ve kullanılan araçlar nelerdir?",
+            "expected": [
+              "bt-sizma-testi"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 543.2,
+            "returned_pages": [
+              "bt-sizma-testi"
+            ]
+          },
+          {
+            "id": "rk06",
+            "category": "kisitli-erisim",
+            "user_id": "elif",
+            "question": "Bilançoda hangi tablolar bulunur?",
+            "expected": [
+              "fin-bilanco"
+            ],
+            "rank": 1,
+            "hits": {
+              "1": true,
+              "3": true,
+              "5": true
+            },
+            "forbidden_violation": [],
+            "took_ms": 539.1,
+            "returned_pages": [
+              "fin-bilanco",
+              "fin-banka",
+              "fin-muhasebe"
+            ]
+          },
+          {
+            "id": "ry01",
+            "category": "yetki-siniri",
+            "user_id": "mehmet",
+            "question": "Sosyal Güvenlik Kurumu hangi kanunla kurulmuştur ve görevleri nelerdir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 546.4,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "ik-sendika",
+              "bt-guvenlik-duvari"
+            ]
+          },
+          {
+            "id": "ry02",
+            "category": "yetki-siniri",
+            "user_id": "ayse",
+            "question": "Türk Ticaret Kanunu kapsamı ve ticaret hukuku sistemleri nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 572.2,
+            "returned_pages": [
+              "hukuk-kisisel-verilerin-korunmasi-kanunu",
+              "hukuk-turkiye-cumhuriyeti-anayasasi",
+              "hukuk-idare-hukuku"
+            ]
+          },
+          {
+            "id": "ry03",
+            "category": "yetki-siniri",
+            "user_id": "mehmet",
+            "question": "Sızma testi aşamaları ve araçları nelerdir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 672.4,
+            "returned_pages": [
+              "bt-kotu-amacli-yazilim",
+              "bt-bulut-bilisim",
+              "ik-is-sagligi-ve-guvenligi",
+              "bt-guvenlik-duvari",
+              "bt-veri-tabani"
+            ]
+          },
+          {
+            "id": "ry04",
+            "category": "yetki-siniri",
+            "user_id": "can",
+            "question": "Bilanço eşitliği ile aktif ve pasif tabloları nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 525.1,
+            "returned_pages": [
+              "fin-muhasebe",
+              "fin-banka"
+            ]
+          },
+          {
+            "id": "ry05",
+            "category": "yetki-siniri",
+            "user_id": "deniz",
+            "question": "SGK hizmet birimleri ve MEDULA nedir?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 558.4,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "bt-sizma-testi",
+              "ik-sendika",
+              "bt-bulut-bilisim"
+            ]
+          },
+          {
+            "id": "ry06",
+            "category": "yetki-siniri",
+            "user_id": "elif",
+            "question": "Sızma testi nasıl yapılır?",
+            "expected": [],
+            "rank": null,
+            "hits": {
+              "1": false,
+              "3": false,
+              "5": false
+            },
+            "forbidden_violation": [],
+            "took_ms": 583.7,
+            "returned_pages": [
+              "ik-is-sagligi-ve-guvenligi",
+              "fin-sigorta",
+              "fin-enflasyon",
+              "fin-bilanco",
+              "ik-asgari-ucret"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "token_efficiency": {
+    "words": 39692,
+    "chars": 320886,
+    "models": {
+      "BAAI/bge-m3": {
+        "tokens": 71093,
+        "tokens_per_word": 1.791,
+        "tokens_per_char": 0.2216,
+        "vocab_size": 250002
+      },
+      "Qwen/Qwen3-Embedding-0.6B": {
+        "tokens": 102745,
+        "tokens_per_word": 2.589,
+        "tokens_per_char": 0.3202,
+        "vocab_size": 151643
+      }
+    }
+  }
+}

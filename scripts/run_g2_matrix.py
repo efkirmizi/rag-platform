@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 """G-2 karşılaştırma matrisi (ADR-3'ü kapatan çıktı).
 
-{bge-m3, Qwen3-Embedding-0.6B} × {noop, bge-reranker-v2-m3} matrisini golden_v2
-üzerinde ölçer. Embedding değişimi re-index gerektirir (chunk vektörleri modele
-bağlı); reranker query-time olduğundan re-index gerektirmez → toplam 2 re-index.
+{bge-m3, Qwen3-Embedding-0.6B} × {noop, bge-reranker-v2-m3} matrisini bir golden
+set üzerinde ölçer. Embedding değişimi re-index gerektirir (chunk vektörleri
+modele bağlı); reranker query-time olduğundan gerektirmez → toplam 2 re-index.
 
 Adımlar:
-  1) OpenFGA'yı 40-sayfalık korpusun tuple'larıyla taze bootstrap et.
+  1) OpenFGA'yı korpusun tuple'larıyla taze bootstrap et, index'i temizle.
   2) Her embedding modeli için: GPU'ya yükle → index_corpus → her reranker için
-     golden_v2'yi score_run'dan geçir.
+     golden set'i score_run'dan geçir.
   3) matris JSON + markdown rapor (karşılaştırma tablosu + ADR-3 önerisi) yaz.
 
 Ön koşul: docker compose up -d  (postgres + openfga ayakta), GPU + `.[local]`.
-Çalıştırma: python scripts/run_g2_matrix.py [--top-k 8]
+Çalıştırma:
+  python scripts/run_g2_matrix.py                       # sentetik korpus
+  python scripts/run_g2_matrix.py --docs data/tr-corpus \
+      --golden eval/golden/golden_tr_v1.jsonl           # gerçek Türkçe korpus
 
 İlk koşuda modeller iner (bge-m3 ~2.3GB, Qwen3 ~1.2GB, reranker ~2.2GB).
 """
@@ -28,15 +31,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import synthetic_corpus as corpus
 from run_eval import score_run
-from seed_synthetic import bootstrap_fga, index_corpus
+from seed_synthetic import corpus_model
 
 from ragplatform.acl.access import AccessResolver
+from ragplatform.acl.bootstrap import bootstrap_store
 from ragplatform.acl.fga import FgaClient
 from ragplatform.config import get_settings
 from ragplatform.db import create_pool
 from ragplatform.embeddings.local_st import LocalSTEmbeddings
+from ragplatform.ingestion.corpus import build_tuples, index_corpus
+from ragplatform.ingestion.folder_source import load_folder
 from ragplatform.retrieval.rerank import CrossEncoderReranker, NoopReranker
 from ragplatform.retrieval.service import RetrievalService
 
@@ -44,7 +49,7 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-GOLDEN = ROOT / "eval" / "golden" / "golden_v2.jsonl"
+DEFAULT_GOLDEN = ROOT / "eval" / "golden" / "golden_v2.jsonl"
 
 # Karşılaştırılacak embedding modelleri (ikisi de 1024-dim → şema değişmez).
 EMBEDDINGS = [
@@ -83,28 +88,42 @@ def _build_reranker(key: str, settings):
 async def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--top-k", type=int, default=8)
+    parser.add_argument(
+        "--docs",
+        default=None,
+        help="Klasör korpusu (ör. data/tr-corpus). Verilmezse sentetik korpus kullanılır.",
+    )
+    parser.add_argument("--golden", default=str(DEFAULT_GOLDEN))
     args = parser.parse_args()
 
+    golden = Path(args.golden)
     items = [
         json.loads(line)
-        for line in GOLDEN.read_text(encoding="utf-8").splitlines()
+        for line in golden.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
+    corpus = load_folder(args.docs) if args.docs else corpus_model()
+    errors = corpus.validate()
+    if errors:
+        print(f"❌ Korpus doğrulaması başarısız: {errors[:3]}")
+        return 1
+    corpus_pages = len(corpus.pages)
     settings = get_settings()
 
     pool = await create_pool(settings.database_url)
-    # FGA'yı 40-sayfalık korpusa göre taze yaz (yeni kısıtlı sayfaların tuple'ları dahil).
-    await bootstrap_fga(settings)
+    # FGA'yı bu korpusa göre taze yaz (kısıtlı sayfaların tuple'ları dahil).
+    fga_model = json.loads((ROOT / "infra" / "openfga" / "model.json").read_text("utf-8"))
+    await bootstrap_store(settings, fga_model, build_tuples(corpus), store_name="rag-g2")
     fga = FgaClient.from_settings(settings)
     resolver = AccessResolver(fga, ttl_seconds=settings.acl_cache_ttl_seconds)
+    print(f"Korpus: {corpus_pages} doküman · golden: {golden.name} ({len(items)} soru)")
 
     cells: list[dict] = []
     try:
-        # Index'i temizle: index'te kalan başka bir korpus (ör. klasör
-        # connector'ıyla yüklenmiş gerçek korpus) sonuçlara karışır ve space
-        # anahtarları çakışabilir → ölçüm sessizce geçersizleşir.
+        # Index'i temizle: index'te kalan başka bir korpus sonuçlara karışır ve
+        # space anahtarları çakışabilir → ölçüm sessizce geçersizleşir.
         await pool.execute("TRUNCATE spaces CASCADE")
-        print("[db] index temizlendi (ölçüm yalnız sentetik korpus üzerinde)")
+        print("[db] index temizlendi (ölçüm yalnız bu korpus üzerinde)")
 
         for emb_cfg in EMBEDDINGS:
             print(f"\n=== embedding: {emb_cfg['key']} ({emb_cfg['model']}) — index + eval ===")
@@ -114,7 +133,7 @@ async def main() -> int:
                 device=settings.embeddings_device,
                 dtype=settings.embeddings_dtype,
             )
-            await index_corpus(pool, embedder)
+            await index_corpus(pool, embedder, corpus, quiet=True)
             resolver.invalidate()  # ACL modelden bağımsız ama taze bootstrap sonrası temiz başla
 
             for rr_key in RERANKERS:
@@ -124,7 +143,7 @@ async def main() -> int:
                     service,
                     items,
                     args.top_k,
-                    golden_name=GOLDEN.name,
+                    golden_name=golden.name,
                     embedding_model=embedder.name,
                     reranker_name=getattr(reranker, "name", rr_key),
                 )
@@ -148,13 +167,16 @@ async def main() -> int:
     # --- Token verimliliği (opsiyonel; tokenizer indirmesi gerektirir) ---
     token_eff = None
     try:
-        from token_efficiency import corpus_texts, measure
+        from token_efficiency import measure
 
-        token_eff = measure([e["model"] for e in EMBEDDINGS], corpus_texts())
+        # Token verimliliği ÖLÇÜLEN korpus üzerinden hesaplanmalı; aksi hâlde
+        # gerçek korpusla koşarken sentetik metnin sayıları raporlanırdı.
+        texts = [f"{p.title}\n{p.content}" for p in corpus.pages]
+        token_eff = measure([e["model"] for e in EMBEDDINGS], texts)
     except Exception as e:  # matris sonucunu token ölçümü başarısızlığına feda etme
         print(f"[uyari] token verimliliği ölçülemedi: {e}")
 
-    _write_outputs(cells, token_eff, args.top_k)
+    _write_outputs(cells, token_eff, args.top_k, golden.name, corpus_pages)
 
     total_viol = sum(c["summary"]["metrics"]["acl_violations"] for c in cells)
     if total_viol:
@@ -207,11 +229,22 @@ def render_report(matrix: dict) -> str:
 
     # --- Karar kutusu ---
     d_mrr = m(best, rr_on)["mrr"] - m(best, "noop")["mrr"] if rr_on else 0.0
-    rr_verdict = (
-        "**açılması önerilir**" if d_mrr > 0.005
-        else "opsiyonel (bu sette anlamlı katkı yok)" if abs(d_mrr) <= 0.005
-        else "**önerilmez** (skoru düşürüyor)"
+    # Faydayı GECİKME MALİYETİYLE birlikte değerlendir: uzun gerçek metinlerde
+    # cross-encoder 24 adayı puanlarken latency birkaç katına çıkabiliyor.
+    lat_ratio = (
+        m(best, rr_on)["latency_p95_ms"] / max(m(best, "noop")["latency_p95_ms"], 1e-6)
+        if rr_on
+        else 1.0
     )
+    if d_mrr <= 0.005:
+        rr_verdict = "opsiyonel (bu sette anlamlı katkı yok)"
+    elif lat_ratio >= 2.0:
+        rr_verdict = (
+            f"**duruma göre** — kalite artıyor ama p95 {lat_ratio:.1f}× yükseliyor; "
+            "gecikmeye duyarlı kullanımda kapalı bırakılabilir"
+        )
+    else:
+        rr_verdict = "**açılması önerilir**"
     L += [
         "## 🎯 Karar (ADR-3)",
         "",
@@ -233,10 +266,9 @@ def render_report(matrix: dict) -> str:
         "yeniden sıralaması ve modeller arası fark **tanım gereği ölçülemez**. Bu yüzden "
         "önce ayırt edici bir substrat üretildi:",
         "",
-        f"- **Korpus:** 15 → {matrix['corpus_pages']} sayfa, *confusable kümeler* halinde "
-        "(izin / erişim / masraf / güvenlik / dağıtım). Her sorgunun 4-5 makul adayı olur → "
-        "hit@1 ve MRR ayrışır.",
-        "- **Golden set:** `golden_v2.jsonl` (45 soru): faktüel · parafraz (semantik boşluk) · "
+        f"- **Korpus:** {matrix['corpus_pages']} doküman. Sorgu başına birden çok makul "
+        "aday bulunması hedeflenir → hit@1 ve MRR ayrışır.",
+        f"- **Golden set:** `{matrix['golden_file']}`: faktüel · parafraz (semantik boşluk) · "
         "kısıtlı-erişim · yetki-sınırı (aynı-space kısıtlı → sıkı ACL testi).",
         f"- **Matris:** {{{', '.join(f'`{e}`' for e in embs)}}} × {{noop, `{rr_on}`}}. "
         "Embedding değişimi re-index gerektirir (vektörler modele bağlı); reranker query-time.",
@@ -262,6 +294,13 @@ def render_report(matrix: dict) -> str:
         )
     L.append("")
     L.append("⭐ = seçilen yapılandırma. MRR = ortalama karşılıklı sıra (sayfa bazında).")
+    if len({c["summary"]["metrics"]["hit@5"] for c in cells}) == 1:
+        L.append("")
+        L.append(
+            f"> ⚠️ hit@5 tüm hücrelerde {cells[0]['summary']['metrics']['hit@5']:.3f} — "
+            "set k=5'te **doygun**; ayrım yalnız MRR ve hit@1'den geliyor. Daha ince "
+            "ayrım için sete daha zor/karıştırıcı sorular eklenmeli."
+        )
     L.append("")
 
     # --- Kategori bazında hit@5 ---
@@ -353,15 +392,15 @@ def render_report(matrix: dict) -> str:
     return "\n".join(L) + "\n"
 
 
-def _write_outputs(cells, token_eff, top_k) -> None:
+def _write_outputs(cells, token_eff, top_k, golden_name, corpus_pages) -> None:
     results_dir = ROOT / "eval" / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 
     matrix = {
         "run_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "golden_file": GOLDEN.name,
-        "corpus_pages": len(corpus.PAGES),
+        "golden_file": golden_name,
+        "corpus_pages": corpus_pages,
         "top_k": top_k,
         "embeddings": [e["key"] for e in EMBEDDINGS],
         "rerankers": RERANKERS,
