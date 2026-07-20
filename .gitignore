@@ -7,3 +7,6 @@ __pycache__/
 .env
 infra/openfga/store.state.json
 .claude/settings.local.json
+
+# Gerçek korpus indirilir, commit edilmez (boyut + lisans) — scripts/fetch_corpus.py
+data/

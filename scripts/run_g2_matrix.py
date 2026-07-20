@@ -100,6 +100,12 @@ async def main() -> int:
 
     cells: list[dict] = []
     try:
+        # Index'i temizle: index'te kalan başka bir korpus (ör. klasör
+        # connector'ıyla yüklenmiş gerçek korpus) sonuçlara karışır ve space
+        # anahtarları çakışabilir → ölçüm sessizce geçersizleşir.
+        await pool.execute("TRUNCATE spaces CASCADE")
+        print("[db] index temizlendi (ölçüm yalnız sentetik korpus üzerinde)")
+
         for emb_cfg in EMBEDDINGS:
             print(f"\n=== embedding: {emb_cfg['key']} ({emb_cfg['model']}) — index + eval ===")
             embedder = LocalSTEmbeddings(

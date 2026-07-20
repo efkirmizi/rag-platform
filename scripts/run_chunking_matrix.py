@@ -23,14 +23,16 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from run_eval import score_run
-from seed_synthetic import bootstrap_fga, corpus_model
+from seed_synthetic import corpus_model
 
 from ragplatform.acl.access import AccessResolver
+from ragplatform.acl.bootstrap import bootstrap_store
 from ragplatform.acl.fga import FgaClient
 from ragplatform.config import get_settings
 from ragplatform.db import create_pool
 from ragplatform.embeddings.local_st import LocalSTEmbeddings
-from ragplatform.ingestion.corpus import index_corpus
+from ragplatform.ingestion.corpus import build_tuples, index_corpus
+from ragplatform.ingestion.folder_source import load_folder
 from ragplatform.retrieval.rerank import NoopReranker
 from ragplatform.retrieval.service import RetrievalService
 
@@ -38,7 +40,7 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-GOLDEN = ROOT / "eval" / "golden" / "golden_v2.jsonl"
+DEFAULT_GOLDEN = ROOT / "eval" / "golden" / "golden_v2.jsonl"
 
 # (max_chars, overlap) — mevcut varsayılan (1600, 0) baseline
 CONFIGS = [
@@ -55,16 +57,36 @@ async def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--top-k", type=int, default=8)
     ap.add_argument("--model", default="BAAI/bge-m3")
+    ap.add_argument(
+        "--docs",
+        default=None,
+        help="Klasör korpusu (ör. data/tr-corpus). Verilmezse sentetik korpus kullanılır — "
+        "ama sentetik sayfalar kısa olduğu için chunking parametreleri devreye girmez.",
+    )
+    ap.add_argument("--golden", default=str(DEFAULT_GOLDEN))
+    ap.add_argument(
+        "--no-reset",
+        action="store_true",
+        help="Index'i temizleme (varsayılan: temizle — kalıntı korpus ölçümü bozar)",
+    )
     args = ap.parse_args()
 
+    golden = Path(args.golden)
     items = [
         json.loads(line)
-        for line in GOLDEN.read_text(encoding="utf-8").splitlines()
+        for line in golden.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
+    corpus = load_folder(args.docs) if args.docs else corpus_model()
+    errors = corpus.validate()
+    if errors:
+        print(f"❌ Korpus doğrulaması başarısız: {errors[:3]}")
+        return 1
+
     settings = get_settings()
     pool = await create_pool(settings.database_url)
-    await bootstrap_fga(settings)
+    model = json.loads((ROOT / "infra" / "openfga" / "model.json").read_text("utf-8"))
+    await bootstrap_store(settings, model, build_tuples(corpus), store_name="rag-chunking")
     fga = FgaClient.from_settings(settings)
     resolver = AccessResolver(fga, ttl_seconds=settings.acl_cache_ttl_seconds)
 
@@ -74,9 +96,17 @@ async def main() -> int:
         device=settings.embeddings_device,
         dtype=settings.embeddings_dtype,
     )
-    corpus = corpus_model()
+    print(f"Korpus: {len(corpus.pages)} doküman · golden: {golden.name} ({len(items)} soru)")
     rows = []
     try:
+        # Index'i TEMİZLE. index_corpus yalnız verilen sayfaları yazar; index'te
+        # kalan başka bir korpus (ör. sentetik seed) sonuçlara karışır. Space
+        # anahtarları da çakışabilir (sentetik ve gerçek korpusun ikisinde de
+        # IK/FIN var) → ölçüm sessizce geçersizleşir.
+        if not args.no_reset:
+            await pool.execute("TRUNCATE spaces CASCADE")
+            print("[db] index temizlendi (ölçüm yalnız bu korpus üzerinde)")
+
         for max_chars, overlap in CONFIGS:
             n_chunks = await index_corpus(
                 pool, embedder, corpus, quiet=True, max_chars=max_chars, overlap=overlap
@@ -86,7 +116,7 @@ async def main() -> int:
                 service,
                 items,
                 args.top_k,
-                golden_name=GOLDEN.name,
+                golden_name=golden.name,
                 embedding_model=embedder.name,
                 reranker_name="noop",
             )
@@ -121,7 +151,7 @@ async def main() -> int:
     out = {
         "run_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "model": args.model,
-        "golden_file": GOLDEN.name,
+        "golden_file": golden.name,
         "baseline": {"max_chars": base["max_chars"], "overlap": base["overlap"]},
         "best": {"max_chars": best["max_chars"], "overlap": best["overlap"]},
         "delta_mrr_vs_baseline": round(best["mrr"] - base["mrr"], 4),

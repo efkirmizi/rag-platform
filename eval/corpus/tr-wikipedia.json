@@ -1,0 +1,83 @@
+{
+  "_readme": [
+    "Gerçek Türkçe içerikten oluşan değerlendirme korpusunun MANİFESTOSU.",
+    "İçeriğin kendisi repoya konmaz (boyut + lisans); scripts/fetch_corpus.py",
+    "ile indirilir. Kaynak: Türkçe Vikipedi (CC BY-SA 4.0) — indirilen klasöre",
+    "otomatik ATTRIBUTION.md yazılır.",
+    "",
+    "NEDEN: sentetik korpustaki sayfalar ~300 karakterdi; chunking parametreleri",
+    "hiç devreye girmiyordu (bkz. eval/results/chunking-matrix.json 'conclusive':false)",
+    "ve embedding kararı sentetik metne dayanıyordu. Bu korpus uzun, başlıklı,",
+    "gerçek Türkçe metin sağlar.",
+    "",
+    "İZİNLER SENTETİKTİR ve öyle kalmalı: içerik gerçek, ACL yapısı kurgusal.",
+    "Test ettiğimiz şey ACL mekanizması; onun kontrollü olması gerekiyor."
+  ],
+
+  "source": "wikipedia",
+  "lang": "tr",
+  "license": "CC BY-SA 4.0",
+
+  "spaces": {
+    "IK": "İnsan Kaynakları ve Çalışma Hayatı",
+    "HUKUK": "Hukuk ve Mevzuat",
+    "BT": "Bilgi Teknolojileri ve Güvenlik",
+    "FIN": "Finans ve Vergi"
+  },
+  "groups": {
+    "herkes": ["ayse", "mehmet", "can", "zeynep", "deniz", "elif"],
+    "ik": ["ayse", "zeynep"],
+    "ik-yonetim": ["zeynep"],
+    "bt": ["mehmet", "deniz"],
+    "guvenlik": ["deniz"],
+    "fin": ["can", "elif"],
+    "fin-yonetim": ["elif"],
+    "hukuk": ["zeynep", "elif", "ayse"]
+  },
+  "space_viewers": {
+    "IK": ["herkes"],
+    "HUKUK": ["hukuk"],
+    "BT": ["bt"],
+    "FIN": ["fin"]
+  },
+
+  "_restricted_note": [
+    "Kısıtlı sayfalar, YETERİNCE UZUN indiği doğrulanmış dokümanlara atandı.",
+    "İlk denemede kısıtlılar kısa oldukları için atlanmıştı ve ik-yonetim'in",
+    "test edilecek hiçbir kısıtlı sayfası kalmamıştı. Her kısıt grubunun en az",
+    "bir gerçek dokümanı olmalı, yoksa yetki-sınırı testleri boşa çıkar."
+  ],
+
+  "documents": [
+    { "title": "Asgari ücret", "space": "IK" },
+    { "title": "Sendika", "space": "IK" },
+    { "title": "İş sağlığı ve güvenliği", "space": "IK" },
+    { "title": "Emeklilik", "space": "IK" },
+    { "title": "Sosyal Güvenlik Kurumu", "space": "IK", "restricted_to": "ik-yonetim" },
+    { "title": "İnsan kaynakları yönetimi", "space": "IK" },
+    { "title": "Ücret", "space": "IK" },
+
+    { "title": "Kişisel Verilerin Korunması Kanunu", "space": "HUKUK" },
+    { "title": "Türkiye Cumhuriyeti Anayasası", "space": "HUKUK" },
+    { "title": "Ticaret hukuku", "space": "HUKUK", "restricted_to": "ik-yonetim" },
+    { "title": "İdare hukuku", "space": "HUKUK" },
+    { "title": "Ceza hukuku", "space": "HUKUK" },
+
+    { "title": "Bilgi güvenliği", "space": "BT" },
+    { "title": "Kriptografi", "space": "BT" },
+    { "title": "Bilgisayar ağı", "space": "BT" },
+    { "title": "Güvenlik duvarı", "space": "BT" },
+    { "title": "Kötü amaçlı yazılım", "space": "BT" },
+    { "title": "Veri tabanı", "space": "BT" },
+    { "title": "Bulut bilişim", "space": "BT" },
+    { "title": "Yapay zekâ", "space": "BT" },
+    { "title": "Sızma testi", "space": "BT", "restricted_to": "guvenlik" },
+
+    { "title": "Katma değer vergisi", "space": "FIN" },
+    { "title": "Muhasebe", "space": "FIN" },
+    { "title": "Enflasyon", "space": "FIN" },
+    { "title": "Sigorta", "space": "FIN" },
+    { "title": "Banka", "space": "FIN" },
+    { "title": "Bilanço", "space": "FIN", "restricted_to": "fin-yonetim" }
+  ]
+}
