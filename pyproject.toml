@@ -52,6 +52,10 @@ local = [
 #  görüyorsanız sebebi budur.)
 docs = [
     "docling>=2.0",
+    # OCR'da Latin/İngilizce modelleri ONNX motoruyla geliyor; onsuz RapidOCR
+    # Çince modele düşüyor ve latin metinde kelimeleri bitişik üretiyor
+    # (bkz. folder_source._DoclingConverter). Görsel/taranmış belge için şart.
+    "onnxruntime>=1.17",
 ]
 
 [project.urls]

@@ -1,8 +1,11 @@
-"""Başlık-farkındalıklı basit chunker (Faz 0).
+"""Başlık-farkındalıklı chunker.
 
-Faz 1'de Docling çıktısı (yapısal parse: tablo, başlık hiyerarşisi) bu modülün
-yerini alacak; Chunk arayüzü sabit tutuldu. Overlap bilinçli olarak yok —
-eklenecekse eval ile kanıtlanarak eklenir (PROJE-PLANI.md Faz 3).
+Girdi her zaman markdown'dır: markdown dosyaları doğrudan, PDF/DOCX/HTML/PPTX
+ise Docling ile markdown'a çevrilerek buraya gelir (folder_source). Yani tablo
+ve başlık hiyerarşisi bu noktada zaten markdown olarak temsil edilir.
+
+Overlap artık var ve varsayılan olarak AÇIK (150 karakter) — ölçülerek eklendi;
+gerekçe ve sayılar chunk_markdown() docstring'inde.
 """
 
 import re

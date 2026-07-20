@@ -2,8 +2,10 @@
 
 Markdown doğrudan okunur; PDF/DOCX/HTML/PPTX **Docling** ile markdown'a
 çevrilir (plan Faz 1: "Docling ile parse; tablo ve başlık yapısı korunur").
-Docling opsiyonel bir ekstradır ve yalnız gerektiğinde import edilir:
-`pip install -e ".[docs]"`.
+Görseller (PNG/JPG/TIFF…) da Docling'e verilir ve **OCR** edilir — taranmış
+belge ve ekran görüntüleri aranabilir olur; kalite/hız uyarıları için
+`_IMAGE_EXT` yorumuna bakın. Docling opsiyonel bir ekstradır ve yalnız
+gerektiğinde import edilir: `pip install -e ".[docs]"`.
 
 Beklenen düzen:
 
@@ -45,6 +47,7 @@ bağımlılığı eklemeden okunabilir kalır.
 
 import json
 import re
+import sys
 from fnmatch import fnmatch
 from pathlib import Path
 
@@ -66,7 +69,16 @@ _DEFAULT_IGNORE = [
 _MARKDOWN_EXT = {".md", ".markdown"}
 # Docling'in yapısal parse ettiği formatlar (tablo/başlık hiyerarşisi korunur)
 _DOCLING_EXT = {".pdf", ".docx", ".html", ".htm", ".pptx", ".xlsx"}
-_SUPPORTED_EXT = _MARKDOWN_EXT | _DOCLING_EXT
+# Görseller: Docling bunlarda OCR çalıştırır (taranmış belge, ekran görüntüsü).
+# İki uyarı — README'de de yazılı:
+#  1) OCR kayıplıdır. Ölçüldü: "YILLIK IZIN" → "YILLIKIZIN". Kaybolan boşluk FTS
+#     token'ını tamamen bozar; embedding daha aftedici ama yine de zayıflar.
+#     Taranmış içerikte retrieval kalitesi doğal metne göre ölçülebilir düşüktür.
+#  2) OCR yavaştır (sayfa başına layout modeli). Görsel ağırlıklı bir klasörde
+#     ingest süresi ciddi artar; istenmiyorsa permissions.json "ignore" ile
+#     dışlanabilir (ör. "*.png").
+_IMAGE_EXT = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
+_SUPPORTED_EXT = _MARKDOWN_EXT | _DOCLING_EXT | _IMAGE_EXT
 
 
 class FolderSourceError(Exception):
@@ -115,21 +127,52 @@ class _DoclingConverter:
 
     DocumentConverter kurulumu model yüklediği için pahalıdır; klasör başına
     bir kez oluşturulup tüm dosyalar için kullanılır.
+
+    OCR dili varsayılan olarak `en` — Docling'in varsayılanı `chinese` ve bu
+    LATİN yazıda kelimeleri BİTİŞİK üretiyor (Çince kelime arası boşluk
+    kullanmaz). Ölçüldü, aynı taranmış sayfa:
+        chinese : "Kidemi1-5yilarasicalisanlar14isgunuizinkullanir."   (0/10 kelime)
+        en      : "Kidemi 1-5 yilarasi calisanlar 14 isgunu izin kullanir."  (8/10)
+    Boşluksuz metin FTS'te tek dev token olur ve hiçbir sorguyla eşleşmez;
+    yani varsayılan bırakılırsa taranmış Türkçe içerik aranamaz hale gelir.
+    permissions.json'daki "ocr_lang" ile değiştirilebilir (ör. ["cyrillic"]).
     """
 
-    def __init__(self):
+    def __init__(self, ocr_lang: list[str] | None = None):
         self._conv = None
+        self._lang = ocr_lang or ["en"]
+
+    def _build(self, path: Path):
+        try:
+            from docling.datamodel.base_models import InputFormat
+            from docling.datamodel.pipeline_options import (
+                PdfPipelineOptions,
+                RapidOcrOptions,
+            )
+            from docling.document_converter import (
+                DocumentConverter,
+                ImageFormatOption,
+                PdfFormatOption,
+            )
+        except ImportError as e:
+            raise FolderSourceError(
+                f"{path.name}: Docling kurulu değil. Markdown dışı dosyalar "
+                'için: pip install -e ".[docs]"  (ya da bu dosyayı çıkarın)'
+            ) from e
+
+        opts = PdfPipelineOptions()
+        opts.do_ocr = True
+        opts.ocr_options = RapidOcrOptions(lang=self._lang)
+        return DocumentConverter(
+            format_options={
+                InputFormat.PDF: PdfFormatOption(pipeline_options=opts),
+                InputFormat.IMAGE: ImageFormatOption(pipeline_options=opts),
+            }
+        )
 
     def to_markdown(self, path: Path) -> str:
         if self._conv is None:
-            try:
-                from docling.document_converter import DocumentConverter
-            except ImportError as e:
-                raise FolderSourceError(
-                    f"{path.name}: Docling kurulu değil. Markdown dışı dosyalar "
-                    'için: pip install -e ".[docs]"  (ya da bu dosyayı çıkarın)'
-                ) from e
-            self._conv = DocumentConverter()
+            self._conv = self._build(path)
         try:
             return self._conv.convert(str(path)).document.export_to_markdown()
         except Exception as e:  # bozuk/şifreli dosya vb.
@@ -160,7 +203,7 @@ def load_folder(root: str | Path) -> Corpus:
     )
     rules = perms.get("path_rules", [])
     ignore = perms.get("ignore", _DEFAULT_IGNORE)
-    converter = _DoclingConverter()
+    converter = _DoclingConverter(perms.get("ocr_lang"))
 
     files = sorted(
         p
@@ -187,6 +230,13 @@ def load_folder(root: str | Path) -> Corpus:
                 )
         else:
             meta, body = {}, converter.to_markdown(path)
+            if not body.strip():
+                # Metin çıkmayan dosya (logo, fotoğraf, boş PDF) sayfa olarak
+                # eklenirse korpus doğrulaması "içerik boş" diye TÜM yüklemeyi
+                # düşürür. Klasörde metinsiz görsel bulunması olağan → atla,
+                # ama sessizce değil.
+                print(f"[atla] {rel_posix}: metin çıkarılamadı (boş)", file=sys.stderr)
+                continue
 
         space = meta.get("space") or rule.get("space")
         if not space:
