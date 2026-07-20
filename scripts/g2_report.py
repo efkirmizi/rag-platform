@@ -25,7 +25,8 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 def main() -> int:
     results_dir = ROOT / "eval" / "results"
     if len(sys.argv) > 1:
-        src = Path(sys.argv[1])
+        # Göreli yol verilebilsin: relative_to() mutlak/göreli karışımında patlıyor.
+        src = Path(sys.argv[1]).resolve()
     else:
         candidates = sorted(results_dir.glob("*_g2_matrix.json"))
         if not candidates:
