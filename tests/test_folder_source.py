@@ -272,6 +272,35 @@ def test_docling_missing_gives_actionable_error(tmp_path):
         load_folder(tmp_path)
 
 
+# --- görsel / OCR yapılandırması (model yüklemeden) ---
+
+
+def test_image_extensions_are_supported():
+    from ragplatform.ingestion.folder_source import _IMAGE_EXT, _SUPPORTED_EXT
+
+    assert {".png", ".jpg", ".jpeg", ".tiff"} <= _IMAGE_EXT
+    assert _IMAGE_EXT <= _SUPPORTED_EXT
+
+
+def test_ocr_language_defaults_to_latin_script():
+    """Docling varsayılanı 'chinese' ve latin metinde kelimeleri BİTİŞİK üretiyor.
+
+    Ölçüldü: aynı taranmış sayfada chinese 0/10, en 8/10 kelime doğru.
+    Boşluksuz metin FTS'te tek token olur → taranmış içerik aranamaz.
+    """
+    from ragplatform.ingestion.folder_source import _DoclingConverter
+
+    assert _DoclingConverter()._lang == ["en"]
+    assert _DoclingConverter(["cyrillic"])._lang == ["cyrillic"]
+
+
+def test_ocr_lang_read_from_permissions(tmp_path):
+    _perms(tmp_path, ocr_lang=["cyrillic"], path_rules=[{"prefix": "", "space": "IK"}])
+    _write(tmp_path, "a.md", "---\nspace: IK\ntitle: A\n---\nicerik")
+    # markdown yolu Docling'e hiç gitmez; ayar yine de okunmalı
+    assert load_folder(tmp_path).pages[0].space == "IK"
+
+
 # --- repodaki örnek klasör ---
 
 

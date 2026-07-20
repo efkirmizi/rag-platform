@@ -97,8 +97,33 @@ mydocs/
   permissions.json          # spaces, groups, who can see what
   handbook/onboarding.md    # markdown with front-matter
   handbook/policy.pdf       # PDF/DOCX/HTML via Docling  (pip install -e ".[docs]")
+  handbook/scan.png         # images + scanned PDFs are OCR'd
   eng/deployment.md
 ```
+
+<details>
+<summary><b>Scanned documents and images — read this before trusting the results</b></summary>
+
+Images (`.png/.jpg/.tiff/…`) and image-only PDFs are OCR'd. It works, but OCR is
+lossy and retrieval on scanned content is measurably worse than on native text.
+
+The default OCR language is `en` (Latin script), **not** Docling's `chinese`
+default — that default merges words on Latin text, which is fatal for full-text
+search. Measured on the same scanned page:
+
+| OCR lang | output | words correct |
+|---|---|---|
+| `chinese` (Docling default) | `Kidemi1-5yilarasicalisanlar14isgunu…` | 0 / 10 |
+| **`en`** (our default) | `Kidemi 1-5 yilarasi calisanlar 14 isgunu…` | 8 / 10 |
+
+Even at 8/10, merged words (`isgunu` for `is gunu`) don't match FTS tokens —
+embeddings degrade more gracefully than lexical search here. Override with
+`"ocr_lang": ["cyrillic"]` in `permissions.json` for other scripts.
+
+Files that yield no text (logos, photos) are skipped with a notice rather than
+becoming empty pages. OCR is slow — exclude images with `"ignore": ["*.png"]`
+if you don't need them.
+</details>
 
 ```markdown
 ---

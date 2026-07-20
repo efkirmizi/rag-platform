@@ -98,8 +98,33 @@ belgelerim/
   permissions.json          # space'ler, gruplar, kim neyi görür
   elkitabi/oryantasyon.md   # front-matter'lı markdown
   elkitabi/yonetmelik.pdf   # PDF/DOCX/HTML → Docling  (pip install -e ".[docs]")
+  elkitabi/tarama.png       # görseller ve taranmış PDF'ler OCR edilir
   eng/dagitim.md
 ```
+
+<details>
+<summary><b>Taranmış belgeler ve görseller — sonuçlara güvenmeden önce okuyun</b></summary>
+
+Görseller (`.png/.jpg/.tiff/…`) ve yalnız-görüntü PDF'ler OCR edilir. Çalışır,
+ama OCR kayıplıdır: taranmış içerikte retrieval kalitesi doğal metne göre
+ölçülebilir biçimde düşüktür.
+
+Varsayılan OCR dili `en` (latin yazı) — Docling'in varsayılanı olan `chinese`
+DEĞİL. O varsayılan latin metinde kelimeleri birleştiriyor ve tam metin
+aramasını tamamen bozuyor. Aynı taranmış sayfada ölçüldü:
+
+| OCR dili | çıktı | doğru kelime |
+|---|---|---|
+| `chinese` (Docling varsayılanı) | `Kidemi1-5yilarasicalisanlar14isgunu…` | 0 / 10 |
+| **`en`** (bizim varsayılan) | `Kidemi 1-5 yilarasi calisanlar 14 isgunu…` | 8 / 10 |
+
+8/10'da bile birleşmiş kelimeler (`isgunu` ← `is gunu`) FTS token'ıyla
+eşleşmez; burada embedding lexical aramadan daha aftedicidir. Başka yazı
+sistemleri için `permissions.json`'da `"ocr_lang": ["cyrillic"]`.
+
+Metin çıkmayan dosyalar (logo, fotoğraf) boş sayfa olmak yerine bildirimle
+atlanır. OCR yavaştır; gerekmiyorsa `"ignore": ["*.png"]` ile dışlayın.
+</details>
 
 ```markdown
 ---
